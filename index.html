@@ -58,6 +58,9 @@ textarea{min-height:140px;font-family:ui-monospace,Menlo,monospace;font-size:13p
 .mine .nm{flex:1;font-weight:700;font-size:15px;word-break:break-all}
 .star{border:none;background:none;font-size:22px;color:#d9d0c3;padding:0 2px;line-height:1}
 .star.on{color:var(--star)}
+.bad{border:1.5px solid var(--line);background:#fff;color:#c8bdb2;border-radius:8px;padding:2px 7px;font:inherit;font-size:11px;font-weight:700}
+.bad.on{background:#eef0f3;border-color:#9aa3ad;color:#5b6570}
+.mine .ep{background:#f6f7f9;border-color:#d9dee4}
 .del{border:none;background:none;color:#c8bdb2;font-size:18px;padding:0 4px}
 .mine .memo{margin-top:8px;font-size:13px;min-height:auto;font-family:inherit;padding:8px}
 .when{display:flex;gap:4px;margin-top:8px;flex-wrap:wrap}
@@ -74,6 +77,7 @@ textarea{min-height:140px;font-family:ui-monospace,Menlo,monospace;font-size:13p
 .modal .sheet{background:var(--bg);width:100%;max-width:640px;max-height:80vh;overflow:auto;border-radius:18px 18px 0 0;padding:18px 16px 24px}
 .hv{margin-bottom:14px}.hv b{font-size:14px}.hv small{color:var(--sub);margin-left:6px}
 .hv ul{margin:4px 0 0;padding-left:20px;font-size:13px;line-height:1.7}
+.lnk{color:var(--sky);font-weight:700;text-decoration:none;white-space:nowrap}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);opacity:0;background:#3a3330;color:#fff;padding:10px 16px;border-radius:999px;font-size:13px;transition:.25s;pointer-events:none;z-index:20}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 .seg{display:flex;gap:6px;margin-bottom:10px}
@@ -139,6 +143,7 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
   <div class="chips" id="filter" style="margin-bottom:10px">
     <button class="chip on" data-f="all">すべて</button>
     <button class="chip" data-f="good">★ あって良かった</button>
+    <button class="chip" data-f="bad">失敗だった</button>
     <button class="chip" data-f="friend">友だちから</button>
     <button class="chip" data-f="now">🚨 入居日から</button>
   </div>
@@ -154,6 +159,7 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
     <input type="text" id="myName" placeholder="例）わたし">
     <div class="seg chips" id="expMode" style="margin-top:10px">
       <button class="chip on" data-m="good">★だけ</button>
+      <button class="chip" data-m="bad">失敗だけ</button>
       <button class="chip" data-m="all">ぜんぶ</button>
     </div>
     <textarea id="exp" readonly></textarea>
@@ -168,7 +174,9 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
       <code># わたしの新生活リスト</code><br>
       <code>- ★ ✨ ロボット掃除機 : 床がいつもきれい</code><br>
       <code>- タジン鍋 : 野菜を入れてチンするだけ</code><br>
-      ★ は「あって良かった」、🚨✨ は買う時期、<code>:</code> のあとはメモです。</p>
+      <code>- ✖ 大きいバスタオル</code><br>
+      <code>&nbsp;&nbsp;- 失敗：場所を取って乾かない</code><br>
+      ★ は「あって良かった」、✖ は失敗、🚨✨ は買う時期、<code>:</code> のあとはメモです。</p>
   </div>
 </section>
 
@@ -182,8 +190,9 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
 
 <script>
 // ===== バージョン =====
-const VERSION="1.1";
+const VERSION="1.2";
 const HISTORY=[
+ {v:"1.2",d:"2026-10-31",c:["マイリストで「失敗だった」を残せるように（失敗エピソードも書ける・共有もできる）","ポータブル電源・骨盤サポートチェアを追加","防災セットに「わが家の防災リスト」へのリンクを追加","ダンボールストッカーを「コジット ダンボールストッカー」に"]},
  {v:"1.1",d:"2026-10-31",c:["買う時期のラベルを「入居日から」「余裕があれば」の2つに整理","バージョン表示と更新履歴を追加"]},
  {v:"1.0",d:"2026-10-31",c:["初版：おすすめ（ふたり暮らしは1人目・2人目ごとに性別・年代・性格・星座）","アイテム一覧と検索、エコ・安価の分類","マイリスト（★あって良かった・メモ・買う時期）","マークダウンで友だちと送り合える共有機能"]}
 ];
@@ -241,7 +250,7 @@ const ITEMS=[
  {n:"メイク用ライト付きミラー",w:"later",i:"💄",d:"自然光に近い明るさで朝の支度がスムーズ。",p:[1,2],t:["picky"],e:["air","water"],a:[20,30,40],g:"f"},
  {n:"電気シェーバー",w:"now",i:"🪒",d:"朝の時短に。洗えるタイプが衛生的。",p:[1,2],t:["lazy","clean"],e:["fire","earth"],a:[20,30,40,50,60],g:"m"},
  {n:"工具セット（小）",w:"now",i:"🔧",d:"家具の組み立て、ネジのゆるみ直しに。引っ越し初日から活躍。",p:[1,2],t:["active","thrift"],e:["fire","earth"],a:[20,30,40,50,60]},
- {n:"防災セット",w:"now",i:"🎒",d:"水・ライト・モバイルバッテリー。新居に住み始めたら早めに。",p:[1,2],t:["picky","clean"],e:["earth"],a:[20,30,40,50,60]},
+ {n:"防災セット",w:"now",i:"🎒",d:"水・ライト・モバイルバッテリー。新居に住み始めたら早めに。防災の備えは専用アプリも参考に。",l:{t:"わが家の防災リスト",u:"https://sunatrux.github.io/bousailist/"},p:[1,2],t:["picky","clean"],e:["earth"],a:[20,30,40,50,60]},
  {n:"体組成計",w:"later",i:"⚖️",d:"アプリ連携で健康管理。自炊のモチベにも。",p:[1,2],t:["active","picky"],e:["fire","earth"],a:[30,40,50,60]},
  {n:"自転車",w:"later",i:"🚲",d:"近所の開拓と買い出しに。新しい街を知る一番の近道。",p:[1,2],t:["active","thrift"],e:["fire","air"],a:[20,30],c:["eco"]},
  {n:"共有家計簿アプリ",w:"later",i:"💰",d:"ふたりの出費を見える化。お金の話がしやすくなる。",p:[2],t:["thrift","picky"],e:["earth","air"],a:[20,30,40],c:["cheap"]},
@@ -269,7 +278,9 @@ const ITEMS=[
  {n:"電子レンジ用トレイ",w:"later",i:"🍱",d:"レンジから取り出してそのまま食卓へ運べる。熱いお皿も安心。",p:[1,2],t:["lazy","cook"],e:["earth"],a:[20,30,40,50,60],c:["cheap"]},
  {n:"電子レンジ用シリコンラップ",w:"later",i:"🟢",d:"お皿にかぶせてそのままチン。洗って繰り返し使えるのでラップ代も節約。",p:[1,2],t:["thrift","cook","clean"],e:["earth","water"],a:[20,30,40,50,60],c:["eco","cheap"]},
  {n:"100均のシャワードリップ",w:"later",i:"☕",d:"ドリッパーにのせてお湯を注ぐだけ。ゆっくりお湯が落ちている間に別のことができる。",p:[1,2],t:["lazy","relax","thrift"],e:["water","air"],a:[20,30,40,50,60],c:["cheap"]},
- {n:"ダンボールストッカー",w:"later",i:"📦",d:"たまりがちなダンボールをすっきり収納。コジットのものがベスト。使い方はインスタなどで見てみて。",p:[1,2],t:["clean","picky"],e:["earth"],a:[20,30,40,50,60],c:["eco"]},
+ {n:"コジット ダンボールストッカー",w:"later",i:"📦",d:"たまりがちなダンボールをすっきり収納。ダンボールストッカーならコジットのものがベスト。使い方はインスタなどで見てみて。",p:[1,2],t:["clean","picky"],e:["earth"],a:[20,30,40,50,60],c:["eco"]},
+ {n:"ポータブル電源",w:"later",i:"🔋",d:"停電時もスマホの充電や家電が使える。キャンプや車中泊など屋外でも活躍。",p:[1,2],t:["active","picky"],e:["fire","earth"],a:[20,30,40,50,60]},
+ {n:"骨盤サポートチェア",w:"later",i:"🪑",d:"普通の椅子もこれがあるとテレワーク対応に。高価で大きいゲーミングチェアの前に試してみて。",p:[1,2],t:["indoor","picky","thrift"],e:["earth","water"],a:[20,30,40,50,60],c:["cheap"]},
  {n:"ブランケット",w:"later",i:"🧣",d:"ソファでの映画やうたた寝に。冬の電気代も節約。",p:[1,2],t:["relax","indoor","thrift"],e:["water"],a:[20,30,40,50,60],c:["eco", "cheap"]}
 ];
 
@@ -391,7 +402,7 @@ function horoHtml(){
   return `<div class="card horo">${h}</div>`;
 }
 function inList(n){return mine.some(m=>m.name===n)}
-const itemHtml=it=>`<div class="card item"><div class="ic">${it.i}</div><div class="bd"><div class="nm">${esc(it.n)}</div><div class="ds">${esc(state.people==="2"&&it.d2?it.d2:it.d)}</div><div class="why"><span class="w ${it.w}">${WHEN[it.w]}</span>${it.why.map(w=>`<span class="${w.c}">${esc(w.t)}</span>`).join("")}</div></div><button class="add ${inList(it.n)?"done":""}" data-n="${esc(it.n)}">${inList(it.n)?"追加済み":"＋リスト"}</button></div>`;
+const itemHtml=it=>`<div class="card item"><div class="ic">${it.i}</div><div class="bd"><div class="nm">${esc(it.n)}</div><div class="ds">${esc(state.people==="2"&&it.d2?it.d2:it.d)}${it.l?` <a class="lnk" href="${it.l.u}" target="_blank" rel="noopener">${esc(it.l.t)} ↗</a>`:""}</div><div class="why"><span class="w ${it.w}">${WHEN[it.w]}</span>${it.why.map(w=>`<span class="${w.c}">${esc(w.t)}</span>`).join("")}</div></div><button class="add ${inList(it.n)?"done":""}" data-n="${esc(it.n)}">${inList(it.n)?"追加済み":"＋リスト"}</button></div>`;
 const FIRST=12,STEP=10;
 let allList=[],shown=0;
 function showMore(){
@@ -455,21 +466,24 @@ document.getElementById("filter").addEventListener("click",e=>{
   document.querySelectorAll("#filter .chip").forEach(x=>x.classList.toggle("on",x===c));renderMine();
 });
 function renderMine(){
-  const list=mine.filter(m=>filter==="all"||(filter==="good"&&m.good)||(filter==="friend"&&m.from)||(filter==="now"&&m.w==="now"));
-  const goods=mine.filter(m=>m.good).length;
-  document.getElementById("cnt").textContent=mine.length?`${mine.length}アイテム（★あって良かった ${goods}）`:"";
+  const list=mine.filter(m=>filter==="all"||(filter==="good"&&m.good)||(filter==="bad"&&(m.bad||m.fbad))||(filter==="friend"&&m.from)||(filter==="now"&&m.w==="now"));
+  const goods=mine.filter(m=>m.good).length,bads=mine.filter(m=>m.bad).length;
+  document.getElementById("cnt").textContent=mine.length?`${mine.length}アイテム（★あって良かった ${goods}・失敗 ${bads}）`:"";
   const el=document.getElementById("mine");
-  if(!list.length){el.innerHTML=`<div class="empty">${mine.length?"この条件のアイテムはありません":"まだアイテムがありません。<br>おすすめから追加するか、上で自分で追加してね。<br>使ってみて良かったら ★ をつけよう。"}</div>`;return}
+  if(!list.length){el.innerHTML=`<div class="empty">${mine.length?"この条件のアイテムはありません":"まだアイテムがありません。<br>おすすめから追加するか、上で自分で追加してね。<br>使ってみて良かったら ★、失敗だったら「失敗」をつけよう。"}</div>`;return}
   el.innerHTML=list.map(m=>`<div class="card mine" data-id="${m.id}">
-    <div class="top"><button class="star ${m.good?"on":""}" aria-label="あって良かった">★</button>
-    <div class="nm">${esc(m.name)}${m.from?`<span class="from">from ${esc(m.from)}${m.fgood?" ★":""}</span>`:""}</div>
+    <div class="top"><button class="star ${m.good?"on":""}" aria-label="あって良かった">★</button><button class="bad ${m.bad?"on":""}" aria-label="失敗だった">失敗</button>
+    <div class="nm">${esc(m.name)}${m.from?`<span class="from">from ${esc(m.from)}${m.fgood?" ★":""}${m.fbad?" 失敗":""}</span>`:""}</div>
     <button class="del" aria-label="削除">✕</button></div>
     <div class="when" >${Object.keys(WHEN).map(k=>`<button class="wbtn ${m.w===k?"on "+k:""}" data-w="${k}">${WHEN[k]}</button>`).join("")}</div>
-    <textarea class="memo" rows="1" placeholder="メモ（どこで買った・良かった点など）">${esc(m.memo)}</textarea></div>`).join("");
+    <textarea class="memo" rows="1" placeholder="メモ（どこで買った・良かった点など）">${esc(m.memo)}</textarea>
+    ${m.bad?`<textarea class="memo ep" rows="2" placeholder="失敗エピソード（何がダメだった？次はどうする？）">${esc(m.ep||"")}</textarea>`:""}</div>`).join("");
 }
 document.getElementById("mine").addEventListener("click",e=>{
   const card=e.target.closest(".mine");if(!card)return;const m=mine.find(x=>x.id===card.dataset.id);
-  if(e.target.closest(".star")){m.good=!m.good;save();renderMine()}
+  if(e.target.closest(".star")){m.good=!m.good;if(m.good)m.bad=false;save();renderMine()}
+  if(e.target.closest(".bad")){m.bad=!m.bad;if(m.bad)m.good=false;save();renderMine();
+    if(m.bad){const ep=document.querySelector(`.mine[data-id="${m.id}"] .ep`);if(ep&&!ep.value)ep.focus()}}
   const wb=e.target.closest(".wbtn");if(wb){m.w=m.w===wb.dataset.w?"":wb.dataset.w;save();renderMine()}
   if(e.target.closest(".del")){
     if(card.dataset.confirm){mine=mine.filter(x=>x!==m);save();updateBadge();renderMine()}
@@ -478,7 +492,8 @@ document.getElementById("mine").addEventListener("click",e=>{
 });
 document.getElementById("mine").addEventListener("input",e=>{
   if(!e.target.classList.contains("memo"))return;
-  const m=mine.find(x=>x.id===e.target.closest(".mine").dataset.id);m.memo=e.target.value;save();
+  const m=mine.find(x=>x.id===e.target.closest(".mine").dataset.id);
+  if(e.target.classList.contains("ep"))m.ep=e.target.value;else m.memo=e.target.value;save();
 });
 document.getElementById("addBtn").onclick=()=>{
   const n=document.getElementById("newName"),mm=document.getElementById("newMemo");
@@ -497,10 +512,11 @@ document.getElementById("expMode").addEventListener("click",e=>{
   document.querySelectorAll("#expMode .chip").forEach(x=>x.classList.toggle("on",x===c));renderExport();
 });
 function renderExport(){
-  const list=mine.filter(m=>expMode==="all"||m.good);
+  const list=mine.filter(m=>expMode==="all"||(expMode==="good"&&m.good)||(expMode==="bad"&&m.bad));
   const nm=myName.value.trim();
-  let md=`# ${nm?nm+"の":""}${expMode==="good"?"あって良かった":""}新生活グッズ\n\n`;
-  md+=list.length?list.map(m=>`- ${m.good?"★ ":""}${m.w?WHEN_ICON[m.w]+" ":""}${m.name.replace(/\n/g," ")}${m.memo?" : "+m.memo.replace(/\n/g," "):""}`).join("\n"):"（まだ★のアイテムがありません）";
+  const flat=t=>t.replace(/\n/g," ");
+  let md=`# ${nm?nm+"の":""}${expMode==="good"?"あって良かった":expMode==="bad"?"失敗した":""}新生活グッズ\n\n`;
+  md+=list.length?list.map(m=>`- ${m.good?"★ ":""}${m.bad?"✖ ":""}${m.w?WHEN_ICON[m.w]+" ":""}${flat(m.name)}${m.memo?" : "+flat(m.memo):""}${m.bad&&m.ep?"\n  - 失敗：" +flat(m.ep):""}`).join("\n"):`（まだ${expMode==="bad"?"失敗":"★"}のアイテムがありません）`;
   document.getElementById("exp").value=md+"\n";
 }
 document.getElementById("copyBtn").onclick=async()=>{
@@ -511,16 +527,19 @@ document.getElementById("copyBtn").onclick=async()=>{
 function parseMd(text){
   let from="";const items=[];
   text.split(/\r?\n/).forEach(line=>{
+    const f=line.match(/^\s+[-*・]\s*失敗[:：]\s*(.*)$/);
+    if(f){if(items.length){const l=items[items.length-1];l.bad=true;l.ep=f[1].trim()}return}
     const h=line.match(/^#\s*(.+?)の/);if(h&&!from){from=h[1].trim();return}
     const m=line.match(/^\s*(?:[-*・]|\d+\.)\s+(.*)$/);if(!m)return;
-    let s=m[1].trim(),good=false;
+    let s=m[1].trim(),good=false,bad=false;
     const ck=s.match(/^\[( |x|X)\]\s*/);if(ck){good=ck[1]!==" ";s=s.slice(ck[0].length)}
     if(/^[★☆]/.test(s)){good=s[0]==="★";s=s.slice(1).trim()}
+    if(/^[✖×❌]/.test(s)){bad=true;s=s.replace(/^[✖×❌]\uFE0F?\s*/,"")}
     if(s.startsWith("📅")){s="✨"+s.slice(2)}
     let w="";for(const k in WHEN_ICON){if(s.startsWith(WHEN_ICON[k])){w=k;s=s.slice(WHEN_ICON[k].length).replace(/^\uFE0F/,"").trim();break}}
     const sp=s.split(/\s+[:：]\s+|\s+[—–-]{1,2}\s+/);
     const name=sp.shift().replace(/\*\*/g,"").trim();if(!name)return;
-    items.push({name,memo:sp.join(" ").trim(),good,w});
+    items.push({name,memo:sp.join(" ").trim(),good,bad,ep:"",w});
   });
   return {from,items};
 }
@@ -531,7 +550,7 @@ document.getElementById("impBtn").onclick=()=>{
   items.forEach(it=>{
     const ex=mine.find(m=>m.name===it.name);
     if(ex){ if(it.memo&&!ex.memo.includes(it.memo))ex.memo+=(ex.memo?"\n":"")+(from?from+"：":"")+it.memo; }
-    else{mine.push({id:uid(),name:it.name,memo:it.memo,good:false,fgood:it.good,w:it.w||(ITEMS.find(x=>x.n===it.name)||{}).w||"",from:from||"友だち"});add++}
+    else{mine.push({id:uid(),name:it.name,memo:(it.memo+(it.ep?(it.memo?"\n":"")+"失敗："+it.ep:"")),good:false,fgood:it.good,fbad:it.bad,w:it.w||(ITEMS.find(x=>x.n===it.name)||{}).w||"",from:from||"友だち"});add++}
   });
   save();updateBadge();ta.value="";
   toast(`${add}件追加しました${items.length-add?`（${items.length-add}件は既存にメモを追記）`:""}`);
