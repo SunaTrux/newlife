@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>新生活おすすめグッズ</title>
+<style>
+:root{
+  --bg:#fbf7f0; --card:#fff; --ink:#3a3330; --sub:#8a7f78; --line:#ece4d8;
+  --main:#e8836b; --main-d:#c9644d; --leaf:#7fb08a; --sky:#7aa7d6; --star:#f2b632;
+  --r:14px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Hiragino Maru Gothic ProN","Hiragino Sans","Noto Sans JP",system-ui,sans-serif;
+  -webkit-text-size-adjust:100%}
+header{padding:20px 16px 8px;text-align:center}
+header h1{margin:0;font-size:22px;letter-spacing:.04em}
+header h1 span{color:var(--main)}
+header p{margin:6px 0 0;font-size:12px;color:var(--sub)}
+nav{position:sticky;top:0;z-index:5;display:flex;gap:6px;padding:10px 12px;background:var(--bg);border-bottom:1px solid var(--line)}
+nav button{flex:1;white-space:nowrap;border:none;background:#f1e9dd;color:var(--sub);padding:10px 4px;border-radius:999px;font:inherit;font-size:14px;font-weight:700}
+nav button.on{background:var(--main);color:#fff}
+nav .badge{display:inline-block;min-width:18px;padding:0 5px;margin-left:4px;border-radius:9px;background:#fff;color:var(--main);font-size:11px;line-height:18px}
+main{max-width:640px;margin:0 auto;padding:12px 12px 80px}
+section{display:none}section.on{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:12px}
+h2{font-size:15px;margin:0 0 10px}
+.lbl{font-size:12px;color:var(--sub);margin:12px 0 6px;font-weight:700}
+.lbl:first-child{margin-top:0}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1.5px solid var(--line);background:#fff;color:var(--ink);border-radius:999px;padding:7px 12px;font:inherit;font-size:13px}
+.chip.on{border-color:var(--main);background:#fdeee9;color:var(--main-d);font-weight:700}
+.btn{display:block;width:100%;border:none;border-radius:12px;padding:13px;font:inherit;font-size:15px;font-weight:700;background:var(--main);color:#fff;margin-top:14px}
+.btn:active{background:var(--main-d)}
+.btn.sub{background:#f1e9dd;color:var(--ink)}
+.btn.sm{display:inline-block;width:auto;padding:8px 14px;font-size:13px;margin-top:8px}
+.horo{background:linear-gradient(135deg,#f3eefe,#fdf0ea);border:none;font-size:13px;line-height:1.7}
+.horo b{color:#7a5fc0}
+.item{display:flex;gap:10px;align-items:flex-start}
+.item .ic{font-size:28px;line-height:1;width:36px;text-align:center;flex:none}
+.item .bd{flex:1;min-width:0}
+.item .nm{font-weight:700;font-size:15px}
+.item .ds{font-size:12.5px;color:var(--sub);margin-top:3px;line-height:1.6}
+.why{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.why span{font-size:11px;padding:2px 8px;border-radius:999px;background:#eef5ef;color:#4e8a5c}
+.why span.z{background:#f1ecfb;color:#7a5fc0}
+.why span.k{background:#fdf3dc;color:#a87a12}
+.why span.w{background:#fde4e0;color:#c0473a;font-weight:700}
+.why span.w.month{background:#e3effa;color:#3c6fa5}
+.why span.w.later{background:#f3eefe;color:#7a5fc0}
+.why span.p{background:#eaf2fb;color:#4a7bb0}
+.add{flex:none;border:1.5px solid var(--main);background:#fff;color:var(--main);border-radius:10px;padding:6px 10px;font:inherit;font-size:12px;font-weight:700}
+.add.done{border-color:var(--leaf);color:var(--leaf)}
+input[type=text],input[type=search],textarea{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:10px;font:inherit;font-size:14px;background:#fff;color:var(--ink)}
+textarea{min-height:140px;font-family:ui-monospace,Menlo,monospace;font-size:13px;line-height:1.6}
+.row{display:flex;gap:8px}.row>*{flex:1}
+.mine .top{display:flex;align-items:center;gap:8px}
+.mine .nm{flex:1;font-weight:700;font-size:15px;word-break:break-all}
+.star{border:none;background:none;font-size:22px;color:#d9d0c3;padding:0 2px;line-height:1}
+.star.on{color:var(--star)}
+.del{border:none;background:none;color:#c8bdb2;font-size:18px;padding:0 4px}
+.mine .memo{margin-top:8px;font-size:13px;min-height:auto;font-family:inherit;padding:8px}
+.when{display:flex;gap:4px;margin-top:8px;flex-wrap:wrap}
+.wbtn{border:1px solid var(--line);background:#fff;color:var(--sub);border-radius:999px;padding:3px 9px;font:inherit;font-size:11px}
+.wbtn.on.now{background:#fde4e0;color:#c0473a;border-color:#f3b9b0;font-weight:700}
+.wbtn.on.month{background:#e3effa;color:#3c6fa5;border-color:#b5d0ec;font-weight:700}
+.wbtn.on.later{background:#f3eefe;color:#7a5fc0;border-color:#d3c6f1;font-weight:700}
+.from{font-size:11px;color:var(--sky);margin-left:2px}
+.cnt{font-size:12px;color:var(--sub);margin:0 0 8px}
+.empty{text-align:center;color:var(--sub);font-size:13px;padding:24px 8px;line-height:1.8}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);opacity:0;background:#3a3330;color:#fff;padding:10px 16px;border-radius:999px;font-size:13px;transition:.25s;pointer-events:none;z-index:20}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.seg{display:flex;gap:6px;margin-bottom:10px}
+.seg .chip{flex:1;text-align:center}
+.person{border:1.5px dashed var(--line);border-radius:12px;padding:10px 12px;margin-top:12px}
+.person h3{margin:0 0 4px;font-size:14px;color:var(--main-d)}
+.person .lbl{margin-top:8px}
+.hint{font-size:12px;color:var(--sub);line-height:1.7;margin:6px 0 0}
+code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
+</style>
+</head>
+<body>
+<header>
+  <h1>🌱 新生活<span>おすすめ</span>グッズ</h1>
+  <p>あなたにぴったりのグッズを選んで、本当にあって良かったものを集めよう</p>
+</header>
+<nav>
+  <button data-tab="find" class="on">おすすめ</button>
+  <button data-tab="all">一覧</button>
+  <button data-tab="list">マイリスト<span class="badge" id="badge">0</span></button>
+  <button data-tab="share">共有</button>
+</nav>
+<main>
+
+<!-- おすすめ -->
+<section id="find" class="on">
+  <div class="card">
+    <div class="lbl">人数</div>
+    <div class="chips seg" id="peopleChips">
+      <button class="chip" data-v="1">ひとり暮らし</button><button class="chip" data-v="2">ふたり暮らし</button>
+    </div>
+    <div id="persons"></div>
+    <div class="lbl">重視すること（任意）</div>
+    <div class="chips" id="focusChips"><button class="chip" data-v="eco">♻️ エコ</button><button class="chip" data-v="cheap">💴 安価</button></div>
+    <button class="btn" id="go">おすすめを見る</button>
+  </div>
+  <div id="result"></div>
+</section>
+
+<!-- アイテム一覧 -->
+<section id="all">
+  <div class="card" style="padding:10px">
+    <input type="search" id="q" placeholder="🔍 アイテムを検索（例：レンジ、防災、エコ）">
+    <div class="chips" id="allFilter" style="margin-top:8px">
+      <button class="chip on" data-v="">すべて</button><button class="chip" data-v="eco">♻️ エコ</button><button class="chip" data-v="cheap">💴 安価</button><button class="chip" data-v="1">ひとり向け</button><button class="chip" data-v="2">ふたり向け</button>
+    </div>
+    <div class="chips" id="whenFilter" style="margin-top:6px">
+      <button class="chip on" data-v="">いつでも</button><button class="chip" data-v="now">🚨 入居日から</button><button class="chip" data-v="month">📅 1か月以内</button><button class="chip" data-v="later">✨ 余裕があれば</button>
+    </div>
+  </div>
+  <p class="cnt" id="allCnt"></p>
+  <div id="allItems"></div>
+</section>
+
+<!-- マイリスト -->
+<section id="list">
+  <div class="card">
+    <h2>アイテムを追加</h2>
+    <input type="text" id="newName" placeholder="例）ロボット掃除機">
+    <input type="text" id="newMemo" placeholder="メモ（任意）例）床がいつもきれい" style="margin-top:8px">
+    <button class="btn" id="addBtn">追加する</button>
+  </div>
+  <div class="chips" id="filter" style="margin-bottom:10px">
+    <button class="chip on" data-f="all">すべて</button>
+    <button class="chip" data-f="good">★ あって良かった</button>
+    <button class="chip" data-f="friend">友だちから</button>
+    <button class="chip" data-f="now">🚨 入居日から</button>
+  </div>
+  <p class="cnt" id="cnt"></p>
+  <div id="mine"></div>
+</section>
+
+<!-- 共有 -->
+<section id="share">
+  <div class="card">
+    <h2>📤 友だちに送る</h2>
+    <div class="lbl">あなたの名前（任意）</div>
+    <input type="text" id="myName" placeholder="例）わたし">
+    <div class="seg chips" id="expMode" style="margin-top:10px">
+      <button class="chip on" data-m="good">★だけ</button>
+      <button class="chip" data-m="all">ぜんぶ</button>
+    </div>
+    <textarea id="exp" readonly></textarea>
+    <button class="btn" id="copyBtn">コピーする</button>
+    <p class="hint">コピーしたテキストを LINE やメールで送ってね。</p>
+  </div>
+  <div class="card">
+    <h2>📥 友だちのリストを取り込む</h2>
+    <textarea id="imp" placeholder="友だちから届いたテキストを貼り付け"></textarea>
+    <button class="btn" id="impBtn">取り込む</button>
+    <p class="hint">書き方の例（手書きでもOK）<br>
+      <code># わたしの新生活リスト</code><br>
+      <code>- ★ ✨ ロボット掃除機 : 床がいつもきれい</code><br>
+      <code>- タジン鍋 : 野菜を入れてチンするだけ</code><br>
+      ★ は「あって良かった」、🚨📅✨ は買う時期、<code>:</code> のあとはメモです。</p>
+  </div>
+</section>
+
+</main>
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== データ =====
+const ZODIAC=[
+ ["aries","♈ おひつじ座","fire"],["taurus","♉ おうし座","earth"],["gemini","♊ ふたご座","air"],
+ ["cancer","♋ かに座","water"],["leo","♌ しし座","fire"],["virgo","♍ おとめ座","earth"],
+ ["libra","♎ てんびん座","air"],["scorpio","♏ さそり座","water"],["sagittarius","♐ いて座","fire"],
+ ["capricorn","♑ やぎ座","earth"],["aquarius","♒ みずがめ座","air"],["pisces","♓ うお座","water"]
+];
+const ELEMENT={
+ fire:{name:"火",msg:"行動力のある<b>火の星座</b>。思い立ったらすぐ動けるように、手間を減らす道具や外に出かけたくなるアイテムが相性◎。"},
+ earth:{name:"地",msg:"堅実な<b>地の星座</b>。長く使える実用品や、暮らしを整える収納・家事道具で毎日が安定します。"},
+ air:{name:"風",msg:"軽やかな<b>風の星座</b>。人とつながる道具や、気分を切り替えられるスマートなアイテムがぴったり。"},
+ water:{name:"水",msg:"感受性ゆたかな<b>水の星座</b>。おうち時間を心地よくする照明や香り、癒やしのアイテムで満たされます。"}
+};
+const PERSONA={lazy:"めんどくさがり",clean:"きれい好き",cook:"料理好き",indoor:"インドア派",active:"アクティブ派",thrift:"節約家",picky:"こだわり派",relax:"癒やし重視"};
+
+// p:人数 t:性格タグ e:星座エレメント a:年代 g:性別
+const ITEMS=[
+ {n:"ロボット掃除機",w:"later",i:"🤖",d:"出かけている間に床がきれいに。床にモノを置かなくなる効果も。",p:[1,2],t:["lazy","clean"],e:["earth","air"],a:[20,30,40,50,60]},
+ {n:"タジン鍋",w:"month",i:"🫕",d:"野菜とお肉を入れてレンジや火にかけるだけ。ヘルシーで洗い物も少なめ。",p:[1,2],t:["cook","lazy"],e:["fire","water"],a:[20,30,40,50,60]},
+ {n:"クッカー",w:"month",i:"🍲",d:"ひとり鍋・ラーメン・炊飯まで1台で。小さなキッチンの心強い味方。",p:[1],t:["lazy","thrift","active"],e:["fire"],a:[20,30]},
+ {n:"セリア 洗面鏡ナナメスタンド",w:"now",i:"🪞",d:"100均で買える角度つきスタンド。洗面台まわりの見やすさがグッと上がる。",p:[1,2],t:["thrift","picky","clean"],e:["earth","air"],a:[20,30,40,50,60],c:["cheap"]},
+ {n:"TimeTree（共有カレンダー）",w:"now",i:"📅",d:"ふたりの予定を共有できる無料アプリ。すれ違い防止に。",p:[2],t:["picky","active"],e:["air"],a:[20,30,40,50,60],c:["cheap"]},
+ {n:"電気ケトル",w:"now",i:"☕",d:"すぐお湯が沸く。コーヒー、カップ麺、湯たんぽにも。",p:[1,2],t:["lazy","indoor"],e:["fire","water"],a:[20,30,40,50,60]},
+ {n:"電子レンジ（フラット庫内）",w:"now",i:"📦",d:"ターンテーブルなしは掃除がラク。作り置きの温め直しに必須。",p:[1,2],t:["lazy","clean"],e:["earth"],a:[20,30,40,50,60]},
+ {n:"3合炊き炊飯器",w:"now",i:"🍚",d:"まとめて炊いて冷凍が節約の基本。",p:[1],t:["thrift","cook"],e:["earth"],a:[20,30,40,50,60]},
+ {n:"5合炊き炊飯器",w:"now",i:"🍚",d:"ふたり分＋お弁当や冷凍分まで余裕。",p:[2],t:["thrift","cook"],e:["earth"],a:[20,30,40,50,60]},
+ {n:"ホットサンドメーカー",w:"later",i:"🥪",d:"パンと具をはさむだけで朝ごはんが楽しみに。",p:[1,2],t:["cook","indoor"],e:["fire","air"],a:[20,30]},
+ {n:"ホットプレート",w:"later",i:"🥘",d:"焼肉、たこ焼き、ふたりでワイワイ。友だちが来た日にも。",p:[2],t:["cook","indoor"],e:["fire","air"],a:[20,30,40]},
+ {n:"保存容器セット",w:"month",i:"🥡",d:"作り置き・冷凍に。サイズをそろえると冷蔵庫がスッキリ。",p:[1,2],t:["cook","thrift","clean"],e:["earth"],a:[20,30,40,50,60],c:["cheap"]},
+ {n:"キッチンバサミ",w:"now",i:"✂️",d:"まな板を出さずに肉もネギも切れる。洗い物が減る。",p:[1,2],t:["lazy","cook"],e:["fire"],a:[20,30,40,50,60],c:["cheap"]},
+ {n:"圧力鍋（電気）",w:"later",i:"♨️",d:"ほったらかしで煮込み料理。忙しい日の夕飯が本格的に。",p:[2],t:["cook","lazy","picky"],e:["earth","water"],a:[30,40,50,60]},
+ {n:"工事不要タイプの食洗機",w:"later",i:"🍽️",d:"水を注ぐだけで賃貸でも置ける。手間が減るだけでなく、温水洗いで衛生的。",p:[1,2],t:["lazy","clean"],e:["earth","air"],a:[30,40,50,60],c:["eco"]},
+ {n:"突っ張り棒",w:"now",i:"📏",d:"収納を増やす万能アイテム。賃貸の強い味方。",p:[1,2],t:["thrift","clean"],e:["earth"],a:[20,30],c:["cheap"]},
+ {n:"マグネット収納",w:"month",i:"🧲",d:"冷蔵庫や洗濯機の側面がそのまま収納に。",p:[1,2],t:["clean","picky"],e:["earth","air"],a:[20,30,40],c:["cheap"]},
+ {n:"折りたたみコンテナ",w:"now",i:"🗃️",d:"使わないときはペタンコ。引っ越し後の仮置きにも。",p:[1,2],t:["clean","active"],e:["earth","fire"],a:[20,30]},
+ {n:"スイッチ付き延長コード",w:"now",i:"🔌",d:"コンセントが足りない問題を解決。待機電力カットで節約にも。",p:[1,2],t:["thrift","lazy"],e:["earth","air"],a:[20,30,40,50,60],c:["eco", "cheap"]},
+ {n:"室内物干し",w:"now",i:"👕",d:"雨の日・花粉の季節に。突っ張りタイプは場所をとらない。",p:[1,2],t:["clean","thrift"],e:["water","earth"],a:[20,30,40,50,60],c:["eco", "cheap"]},
+ {n:"ドラム式洗濯乾燥機",w:"later",i:"🌀",d:"干す手間がゼロに。ふたり暮らしの家事分担がラクになる。",p:[2],t:["lazy","clean","picky"],e:["air","earth"],a:[30,40,50,60]},
+ {n:"衣類スチーマー",w:"later",i:"💨",d:"ハンガーにかけたままシワ取り。アイロン台いらず。",p:[1,2],t:["picky","lazy"],e:["air"],a:[20,30,40]},
+ {n:"布団乾燥機",w:"month",i:"🛏️",d:"いつでもふかふか。冬は布団を温めてから寝られる幸せ。",p:[1,2],t:["relax","clean","indoor"],e:["water"],a:[20,30,40,50,60]},
+ {n:"サーキュレーター",w:"month",i:"🌬️",d:"部屋干しの乾きが早くなり、冷暖房の効きもアップ。",p:[1,2],t:["thrift","clean"],e:["air"],a:[20,30,40,50,60],c:["eco"]},
+ {n:"除湿機",w:"month",i:"💧",d:"梅雨のカビ対策と部屋干しに。",p:[1,2],t:["clean","picky"],e:["water","earth"],a:[30,40,50,60]},
+ {n:"遮光・防音カーテン",w:"now",i:"🪟",d:"朝寝坊の日もぐっすり。外の音もやわらげて、断熱で冷暖房費も節約。",p:[1,2],t:["indoor","relax","thrift"],e:["water"],a:[20,30,40,50,60],c:["eco"]},
+ {n:"間接照明",w:"later",i:"💡",d:"夜の部屋が一気にくつろぎ空間に。",p:[1,2],t:["relax","indoor","picky"],e:["water","air"],a:[20,30,40]},
+ {n:"アロマディフューザー",w:"later",i:"🌿",d:"好きな香りで帰宅が楽しみに。",p:[1,2],t:["relax","picky"],e:["water"],a:[20,30,40,50,60],g:"f"},
+ {n:"観葉植物（ポトス）",w:"later",i:"🪴",d:"丈夫で育てやすい。部屋に緑があるだけで気分が上がる。",p:[1,2],t:["relax","picky"],e:["earth","water"],a:[20,30,40,50,60],c:["cheap"]},
+ {n:"ヨガマット",w:"later",i:"🧘",d:"家でストレッチや筋トレ。運動不足の解消に。",p:[1,2],t:["active","relax"],e:["fire","water"],a:[20,30,40,50,60],c:["cheap"]},
+ {n:"プロジェクター",w:"later",i:"📽️",d:"白い壁が映画館に。休日はひとり映画館で贅沢な時間を。",d2:"白い壁が映画館に。ふたりの映画ナイトにも。",p:[1,2],t:["indoor","picky"],e:["air","water"],a:[20,30]},
+ {n:"ワイヤレスイヤホン",w:"month",i:"🎧",d:"家事しながら音楽やラジオ。夜でも周りを気にせず楽しめる。",d2:"家事しながら音楽やラジオ。ふたり暮らしで音を気にせず楽しめる。",p:[1,2],t:["active","indoor"],e:["air","fire"],a:[20,30]},
+ {n:"大風量ドライヤー",w:"month",i:"🔥",d:"乾かす時間が短くなるだけで毎晩がラクに。",p:[1,2],t:["lazy","picky"],e:["fire"],a:[20,30,40],g:"f"},
+ {n:"メイク用ライト付きミラー",w:"month",i:"💄",d:"自然光に近い明るさで朝の支度がスムーズ。",p:[1,2],t:["picky"],e:["air","water"],a:[20,30,40],g:"f"},
+ {n:"電気シェーバー",w:"now",i:"🪒",d:"朝の時短に。洗えるタイプが衛生的。",p:[1,2],t:["lazy","clean"],e:["fire","earth"],a:[20,30,40,50,60],g:"m"},
+ {n:"工具セット（小）",w:"now",i:"🔧",d:"家具の組み立て、ネジのゆるみ直しに。引っ越し初日から活躍。",p:[1,2],t:["active","thrift"],e:["fire","earth"],a:[20,30,40,50,60]},
+ {n:"防災セット",w:"now",i:"🎒",d:"水・ライト・モバイルバッテリー。新居に住み始めたら早めに。",p:[1,2],t:["picky","clean"],e:["earth"],a:[20,30,40,50,60]},
+ {n:"体組成計",w:"later",i:"⚖️",d:"アプリ連携で健康管理。自炊のモチベにも。",p:[1,2],t:["active","picky"],e:["fire","earth"],a:[30,40,50,60]},
+ {n:"自転車",w:"month",i:"🚲",d:"近所の開拓と買い出しに。新しい街を知る一番の近道。",p:[1,2],t:["active","thrift"],e:["fire","air"],a:[20,30],c:["eco"]},
+ {n:"共有家計簿アプリ",w:"month",i:"💰",d:"ふたりの出費を見える化。お金の話がしやすくなる。",p:[2],t:["thrift","picky"],e:["earth","air"],a:[20,30,40],c:["cheap"]},
+ {n:"買い物メモ用ホワイトボード",w:"month",i:"📝",d:"冷蔵庫に貼って「切れたもの」をすぐメモ。ふたりで共有。",p:[2],t:["clean","thrift"],e:["air","earth"],a:[20,30,40,50,60],c:["cheap"]},
+ {n:"ゆったりソファ",w:"later",i:"🛋️",d:"ふたりで並んで座れるサイズを。おうち時間の中心に。",p:[2],t:["relax","indoor"],e:["water","earth"],a:[20,30,40]},
+ {n:"ペアのマグカップ",w:"later",i:"🍵",d:"ふたり暮らしのスタートに。色違いで自分のものが分かる。",p:[2],t:["relax","picky"],e:["water"],a:[20,30],c:["cheap"]},
+ {n:"遠近両用メガネ",w:"month",i:"👓",d:"手元も遠くもかけ替えなしで。スマホも料理のレシピもラクに見える。",p:[1,2],t:["picky","lazy"],e:["earth","air"],a:[40,50,60]},
+ {n:"ハンディマッサージャー",w:"later",i:"💆",d:"肩や腰をおうちでほぐせる。ふとした疲れのケアに。",p:[1,2],t:["relax","indoor"],e:["water","earth"],a:[40,50,60]},
+ {n:"足元センサーライト",w:"now",i:"🔦",d:"夜中のトイレや廊下で自動点灯。新しい家の暗がり対策に。",p:[1,2],t:["lazy","picky"],e:["earth","water"],a:[40,50,60],c:["cheap"]},
+ {n:"浴室の滑り止めマット",w:"now",i:"🛁",d:"慣れない新居のお風呂でも安心。",p:[1,2],t:["clean","picky"],e:["earth","water"],a:[50,60],c:["cheap"]},
+ {n:"電動アシスト自転車",w:"later",i:"🚴",d:"坂道も買い出しもラクラク。行動範囲がぐっと広がる。",p:[1,2],t:["active"],e:["fire","air"],a:[30,40,50,60],c:["eco"]},
+ {n:"ストレッチ用の丸棒",w:"later",i:"🧘‍♀️",d:"寝転がるだけで背中や肩がほぐれる。テレビを見ながらでも。",p:[1,2],t:["relax","active","indoor"],e:["water","fire"],a:[20,30,40,50,60],c:["cheap"]},
+ {n:"クッション付きフラフープ",w:"later",i:"⭕",d:"回すだけで運動不足解消。クッション付きなので痛くなりにくい。",p:[1,2],t:["active","indoor"],e:["fire","air"],a:[20,30,40,50]},
+ {n:"ゴキジェット",w:"now",i:"🪳",d:"新居で「出た！」ときの必需品。引っ越し初日から1本あると安心。",p:[1,2],t:["clean","picky"],e:["fire","earth"],a:[20,30,40,50,60],c:["cheap"]},
+ {n:"レンチン目玉焼きクッカー",w:"month",i:"🍳",d:"卵を割ってレンジで1分。フライパンを洗わずに朝ごはん。",p:[1,2],t:["lazy","cook"],e:["fire","air"],a:[20,30,40,50,60],c:["cheap"]},
+ {n:"耐熱ガラス容器",w:"month",i:"🫙",d:"作り置き→レンジ→そのまま食卓へ。においや色移りしにくい。",p:[1,2],t:["cook","clean","thrift"],e:["earth","water"],a:[20,30,40,50,60],c:["eco"]},
+ {n:"サーモグラス",w:"later",i:"🥃",d:"二重構造で氷が溶けにくく、結露しない。毎日の一杯がちょっと特別に。",p:[1,2],t:["picky","relax"],e:["water","air"],a:[20,30,40,50,60]},
+ {n:"アレクサ＋Fire TV Stick＋プロジェクター",w:"later",i:"🗣️",d:"アレクサ→Fire TV Stick→プロジェクターとつなぐと、声だけで映画やYouTubeを再生・操作できる。リモコンを探さなくていい。",d2:"アレクサ→Fire TV Stick→プロジェクターとつなぐと、声だけで再生・操作できる。ソファに並んだまま「アレクサ、映画つけて」。",p:[1,2],t:["lazy","indoor","picky"],e:["air","water"],a:[20,30,40,50,60]},
+ {n:"防音マット",w:"month",i:"🔇",d:"足音や椅子の音を軽減。集合住宅で下の階への気づかいに。",p:[1,2],t:["picky","indoor","active"],e:["earth","water"],a:[20,30,40,50,60]},
+ {n:"静床ライト",w:"month",i:"🟫",d:"敷くだけの防音タイルマット。汚れた1枚だけ外して洗える。床のキズ防止にも。",p:[1,2],t:["clean","picky","indoor"],e:["earth"],a:[20,30,40,50,60]},
+ {n:"Anker Nano Charging Station",w:"month",i:"🔋",d:"USB-CとUSB-A、コンセントを1台に。コンパクトで旅行時にも便利な電源タップ。",p:[1,2],t:["picky","active"],e:["air","fire"],a:[20,30,40,50]},
+ {n:"ラベルレスペットボトル飲料水",w:"now",i:"💧",d:"箱買いして防災のローリングストックに。ラベルをはがす手間がなくゴミも減ってエコ。",p:[1,2],t:["lazy","clean","thrift"],e:["water","earth"],a:[20,30,40,50,60],c:["eco"]},
+ {n:"尾西の携帯おにぎり",w:"now",i:"🍙",d:"水を注ぐだけで食べられる。長期保存できて防災にも。",p:[1,2],t:["active","picky"],e:["earth","fire"],a:[20,30,40,50,60]},
+ {n:"コンパクトなバスタオル",w:"now",i:"🛀",d:"大きいと場所を取るので小さめで。吸水性の高いものならコンパクトで充分。乾きも早い。",p:[1,2],t:["clean","thrift","picky"],e:["water","earth"],a:[20,30,40,50,60],c:["eco","cheap"]},
+ {n:"電子レンジ用トレイ",w:"month",i:"🍱",d:"レンジから取り出してそのまま食卓へ運べる。熱いお皿も安心。",p:[1,2],t:["lazy","cook"],e:["earth"],a:[20,30,40,50,60],c:["cheap"]},
+ {n:"電子レンジ用シリコンラップ",w:"month",i:"🟢",d:"お皿にかぶせてそのままチン。洗って繰り返し使えるのでラップ代も節約。",p:[1,2],t:["thrift","cook","clean"],e:["earth","water"],a:[20,30,40,50,60],c:["eco","cheap"]},
+ {n:"100均のシャワードリップ",w:"month",i:"☕",d:"ドリッパーにのせてお湯を注ぐだけ。ゆっくりお湯が落ちている間に別のことができる。",p:[1,2],t:["lazy","relax","thrift"],e:["water","air"],a:[20,30,40,50,60],c:["cheap"]},
+ {n:"ダンボールストッカー",w:"month",i:"📦",d:"たまりがちなダンボールをすっきり収納。コジットのものがベスト。使い方はインスタなどで見てみて。",p:[1,2],t:["clean","picky"],e:["earth"],a:[20,30,40,50,60],c:["eco"]},
+ {n:"ブランケット",w:"month",i:"🧣",d:"ソファでの映画やうたた寝に。冬の電気代も節約。",p:[1,2],t:["relax","indoor","thrift"],e:["water"],a:[20,30,40,50,60],c:["eco", "cheap"]}
+];
+
+// ===== 保存（使えない環境でも動く） =====
+const store={
+  get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+};
+let mine=store.get("ssg_list",[]);
+const AGES_OK=["20","30","40","50","60"];
+const newPerson=()=>({gender:"any",age:"20",zodiac:"",persona:[]});
+let state=store.get("ssg_q2",null)||{people:"1",persons:[newPerson(),newPerson()],persona:[]};
+state.persons.forEach(p=>{if(!AGES_OK.includes(p.age))p.age="20";if(!Array.isArray(p.persona))p.persona=Array.isArray(state.persona)?[...state.persona]:[]});
+const saveQ=()=>store.set("ssg_q2",state);
+const PERSONA_OPTS=Object.entries(PERSONA);
+if(!Array.isArray(state.focus))state.focus=[];
+const CATS={eco:"♻️ エコ",cheap:"💴 安価"};
+const WHEN={now:"🚨 入居日から",month:"📅 1か月以内",later:"✨ 余裕があれば"};
+const WHEN_ICON={now:"🚨",month:"📅",later:"✨"};
+const save=()=>store.set("ssg_list",mine);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+
+function toast(t){const el=document.getElementById("toast");el.textContent=t;el.classList.add("on");clearTimeout(toast._t);toast._t=setTimeout(()=>el.classList.remove("on"),1800)}
+
+// ===== タブ =====
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("on",x===b));
+  document.querySelectorAll("section").forEach(s=>s.classList.toggle("on",s.id===b.dataset.tab));
+  if(b.dataset.tab==="list")renderMine();
+  if(b.dataset.tab==="all")renderAll();
+  if(b.dataset.tab==="share")renderExport();
+  window.scrollTo(0,0);
+});
+
+// ===== 質問チップ =====
+const AGES=[["20","20代"],["30","30代"],["40","40代"],["50","50代"],["60","60代〜"]];
+const GENDERS=[["f","女性"],["m","男性"],["any","問わない"]];
+const chipRow=(k,opts,cur)=>`<div class="chips" data-k="${k}">${opts.map(o=>`<button class="chip ${cur===o[0]?"on":""}" data-v="${o[0]}">${o[1]}</button>`).join("")}</div>`;
+function renderPersons(){
+  document.querySelectorAll("#peopleChips .chip").forEach(c=>c.classList.toggle("on",c.dataset.v===state.people));
+  const n=+state.people;
+  document.getElementById("persons").innerHTML=state.persons.slice(0,n).map((p,i)=>`<div class="person" data-i="${i}">
+    ${n===2?`<h3>${i+1}人目</h3>`:""}
+    <div class="lbl">性別</div>${chipRow("gender",GENDERS,p.gender)}
+    <div class="lbl">年代</div>${chipRow("age",AGES,p.age)}
+    <div class="lbl">星座</div>${chipRow("zodiac",ZODIAC.map(z=>[z[0],z[1]]),p.zodiac)}
+    <div class="lbl">性格（いくつでも）</div><div class="chips" data-k="persona">${PERSONA_OPTS.map(o=>`<button class="chip ${p.persona.includes(o[0])?"on":""}" data-v="${o[0]}">${o[1]}</button>`).join("")}</div>
+  </div>`).join("");
+}
+document.getElementById("peopleChips").addEventListener("click",e=>{
+  const c=e.target.closest(".chip");if(!c)return;state.people=c.dataset.v;saveQ();renderPersons();
+});
+document.getElementById("persons").addEventListener("click",e=>{
+  const c=e.target.closest(".chip");if(!c)return;
+  const p=state.persons[+c.closest(".person").dataset.i],k=c.closest("[data-k]").dataset.k,v=c.dataset.v;
+  if(k==="persona")p.persona=p.persona.includes(v)?p.persona.filter(x=>x!==v):[...p.persona,v];
+  else p[k]=(k==="zodiac"&&p[k]===v)?"":v;
+  saveQ();renderPersons();
+});
+renderPersons();
+const focusEl=document.getElementById("focusChips");
+const syncFocus=()=>focusEl.querySelectorAll(".chip").forEach(c=>c.classList.toggle("on",state.focus.includes(c.dataset.v)));
+focusEl.addEventListener("click",e=>{const c=e.target.closest(".chip");if(!c)return;const v=c.dataset.v;
+  state.focus=state.focus.includes(v)?state.focus.filter(x=>x!==v):[...state.focus,v];saveQ();syncFocus()});
+syncFocus();
+
+// ===== おすすめ計算 =====
+const zOf=id=>ZODIAC.find(x=>x[0]===id);
+function recommend(){
+  const ppl=+state.people, ps=state.persons.slice(0,ppl);
+  const els=ps.map(p=>zOf(p.zodiac)).map(z=>z?z[2]:null);
+  const genders=ps.map(p=>p.gender);
+  return ITEMS.filter(it=>it.p.includes(ppl)).map(it=>{
+    let s=1; const why=[];
+    // 性格（人ごと）
+    it.t.forEach(t=>{
+      const who=ps.map((p,i)=>p.persona.includes(t)?i:-1).filter(i=>i>=0);
+      if(!who.length)return;
+      s+=who.length===2?4.5:3;
+      why.push({c:"",t:ppl===1?PERSONA[t]:who.length===2?"ふたりとも"+PERSONA[t]:`${who[0]+1}人目：${PERSONA[t]}`});
+    });
+    // 星座
+    const zm=els.map((e,i)=>e&&it.e.includes(e)?i:-1).filter(i=>i>=0);
+    if(zm.length){
+      s+=1.5*zm.length;
+      why.push({c:"z",t:ppl===1?ELEMENT[els[0]].name+"の星座と相性◎":zm.length===2?"ふたりの星座と相性◎":`${zm[0]+1}人目の星座と相性◎`});
+    }
+    // 年代（誰かに合えばOK）
+    if(ps.some(p=>it.a.includes(+p.age)))s+=1;else s-=1;
+    // 性別
+    if(it.g){
+      const match=genders.map((g,i)=>g===it.g?i:-1).filter(i=>i>=0);
+      if(match.length){s+=1;if(ppl===2)why.push({c:"p",t:match.length===2?"ふたりとも使える":`${match[0]+1}人目に`})}
+      else if(genders.every(g=>g==="any"))s-=1.5;
+      else s-=3;
+    }
+    (it.c||[]).forEach(c=>{if(state.focus.includes(c))s+=3;why.push({c:"k",t:CATS[c]})});
+    if(ppl===2&&it.p.length===1){s+=1.5;why.push({c:"p",t:"ふたり暮らし向け"})}
+    if(ppl===1&&it.p.length===1){s+=1;why.push({c:"p",t:"ひとり暮らし向け"})}
+    return {...it,s,why};
+  }).sort((a,b)=>b.s-a.s||Math.random()-.5);
+}
+const GOOD_PAIR={fire:["fire","air"],air:["air","fire"],earth:["earth","water"],water:["water","earth"]};
+function horoHtml(){
+  const ps=state.persons.slice(0,+state.people);
+  const zs=ps.map(p=>zOf(p.zodiac));
+  if(!zs.some(Boolean))return "";
+  if(zs.length===1)return `<div class="card horo">${zs[0][1]} のあなたへ<br>${ELEMENT[zs[0][2]].msg}</div>`;
+  let h=zs.map((z,i)=>z?`<b>${i+1}人目</b> ${z[1]}<br>${ELEMENT[z[2]].msg}`:"").filter(Boolean).join("<br><br>");
+  if(zs[0]&&zs[1]){
+    const a=zs[0][2],b=zs[1][2];
+    const msg=a===b?"同じエレメント同士。好みが似ているので、ふたりで選んだものは長く愛用できそう。":
+      GOOD_PAIR[a].includes(b)?"お互いを高め合う組み合わせ。それぞれの得意を活かして家事を分担すると◎。":
+      "違うタイプ同士。自分にない視点のアイテムを取り入れると、暮らしがぐっと広がります。";
+    h+=`<br><br><b>ふたりの相性</b>（${ELEMENT[a].name}×${ELEMENT[b].name}）<br>${msg}`;
+  }
+  return `<div class="card horo">${h}</div>`;
+}
+function inList(n){return mine.some(m=>m.name===n)}
+const itemHtml=it=>`<div class="card item"><div class="ic">${it.i}</div><div class="bd"><div class="nm">${esc(it.n)}</div><div class="ds">${esc(state.people==="2"&&it.d2?it.d2:it.d)}</div><div class="why"><span class="w ${it.w}">${WHEN[it.w]}</span>${it.why.map(w=>`<span class="${w.c}">${esc(w.t)}</span>`).join("")}</div></div><button class="add ${inList(it.n)?"done":""}" data-n="${esc(it.n)}">${inList(it.n)?"追加済み":"＋リスト"}</button></div>`;
+const FIRST=12,STEP=10;
+let allList=[],shown=0;
+function showMore(){
+  const more=document.getElementById("more"),btn=document.getElementById("moreBtn");
+  if(shown===FIRST&&!more.children.length)more.insertAdjacentHTML("beforeend",`<p class="cnt" style="margin-top:16px">そのほかのアイテム</p>`);
+  const next=allList.slice(shown,shown+STEP);shown+=next.length;
+  more.insertAdjacentHTML("beforeend",next.map(itemHtml).join(""));
+  const rest=allList.length-shown;
+  if(rest>0)btn.textContent=`そのほかも見る（残り${rest}件）`;else btn.remove();
+}
+document.getElementById("go").onclick=()=>{
+  allList=recommend();shown=Math.min(FIRST,allList.length);
+  let h=horoHtml();
+  h+=`<p class="cnt">${state.people==="2"?"ふたり":"ひとり"}暮らしのあなたにおすすめ ${shown}品</p>`;
+  h+=allList.slice(0,shown).map(itemHtml).join("");
+  h+=`<div id="more"></div>`;
+  const rest=allList.length-shown;
+  if(rest>0)h+=`<button class="btn sub" id="moreBtn">そのほかも見る（残り${rest}件）</button>`;
+  const r=document.getElementById("result");r.innerHTML=h;
+  r.scrollIntoView({behavior:"smooth"});
+  const mb=document.getElementById("moreBtn");if(mb)mb.onclick=showMore;
+};
+// ===== アイテム一覧 =====
+let allF="",whenF="";
+function renderAll(){
+  const q=document.getElementById("q").value.trim().toLowerCase();
+  const list=ITEMS.filter(it=>{
+    if(allF==="eco"||allF==="cheap"){if(!(it.c||[]).includes(allF))return false}
+    else if(allF){if(!it.p.includes(+allF))return false}
+    if(whenF&&it.w!==whenF)return false;
+    if(!q)return true;
+    const hay=[it.n,it.d,it.d2||"",...it.t.map(t=>PERSONA[t]),...(it.c||[]).map(c=>CATS[c]),WHEN[it.w]].join(" ").toLowerCase();
+    return q.split(/\s+/).every(w=>hay.includes(w));
+  }).map(it=>({...it,why:[...(it.c||[]).map(c=>({c:"k",t:CATS[c]})),...(it.p.length===1?[{c:"p",t:it.p[0]===2?"ふたり暮らし向け":"ひとり暮らし向け"}]:[])]}));
+  document.getElementById("allCnt").textContent=`${list.length}件 / 全${ITEMS.length}件`;
+  document.getElementById("allItems").innerHTML=list.length?list.map(itemHtml).join(""):`<div class="empty">見つかりませんでした</div>`;
+}
+document.getElementById("q").addEventListener("input",renderAll);
+document.getElementById("allFilter").addEventListener("click",e=>{
+  const c=e.target.closest(".chip");if(!c)return;allF=c.dataset.v;
+  document.querySelectorAll("#allFilter .chip").forEach(x=>x.classList.toggle("on",x===c));renderAll();
+});
+document.getElementById("whenFilter").addEventListener("click",e=>{
+  const c=e.target.closest(".chip");if(!c)return;whenF=c.dataset.v;
+  document.querySelectorAll("#whenFilter .chip").forEach(x=>x.classList.toggle("on",x===c));renderAll();
+});
+document.getElementById("allItems").addEventListener("click",e=>addFromBtn(e));
+document.getElementById("result").addEventListener("click",e=>addFromBtn(e));
+function addFromBtn(e){
+  const b=e.target.closest(".add");if(!b||b.classList.contains("done"))return;
+  const it=ITEMS.find(x=>x.n===b.dataset.n);
+  mine.unshift({id:uid(),name:it.n,memo:"",good:false,from:"",w:it.w});save();updateBadge();
+  b.classList.add("done");b.textContent="追加済み";toast("マイリストに追加しました");
+}
+
+// ===== マイリスト =====
+let filter="all";
+function updateBadge(){document.getElementById("badge").textContent=mine.length}
+document.getElementById("filter").addEventListener("click",e=>{
+  const c=e.target.closest(".chip");if(!c)return;filter=c.dataset.f;
+  document.querySelectorAll("#filter .chip").forEach(x=>x.classList.toggle("on",x===c));renderMine();
+});
+function renderMine(){
+  const list=mine.filter(m=>filter==="all"||(filter==="good"&&m.good)||(filter==="friend"&&m.from)||(filter==="now"&&m.w==="now"));
+  const goods=mine.filter(m=>m.good).length;
+  document.getElementById("cnt").textContent=mine.length?`${mine.length}アイテム（★あって良かった ${goods}）`:"";
+  const el=document.getElementById("mine");
+  if(!list.length){el.innerHTML=`<div class="empty">${mine.length?"この条件のアイテムはありません":"まだアイテムがありません。<br>おすすめから追加するか、上で自分で追加してね。<br>使ってみて良かったら ★ をつけよう。"}</div>`;return}
+  el.innerHTML=list.map(m=>`<div class="card mine" data-id="${m.id}">
+    <div class="top"><button class="star ${m.good?"on":""}" aria-label="あって良かった">★</button>
+    <div class="nm">${esc(m.name)}${m.from?`<span class="from">from ${esc(m.from)}${m.fgood?" ★":""}</span>`:""}</div>
+    <button class="del" aria-label="削除">✕</button></div>
+    <div class="when" >${Object.keys(WHEN).map(k=>`<button class="wbtn ${m.w===k?"on "+k:""}" data-w="${k}">${WHEN[k]}</button>`).join("")}</div>
+    <textarea class="memo" rows="1" placeholder="メモ（どこで買った・良かった点など）">${esc(m.memo)}</textarea></div>`).join("");
+}
+document.getElementById("mine").addEventListener("click",e=>{
+  const card=e.target.closest(".mine");if(!card)return;const m=mine.find(x=>x.id===card.dataset.id);
+  if(e.target.closest(".star")){m.good=!m.good;save();renderMine()}
+  const wb=e.target.closest(".wbtn");if(wb){m.w=m.w===wb.dataset.w?"":wb.dataset.w;save();renderMine()}
+  if(e.target.closest(".del")){
+    if(card.dataset.confirm){mine=mine.filter(x=>x!==m);save();updateBadge();renderMine()}
+    else{card.dataset.confirm=1;e.target.textContent="削除？";setTimeout(()=>{if(card.isConnected){delete card.dataset.confirm;e.target.textContent="✕"}},2500)}
+  }
+});
+document.getElementById("mine").addEventListener("input",e=>{
+  if(!e.target.classList.contains("memo"))return;
+  const m=mine.find(x=>x.id===e.target.closest(".mine").dataset.id);m.memo=e.target.value;save();
+});
+document.getElementById("addBtn").onclick=()=>{
+  const n=document.getElementById("newName"),mm=document.getElementById("newMemo");
+  const name=n.value.trim();if(!name){n.focus();return}
+  mine.unshift({id:uid(),name,memo:mm.value.trim(),good:false,from:""});save();updateBadge();
+  n.value="";mm.value="";renderMine();toast("追加しました");
+};
+
+// ===== 共有（マークダウン） =====
+let expMode="good";
+const myName=document.getElementById("myName");
+myName.value=store.get("ssg_name","");
+myName.oninput=()=>{store.set("ssg_name",myName.value);renderExport()};
+document.getElementById("expMode").addEventListener("click",e=>{
+  const c=e.target.closest(".chip");if(!c)return;expMode=c.dataset.m;
+  document.querySelectorAll("#expMode .chip").forEach(x=>x.classList.toggle("on",x===c));renderExport();
+});
+function renderExport(){
+  const list=mine.filter(m=>expMode==="all"||m.good);
+  const nm=myName.value.trim();
+  let md=`# ${nm?nm+"の":""}${expMode==="good"?"あって良かった":""}新生活グッズ\n\n`;
+  md+=list.length?list.map(m=>`- ${m.good?"★ ":""}${m.w?WHEN_ICON[m.w]+" ":""}${m.name.replace(/\n/g," ")}${m.memo?" : "+m.memo.replace(/\n/g," "):""}`).join("\n"):"（まだ★のアイテムがありません）";
+  document.getElementById("exp").value=md+"\n";
+}
+document.getElementById("copyBtn").onclick=async()=>{
+  const t=document.getElementById("exp");
+  try{await navigator.clipboard.writeText(t.value);toast("コピーしました")}
+  catch(e){t.focus();t.select();toast("選択しました。長押しでコピーしてね")}
+};
+function parseMd(text){
+  let from="";const items=[];
+  text.split(/\r?\n/).forEach(line=>{
+    const h=line.match(/^#\s*(.+?)の/);if(h&&!from){from=h[1].trim();return}
+    const m=line.match(/^\s*(?:[-*・]|\d+\.)\s+(.*)$/);if(!m)return;
+    let s=m[1].trim(),good=false;
+    const ck=s.match(/^\[( |x|X)\]\s*/);if(ck){good=ck[1]!==" ";s=s.slice(ck[0].length)}
+    if(/^[★☆]/.test(s)){good=s[0]==="★";s=s.slice(1).trim()}
+    let w="";for(const k in WHEN_ICON){if(s.startsWith(WHEN_ICON[k])){w=k;s=s.slice(WHEN_ICON[k].length).replace(/^\uFE0F/,"").trim();break}}
+    const sp=s.split(/\s+[:：]\s+|\s+[—–-]{1,2}\s+/);
+    const name=sp.shift().replace(/\*\*/g,"").trim();if(!name)return;
+    items.push({name,memo:sp.join(" ").trim(),good,w});
+  });
+  return {from,items};
+}
+document.getElementById("impBtn").onclick=()=>{
+  const ta=document.getElementById("imp");const {from,items}=parseMd(ta.value);
+  if(!items.length){toast("アイテムが見つかりませんでした");return}
+  let add=0;
+  items.forEach(it=>{
+    const ex=mine.find(m=>m.name===it.name);
+    if(ex){ if(it.memo&&!ex.memo.includes(it.memo))ex.memo+=(ex.memo?"\n":"")+(from?from+"：":"")+it.memo; }
+    else{mine.push({id:uid(),name:it.name,memo:it.memo,good:false,fgood:it.good,w:it.w||(ITEMS.find(x=>x.n===it.name)||{}).w||"",from:from||"友だち"});add++}
+  });
+  save();updateBadge();ta.value="";
+  toast(`${add}件追加しました${items.length-add?`（${items.length-add}件は既存にメモを追記）`:""}`);
+};
+
+updateBadge();
+</script>
+</body>
+</html>
