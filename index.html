@@ -190,8 +190,9 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
 
 <script>
 // ===== バージョン =====
-const VERSION="1.2";
+const VERSION="1.3";
 const HISTORY=[
+ {v:"1.3",d:"2026-10-31",c:["着ぐるみを追加","突っ張り棒・遠近両用メガネを削除","防音マットと静床ライトをひとつに","丸い木の棒・ゴキジェット・電源タップの名前や説明を変更","ポータブル電源のアイコンを家庭用ポータブル電源の形に"]},
  {v:"1.2",d:"2026-10-31",c:["マイリストで「失敗だった」を残せるように（失敗エピソードも書ける・共有もできる）","ポータブル電源・骨盤サポートチェアを追加","防災セットに「わが家の防災リスト」へのリンクを追加","ダンボールストッカーを「コジット ダンボールストッカー」に"]},
  {v:"1.1",d:"2026-10-31",c:["買う時期のラベルを「入居日から」「余裕があれば」の2つに整理","バージョン表示と更新履歴を追加"]},
  {v:"1.0",d:"2026-10-31",c:["初版：おすすめ（ふたり暮らしは1人目・2人目ごとに性別・年代・性格・星座）","アイテム一覧と検索、エコ・安価の分類","マイリスト（★あって良かった・メモ・買う時期）","マークダウンで友だちと送り合える共有機能"]}
@@ -229,7 +230,6 @@ const ITEMS=[
  {n:"キッチンバサミ",w:"now",i:"✂️",d:"まな板を出さずに肉もネギも切れる。洗い物が減る。",p:[1,2],t:["lazy","cook"],e:["fire"],a:[20,30,40,50,60],c:["cheap"]},
  {n:"圧力鍋（電気）",w:"later",i:"♨️",d:"ほったらかしで煮込み料理。忙しい日の夕飯が本格的に。",p:[2],t:["cook","lazy","picky"],e:["earth","water"],a:[30,40,50,60]},
  {n:"工事不要タイプの食洗機",w:"later",i:"🍽️",d:"水を注ぐだけで賃貸でも置ける。手間が減るだけでなく、温水洗いで衛生的。",p:[1,2],t:["lazy","clean"],e:["earth","air"],a:[30,40,50,60],c:["eco"]},
- {n:"突っ張り棒",w:"now",i:"📏",d:"収納を増やす万能アイテム。賃貸の強い味方。",p:[1,2],t:["thrift","clean"],e:["earth"],a:[20,30],c:["cheap"]},
  {n:"マグネット収納",w:"later",i:"🧲",d:"冷蔵庫や洗濯機の側面がそのまま収納に。",p:[1,2],t:["clean","picky"],e:["earth","air"],a:[20,30,40],c:["cheap"]},
  {n:"折りたたみコンテナ",w:"now",i:"🗃️",d:"使わないときはペタンコ。引っ越し後の仮置きにも。",p:[1,2],t:["clean","active"],e:["earth","fire"],a:[20,30]},
  {n:"スイッチ付き延長コード",w:"now",i:"🔌",d:"コンセントが足りない問題を解決。待機電力カットで節約にも。",p:[1,2],t:["thrift","lazy"],e:["earth","air"],a:[20,30,40,50,60],c:["eco", "cheap"]},
@@ -257,21 +257,19 @@ const ITEMS=[
  {n:"買い物メモ用ホワイトボード",w:"later",i:"📝",d:"冷蔵庫に貼って「切れたもの」をすぐメモ。ふたりで共有。",p:[2],t:["clean","thrift"],e:["air","earth"],a:[20,30,40,50,60],c:["cheap"]},
  {n:"ゆったりソファ",w:"later",i:"🛋️",d:"ふたりで並んで座れるサイズを。おうち時間の中心に。",p:[2],t:["relax","indoor"],e:["water","earth"],a:[20,30,40]},
  {n:"ペアのマグカップ",w:"later",i:"🍵",d:"ふたり暮らしのスタートに。色違いで自分のものが分かる。",p:[2],t:["relax","picky"],e:["water"],a:[20,30],c:["cheap"]},
- {n:"遠近両用メガネ",w:"later",i:"👓",d:"手元も遠くもかけ替えなしで。スマホも料理のレシピもラクに見える。",p:[1,2],t:["picky","lazy"],e:["earth","air"],a:[40,50,60]},
  {n:"ハンディマッサージャー",w:"later",i:"💆",d:"肩や腰をおうちでほぐせる。ふとした疲れのケアに。",p:[1,2],t:["relax","indoor"],e:["water","earth"],a:[40,50,60]},
  {n:"足元センサーライト",w:"now",i:"🔦",d:"夜中のトイレや廊下で自動点灯。新しい家の暗がり対策に。",p:[1,2],t:["lazy","picky"],e:["earth","water"],a:[40,50,60],c:["cheap"]},
  {n:"浴室の滑り止めマット",w:"now",i:"🛁",d:"慣れない新居のお風呂でも安心。",p:[1,2],t:["clean","picky"],e:["earth","water"],a:[50,60],c:["cheap"]},
  {n:"電動アシスト自転車",w:"later",i:"🚴",d:"坂道も買い出しもラクラク。行動範囲がぐっと広がる。",p:[1,2],t:["active"],e:["fire","air"],a:[30,40,50,60],c:["eco"]},
- {n:"ストレッチ用の丸棒",w:"later",i:"🧘‍♀️",d:"寝転がるだけで背中や肩がほぐれる。テレビを見ながらでも。",p:[1,2],t:["relax","active","indoor"],e:["water","fire"],a:[20,30,40,50,60],c:["cheap"]},
+ {n:"150〜180cmくらいの丸い木の棒",w:"later",i:"🧘‍♀️",d:"棒を使って肩や肩甲骨を回す運動がインスタで流行りました。",p:[1,2],t:["relax","active","indoor"],e:["water","fire"],a:[20,30,40,50,60],c:["cheap"]},
  {n:"クッション付きフラフープ",w:"later",i:"⭕",d:"回すだけで運動不足解消。クッション付きなので痛くなりにくい。",p:[1,2],t:["active","indoor"],e:["fire","air"],a:[20,30,40,50]},
- {n:"ゴキジェット",w:"now",i:"🪳",d:"新居で「出た！」ときの必需品。引っ越し初日から1本あると安心。",p:[1,2],t:["clean","picky"],e:["fire","earth"],a:[20,30,40,50,60],c:["cheap"]},
+ {n:"ゴキジェット",w:"now",i:"🪳",d:"新居は出がち！引っ越し初日から1本あると安心。",p:[1,2],t:["clean","picky"],e:["fire","earth"],a:[20,30,40,50,60],c:["cheap"]},
  {n:"レンチン目玉焼きクッカー",w:"later",i:"🍳",d:"卵を割ってレンジで1分。フライパンを洗わずに朝ごはん。",p:[1,2],t:["lazy","cook"],e:["fire","air"],a:[20,30,40,50,60],c:["cheap"]},
  {n:"耐熱ガラス容器",w:"later",i:"🫙",d:"作り置き→レンジ→そのまま食卓へ。においや色移りしにくい。",p:[1,2],t:["cook","clean","thrift"],e:["earth","water"],a:[20,30,40,50,60],c:["eco"]},
  {n:"サーモグラス",w:"later",i:"🥃",d:"二重構造で氷が溶けにくく、結露しない。毎日の一杯がちょっと特別に。",p:[1,2],t:["picky","relax"],e:["water","air"],a:[20,30,40,50,60]},
  {n:"アレクサ＋Fire TV Stick＋プロジェクター",w:"later",i:"🗣️",d:"アレクサ→Fire TV Stick→プロジェクターとつなぐと、声だけで映画やYouTubeを再生・操作できる。リモコンを探さなくていい。",d2:"アレクサ→Fire TV Stick→プロジェクターとつなぐと、声だけで再生・操作できる。ソファに並んだまま「アレクサ、映画つけて」。",p:[1,2],t:["lazy","indoor","picky"],e:["air","water"],a:[20,30,40,50,60]},
- {n:"防音マット",w:"later",i:"🔇",d:"足音や椅子の音を軽減。集合住宅で下の階への気づかいに。",p:[1,2],t:["picky","indoor","active"],e:["earth","water"],a:[20,30,40,50,60]},
- {n:"静床ライト",w:"later",i:"🟫",d:"敷くだけの防音タイルマット。汚れた1枚だけ外して洗える。床のキズ防止にも。",p:[1,2],t:["clean","picky","indoor"],e:["earth"],a:[20,30,40,50,60]},
- {n:"Anker Nano Charging Station",w:"later",i:"🔋",d:"USB-CとUSB-A、コンセントを1台に。コンパクトで旅行時にも便利な電源タップ。",p:[1,2],t:["picky","active"],e:["air","fire"],a:[20,30,40,50]},
+ {n:"防音マット（静床ライト）",w:"later",i:"🔇",d:"足音や椅子の音を軽減して、下の階への気づかいに。静床ライトなら敷くだけのタイルマットで、汚れた1枚だけ外して洗える。床のキズ防止にも。",p:[1,2],t:["picky","indoor","active","clean"],e:["earth","water"],a:[20,30,40,50,60]},
+ {n:"今時の電源タップ Anker Nano Charging Station",w:"later",i:"🔌",d:"USB-CとUSB-A、コンセントを1台に。コンパクトで旅行時にも便利な電源タップ。",p:[1,2],t:["picky","active"],e:["air","fire"],a:[20,30,40,50]},
  {n:"ラベルレスペットボトル飲料水",w:"now",i:"💧",d:"箱買いして防災のローリングストックに。ラベルをはがす手間がなくゴミも減ってエコ。",p:[1,2],t:["lazy","clean","thrift"],e:["water","earth"],a:[20,30,40,50,60],c:["eco"]},
  {n:"尾西の携帯おにぎり",w:"now",i:"🍙",d:"水を注ぐだけで食べられる。長期保存できて防災にも。",p:[1,2],t:["active","picky"],e:["earth","fire"],a:[20,30,40,50,60]},
  {n:"コンパクトなバスタオル",w:"now",i:"🛀",d:"大きいと場所を取るので小さめで。吸水性の高いものならコンパクトで充分。乾きも早い。",p:[1,2],t:["clean","thrift","picky"],e:["water","earth"],a:[20,30,40,50,60],c:["eco","cheap"]},
@@ -279,8 +277,9 @@ const ITEMS=[
  {n:"電子レンジ用シリコンラップ",w:"later",i:"🟢",d:"お皿にかぶせてそのままチン。洗って繰り返し使えるのでラップ代も節約。",p:[1,2],t:["thrift","cook","clean"],e:["earth","water"],a:[20,30,40,50,60],c:["eco","cheap"]},
  {n:"100均のシャワードリップ",w:"later",i:"☕",d:"ドリッパーにのせてお湯を注ぐだけ。ゆっくりお湯が落ちている間に別のことができる。",p:[1,2],t:["lazy","relax","thrift"],e:["water","air"],a:[20,30,40,50,60],c:["cheap"]},
  {n:"コジット ダンボールストッカー",w:"later",i:"📦",d:"たまりがちなダンボールをすっきり収納。ダンボールストッカーならコジットのものがベスト。使い方はインスタなどで見てみて。",p:[1,2],t:["clean","picky"],e:["earth"],a:[20,30,40,50,60],c:["eco"]},
- {n:"ポータブル電源",w:"later",i:"🔋",d:"停電時もスマホの充電や家電が使える。キャンプや車中泊など屋外でも活躍。",p:[1,2],t:["active","picky"],e:["fire","earth"],a:[20,30,40,50,60]},
+ {n:"ポータブル電源",w:"later",i:"svg:power",d:"停電時もスマホの充電や家電が使える。キャンプや車中泊など屋外でも活躍。",p:[1,2],t:["active","picky"],e:["fire","earth"],a:[20,30,40,50,60]},
  {n:"骨盤サポートチェア",w:"later",i:"🪑",d:"普通の椅子もこれがあるとテレワーク対応に。高価で大きいゲーミングチェアの前に試してみて。",p:[1,2],t:["indoor","picky","thrift"],e:["earth","water"],a:[20,30,40,50,60],c:["cheap"]},
+ {n:"着ぐるみ",w:"later",i:"🧸",d:"楽しい！部屋着にすれば冬もぬくぬく。友だちが来た日や写真撮影にも。",d2:"楽しい！おそろいで着れば部屋着の時間がもっと楽しく。冬もぬくぬく。",p:[1,2],t:["relax","indoor"],e:["fire","water","air"],a:[20,30,40]},
  {n:"ブランケット",w:"later",i:"🧣",d:"ソファでの映画やうたた寝に。冬の電気代も節約。",p:[1,2],t:["relax","indoor","thrift"],e:["water"],a:[20,30,40,50,60],c:["eco", "cheap"]}
 ];
 
@@ -402,7 +401,11 @@ function horoHtml(){
   return `<div class="card horo">${h}</div>`;
 }
 function inList(n){return mine.some(m=>m.name===n)}
-const itemHtml=it=>`<div class="card item"><div class="ic">${it.i}</div><div class="bd"><div class="nm">${esc(it.n)}</div><div class="ds">${esc(state.people==="2"&&it.d2?it.d2:it.d)}${it.l?` <a class="lnk" href="${it.l.u}" target="_blank" rel="noopener">${esc(it.l.t)} ↗</a>`:""}</div><div class="why"><span class="w ${it.w}">${WHEN[it.w]}</span>${it.why.map(w=>`<span class="${w.c}">${esc(w.t)}</span>`).join("")}</div></div><button class="add ${inList(it.n)?"done":""}" data-n="${esc(it.n)}">${inList(it.n)?"追加済み":"＋リスト"}</button></div>`;
+const SVG_ICONS={
+ power:`<svg viewBox="0 0 36 36" width="34" height="34" aria-hidden="true"><path d="M11 9V6.5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2V9" fill="none" stroke="#5b5f66" stroke-width="2.4" stroke-linecap="round"/><rect x="3" y="9" width="30" height="23" rx="4" fill="#f2a23a"/><rect x="3" y="9" width="30" height="5" rx="2" fill="#5b5f66"/><rect x="6.5" y="17" width="11" height="8" rx="1.5" fill="#2f3439"/><text x="12" y="23.4" font-size="5.5" font-family="sans-serif" font-weight="700" fill="#7fe3a0" text-anchor="middle">88%</text><circle cx="23" cy="21" r="2.2" fill="#2f3439"/><circle cx="29" cy="21" r="2.2" fill="#2f3439"/><rect x="21" y="26.2" width="3.4" height="2" rx=".6" fill="#2f3439"/><rect x="27.3" y="26.2" width="3.4" height="2" rx=".6" fill="#2f3439"/></svg>`
+};
+const icon=i=>i.startsWith("svg:")?SVG_ICONS[i.slice(4)]:i;
+const itemHtml=it=>`<div class="card item"><div class="ic">${icon(it.i)}</div><div class="bd"><div class="nm">${esc(it.n)}</div><div class="ds">${esc(state.people==="2"&&it.d2?it.d2:it.d)}${it.l?` <a class="lnk" href="${it.l.u}" target="_blank" rel="noopener">${esc(it.l.t)} ↗</a>`:""}</div><div class="why"><span class="w ${it.w}">${WHEN[it.w]}</span>${it.why.map(w=>`<span class="${w.c}">${esc(w.t)}</span>`).join("")}</div></div><button class="add ${inList(it.n)?"done":""}" data-n="${esc(it.n)}">${inList(it.n)?"追加済み":"＋リスト"}</button></div>`;
 const FIRST=12,STEP=10;
 let allList=[],shown=0;
 function showMore(){
