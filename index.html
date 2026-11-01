@@ -224,8 +224,9 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
 
 <script>
 // ===== バージョン =====
-const VERSION="1.4";
+const VERSION="1.5";
 const HISTORY=[
+ {v:"1.5",d:"2026-11-01",c:["圧力鍋・折りたたみコンテナを削除","セリア 洗面鏡ナナメスタンド・大風量ドライヤー・ゴキジェット・骨盤サポートチェア・着ぐるみのアイコンを変更"]},
  {v:"1.4",d:"2026-11-01",c:["右上に⚙️設定を追加。「ホーム画面に追加」ボタンと、バージョン・更新履歴","ブラウザで開いたとき、画面の上に「アプリとしてホーム画面に追加」の案内を出すように（×で閉じると2週間は出ません）","服のミスト（衣類用しわ取りスプレー）を追加","足元センサーライトを人感センサーライトに","タジン鍋・電子レンジ・電子レンジ用トレイ・人感センサーライトのアイコンを変更"]},
  {v:"1.3",d:"2026-10-31",c:["着ぐるみを追加","突っ張り棒・遠近両用メガネを削除","防音マットと静床ライトをひとつに","丸い木の棒・ゴキジェット・電源タップの名前や説明を変更","ポータブル電源のアイコンを家庭用ポータブル電源の形に"]},
  {v:"1.2",d:"2026-10-31",c:["マイリストで「失敗だった」を残せるように（失敗エピソードも書ける・共有もできる）","ポータブル電源・骨盤サポートチェアを追加","防災セットに「わが家の防災リスト」へのリンクを追加","ダンボールストッカーを「コジット ダンボールストッカー」に"]},
@@ -253,7 +254,7 @@ const ITEMS=[
  {n:"ロボット掃除機",w:"later",i:"🤖",d:"出かけている間に床がきれいに。床にモノを置かなくなる効果も。",p:[1,2],t:["lazy","clean"],e:["earth","air"],a:[20,30,40,50,60]},
  {n:"タジン鍋",w:"later",i:"svg:tagine",d:"野菜とお肉を入れてレンジや火にかけるだけ。ヘルシーで洗い物も少なめ。",p:[1,2],t:["cook","lazy"],e:["fire","water"],a:[20,30,40,50,60]},
  {n:"クッカー",w:"later",i:"🍲",d:"ひとり鍋・ラーメン・炊飯まで1台で。小さなキッチンの心強い味方。",p:[1],t:["lazy","thrift","active"],e:["fire"],a:[20,30]},
- {n:"セリア 洗面鏡ナナメスタンド",w:"now",i:"🪞",d:"100均で買える角度つきスタンド。洗面台まわりの見やすさがグッと上がる。",p:[1,2],t:["thrift","picky","clean"],e:["earth","air"],a:[20,30,40,50,60],c:["cheap"]},
+ {n:"セリア 洗面鏡ナナメスタンド",w:"now",i:"svg:slantstand",d:"100均で買える角度つきスタンド。洗面台まわりの見やすさがグッと上がる。",p:[1,2],t:["thrift","picky","clean"],e:["earth","air"],a:[20,30,40,50,60],c:["cheap"]},
  {n:"TimeTree（共有カレンダー）",w:"now",i:"📅",d:"ふたりの予定を共有できる無料アプリ。すれ違い防止に。",p:[2],t:["picky","active"],e:["air"],a:[20,30,40,50,60],c:["cheap"]},
  {n:"電気ケトル",w:"now",i:"☕",d:"すぐお湯が沸く。コーヒー、カップ麺、湯たんぽにも。",p:[1,2],t:["lazy","indoor"],e:["fire","water"],a:[20,30,40,50,60]},
  {n:"電子レンジ（フラット庫内）",w:"now",i:"svg:microwave",d:"ターンテーブルなしは掃除がラク。作り置きの温め直しに必須。",p:[1,2],t:["lazy","clean"],e:["earth"],a:[20,30,40,50,60]},
@@ -263,10 +264,8 @@ const ITEMS=[
  {n:"ホットプレート",w:"later",i:"🥘",d:"焼肉、たこ焼き、ふたりでワイワイ。友だちが来た日にも。",p:[2],t:["cook","indoor"],e:["fire","air"],a:[20,30,40]},
  {n:"保存容器セット",w:"later",i:"🥡",d:"作り置き・冷凍に。サイズをそろえると冷蔵庫がスッキリ。",p:[1,2],t:["cook","thrift","clean"],e:["earth"],a:[20,30,40,50,60],c:["cheap"]},
  {n:"キッチンバサミ",w:"now",i:"✂️",d:"まな板を出さずに肉もネギも切れる。洗い物が減る。",p:[1,2],t:["lazy","cook"],e:["fire"],a:[20,30,40,50,60],c:["cheap"]},
- {n:"圧力鍋（電気）",w:"later",i:"♨️",d:"ほったらかしで煮込み料理。忙しい日の夕飯が本格的に。",p:[2],t:["cook","lazy","picky"],e:["earth","water"],a:[30,40,50,60]},
  {n:"工事不要タイプの食洗機",w:"later",i:"🍽️",d:"水を注ぐだけで賃貸でも置ける。手間が減るだけでなく、温水洗いで衛生的。",p:[1,2],t:["lazy","clean"],e:["earth","air"],a:[30,40,50,60],c:["eco"]},
  {n:"マグネット収納",w:"later",i:"🧲",d:"冷蔵庫や洗濯機の側面がそのまま収納に。",p:[1,2],t:["clean","picky"],e:["earth","air"],a:[20,30,40],c:["cheap"]},
- {n:"折りたたみコンテナ",w:"now",i:"🗃️",d:"使わないときはペタンコ。引っ越し後の仮置きにも。",p:[1,2],t:["clean","active"],e:["earth","fire"],a:[20,30]},
  {n:"スイッチ付き延長コード",w:"now",i:"🔌",d:"コンセントが足りない問題を解決。待機電力カットで節約にも。",p:[1,2],t:["thrift","lazy"],e:["earth","air"],a:[20,30,40,50,60],c:["eco", "cheap"]},
  {n:"室内物干し",w:"now",i:"👕",d:"雨の日・花粉の季節に。突っ張りタイプは場所をとらない。",p:[1,2],t:["clean","thrift"],e:["water","earth"],a:[20,30,40,50,60],c:["eco", "cheap"]},
  {n:"ドラム式洗濯乾燥機",w:"later",i:"🌀",d:"干す手間がゼロに。ふたり暮らしの家事分担がラクになる。",p:[2],t:["lazy","clean","picky"],e:["air","earth"],a:[30,40,50,60]},
@@ -281,7 +280,7 @@ const ITEMS=[
  {n:"ヨガマット",w:"later",i:"🧘",d:"家でストレッチや筋トレ。運動不足の解消に。",p:[1,2],t:["active","relax"],e:["fire","water"],a:[20,30,40,50,60],c:["cheap"]},
  {n:"プロジェクター",w:"later",i:"📽️",d:"白い壁が映画館に。休日はひとり映画館で贅沢な時間を。",d2:"白い壁が映画館に。ふたりの映画ナイトにも。",p:[1,2],t:["indoor","picky"],e:["air","water"],a:[20,30]},
  {n:"ワイヤレスイヤホン",w:"later",i:"🎧",d:"家事しながら音楽やラジオ。夜でも周りを気にせず楽しめる。",d2:"家事しながら音楽やラジオ。ふたり暮らしで音を気にせず楽しめる。",p:[1,2],t:["active","indoor"],e:["air","fire"],a:[20,30]},
- {n:"大風量ドライヤー",w:"later",i:"🔥",d:"乾かす時間が短くなるだけで毎晩がラクに。",p:[1,2],t:["lazy","picky"],e:["fire"],a:[20,30,40],g:"f"},
+ {n:"大風量ドライヤー",w:"later",i:"svg:dryer",d:"乾かす時間が短くなるだけで毎晩がラクに。",p:[1,2],t:["lazy","picky"],e:["fire"],a:[20,30,40],g:"f"},
  {n:"メイク用ライト付きミラー",w:"later",i:"💄",d:"自然光に近い明るさで朝の支度がスムーズ。",p:[1,2],t:["picky"],e:["air","water"],a:[20,30,40],g:"f"},
  {n:"電気シェーバー",w:"now",i:"🪒",d:"朝の時短に。洗えるタイプが衛生的。",p:[1,2],t:["lazy","clean"],e:["fire","earth"],a:[20,30,40,50,60],g:"m"},
  {n:"工具セット（小）",w:"now",i:"🔧",d:"家具の組み立て、ネジのゆるみ直しに。引っ越し初日から活躍。",p:[1,2],t:["active","thrift"],e:["fire","earth"],a:[20,30,40,50,60]},
@@ -298,7 +297,7 @@ const ITEMS=[
  {n:"電動アシスト自転車",w:"later",i:"🚴",d:"坂道も買い出しもラクラク。行動範囲がぐっと広がる。",p:[1,2],t:["active"],e:["fire","air"],a:[30,40,50,60],c:["eco"]},
  {n:"150〜180cmくらいの丸い木の棒",w:"later",i:"🧘‍♀️",d:"棒を使って肩や肩甲骨を回す運動がインスタで流行りました。",p:[1,2],t:["relax","active","indoor"],e:["water","fire"],a:[20,30,40,50,60],c:["cheap"]},
  {n:"クッション付きフラフープ",w:"later",i:"⭕",d:"回すだけで運動不足解消。クッション付きなので痛くなりにくい。",p:[1,2],t:["active","indoor"],e:["fire","air"],a:[20,30,40,50]},
- {n:"ゴキジェット",w:"now",i:"🪳",d:"新居は出がち！引っ越し初日から1本あると安心。",p:[1,2],t:["clean","picky"],e:["fire","earth"],a:[20,30,40,50,60],c:["cheap"]},
+ {n:"ゴキジェット",w:"now",i:"svg:spraycan",d:"新居は出がち！引っ越し初日から1本あると安心。",p:[1,2],t:["clean","picky"],e:["fire","earth"],a:[20,30,40,50,60],c:["cheap"]},
  {n:"レンチン目玉焼きクッカー",w:"later",i:"🍳",d:"卵を割ってレンジで1分。フライパンを洗わずに朝ごはん。",p:[1,2],t:["lazy","cook"],e:["fire","air"],a:[20,30,40,50,60],c:["cheap"]},
  {n:"耐熱ガラス容器",w:"later",i:"🫙",d:"作り置き→レンジ→そのまま食卓へ。においや色移りしにくい。",p:[1,2],t:["cook","clean","thrift"],e:["earth","water"],a:[20,30,40,50,60],c:["eco"]},
  {n:"サーモグラス",w:"later",i:"🥃",d:"二重構造で氷が溶けにくく、結露しない。毎日の一杯がちょっと特別に。",p:[1,2],t:["picky","relax"],e:["water","air"],a:[20,30,40,50,60]},
@@ -313,8 +312,8 @@ const ITEMS=[
  {n:"100均のシャワードリップ",w:"later",i:"☕",d:"ドリッパーにのせてお湯を注ぐだけ。ゆっくりお湯が落ちている間に別のことができる。",p:[1,2],t:["lazy","relax","thrift"],e:["water","air"],a:[20,30,40,50,60],c:["cheap"]},
  {n:"コジット ダンボールストッカー",w:"later",i:"📦",d:"たまりがちなダンボールをすっきり収納。ダンボールストッカーならコジットのものがベスト。使い方はインスタなどで見てみて。",p:[1,2],t:["clean","picky"],e:["earth"],a:[20,30,40,50,60],c:["eco"]},
  {n:"ポータブル電源",w:"later",i:"svg:power",d:"停電時もスマホの充電や家電が使える。キャンプや車中泊など屋外でも活躍。",p:[1,2],t:["active","picky"],e:["fire","earth"],a:[20,30,40,50,60]},
- {n:"骨盤サポートチェア",w:"later",i:"🪑",d:"普通の椅子もこれがあるとテレワーク対応に。高価で大きいゲーミングチェアの前に試してみて。",p:[1,2],t:["indoor","picky","thrift"],e:["earth","water"],a:[20,30,40,50,60],c:["cheap"]},
- {n:"着ぐるみ",w:"later",i:"🧸",d:"楽しい！部屋着にすれば冬もぬくぬく。友だちが来た日や写真撮影にも。",d2:"楽しい！おそろいで着れば部屋着の時間がもっと楽しく。冬もぬくぬく。",p:[1,2],t:["relax","indoor"],e:["fire","water","air"],a:[20,30,40]},
+ {n:"骨盤サポートチェア",w:"later",i:"svg:backpain",d:"普通の椅子もこれがあるとテレワーク対応に。高価で大きいゲーミングチェアの前に試してみて。",p:[1,2],t:["indoor","picky","thrift"],e:["earth","water"],a:[20,30,40,50,60],c:["cheap"]},
+ {n:"着ぐるみ",w:"later",i:"svg:kigurumi",d:"楽しい！部屋着にすれば冬もぬくぬく。友だちが来た日や写真撮影にも。",d2:"楽しい！おそろいで着れば部屋着の時間がもっと楽しく。冬もぬくぬく。",p:[1,2],t:["relax","indoor"],e:["fire","water","air"],a:[20,30,40]},
  {n:"服のミスト（衣類用しわ取りスプレー）",w:"now",i:"🧴",d:"シュッとかけて手でのばすだけでシワがとれる。アイロンもスチーマーも出さずに、朝の身支度がすぐ終わる。",p:[1,2],t:["lazy","picky"],e:["air","fire"],a:[20,30,40,50,60],c:["cheap"]},
  {n:"ブランケット",w:"later",i:"🧣",d:"ソファでの映画やうたた寝に。冬の電気代も節約。",p:[1,2],t:["relax","indoor","thrift"],e:["water"],a:[20,30,40,50,60],c:["eco", "cheap"]}
 ];
@@ -438,6 +437,11 @@ function horoHtml(){
 }
 function inList(n){return mine.some(m=>m.name===n)}
 const SVG_ICONS={
+ slantstand:`<svg viewBox="0 0 36 36" width="34" height="34" aria-hidden="true"><rect x="9" y="5" width="8" height="18" rx="2.5" transform="rotate(-22 13 14)" fill="#7ec8e3"/><rect x="9.6" y="2.2" width="6.8" height="3.4" rx="1" transform="rotate(-22 13 14)" fill="#3f8fb0"/><rect x="17" y="7" width="7" height="16" rx="1.5" transform="rotate(-22 20 15)" fill="#f2a6b8"/><rect x="18.6" y="4.4" width="3.8" height="3" rx=".8" transform="rotate(-22 20 15)" fill="#c95f7a"/><rect x="24.5" y="9.5" width="6" height="14" rx="3" transform="rotate(-22 27.5 16.5)" fill="#e9e3d6"/><rect x="25.6" y="7.4" width="3.8" height="2.6" rx=".8" transform="rotate(-22 27.5 16.5)" fill="#9a8f7c"/><path d="M4 31l5-13h25l-4 13z" fill="#cfe8f3" fill-opacity=".55" stroke="#8fbfd6" stroke-width="1.4" stroke-linejoin="round"/><path d="M6.5 28h24" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round" opacity=".8"/></svg>`,
+ dryer:`<svg viewBox="0 0 36 36" width="34" height="34" aria-hidden="true"><path d="M5 10a8 8 0 0 1 8-8h11v14H13a8 8 0 0 1-8-6z" fill="#e8836b"/><rect x="24" y="4.5" width="7" height="9" rx="1.5" fill="#c9644d"/><path d="M32.5 6v6M34.5 7.5v3" stroke="#9fc6e8" stroke-width="1.4" stroke-linecap="round"/><path d="M12 15h7l-2.5 16a2 2 0 0 1-2 1.7h-.6a2 2 0 0 1-2-2z" fill="#d6705a"/><circle cx="12" cy="9" r="2.6" fill="#fff" opacity=".85"/><rect x="14.2" y="20" width="2.6" height="4" rx="1" fill="#fff" opacity=".8"/></svg>`,
+ spraycan:`<svg viewBox="0 0 36 36" width="34" height="34" aria-hidden="true"><rect x="11" y="10" width="14" height="23" rx="3" fill="#d94a3a"/><rect x="11" y="16" width="14" height="9" fill="#2c2c2c"/><path d="M14 20.5h8" stroke="#f2c94c" stroke-width="2" stroke-linecap="round"/><rect x="12.5" y="6.5" width="11" height="4.5" rx="1.5" fill="#bfc4c9"/><rect x="15" y="3" width="6" height="4" rx="1" fill="#f2f2f2" stroke="#9aa0a6" stroke-width="1"/><path d="M21 4.8h4" stroke="#9aa0a6" stroke-width="1.4" stroke-linecap="round"/><circle cx="28.5" cy="3.5" r="1" fill="#9fc6e8"/><circle cx="31" cy="5.5" r="1" fill="#9fc6e8"/><circle cx="28.5" cy="7.2" r=".9" fill="#9fc6e8"/></svg>`,
+ backpain:`<svg viewBox="0 0 36 36" width="34" height="34" aria-hidden="true"><circle cx="13" cy="6.5" r="4" fill="#f2c7a5"/><path d="M11.5 11.5c2-1 5-.5 7 1.5l4 4.5c1 1.2.6 2.6-.6 3.2L18 22.5l1.5 10" fill="none" stroke="#5b7fb0" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M18.5 22.5l-5 9.5" stroke="#5b7fb0" stroke-width="4.2" stroke-linecap="round"/><path d="M13 14l-2 6 6.5 1.8" fill="none" stroke="#f2c7a5" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M26 16l3-2-1 3 3-.5-3.5 4" fill="none" stroke="#e8463a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M27 23.5l3 .5M26 26.5l2.5 1.5" stroke="#e8463a" stroke-width="1.6" stroke-linecap="round"/><path d="M10 5.5c1 .8 2 .8 3 0" stroke="#5c4a3d" stroke-width="1" fill="none" stroke-linecap="round"/></svg>`,
+ kigurumi:`<svg viewBox="0 0 36 36" width="34" height="34" aria-hidden="true"><circle cx="8" cy="7" r="4.5" fill="#a87a52"/><circle cx="28" cy="7" r="4.5" fill="#a87a52"/><circle cx="8" cy="7" r="2.2" fill="#e7b98d"/><circle cx="28" cy="7" r="2.2" fill="#e7b98d"/><path d="M5 34v-6c0-5 3-8 6-9h14c3 1 6 4 6 9v6z" fill="#a87a52"/><circle cx="18" cy="15" r="11.5" fill="#a87a52"/><ellipse cx="18" cy="27.5" rx="5" ry="5" fill="#e7b98d"/><circle cx="18" cy="16" r="7.6" fill="#f6d3b5"/><circle cx="15.2" cy="15.5" r="1.1" fill="#3d2f25"/><circle cx="20.8" cy="15.5" r="1.1" fill="#3d2f25"/><path d="M16 19c1.2 1 2.8 1 4 0" stroke="#3d2f25" stroke-width="1.1" fill="none" stroke-linecap="round"/><circle cx="13.6" cy="18" r="1.2" fill="#f4a3a3" opacity=".7"/><circle cx="22.4" cy="18" r="1.2" fill="#f4a3a3" opacity=".7"/></svg>`,
  tagine:`<svg viewBox="0 0 36 36" width="34" height="34" aria-hidden="true"><circle cx="18" cy="5" r="2.2" fill="#b4522f"/><path d="M18 6.5C16 13 11 20 7.5 25h21C25 20 20 13 18 6.5z" fill="#d9663f"/><path d="M15.2 15.5h5.6M13 19.5h10" stroke="#f4c9a8" stroke-width="1.4" stroke-linecap="round"/><path d="M3 25h30v1.8c0 2.8-3.4 5.2-7.5 5.2h-15C6.4 32 3 29.6 3 26.8z" fill="#b4522f"/><path d="M3 25h30" stroke="#8f3e22" stroke-width="1.6" stroke-linecap="round"/></svg>`,
  microwave:`<svg viewBox="0 0 36 36" width="34" height="34" aria-hidden="true"><rect x="2" y="7" width="32" height="22" rx="3" fill="#e9e5df" stroke="#8a8279" stroke-width="1.6"/><rect x="5.5" y="10.5" width="19" height="15" rx="1.8" fill="#3d4a52"/><path d="M8.5 13.5l4 0M8.5 16l2 0" stroke="#7d9aaa" stroke-width="1.2" stroke-linecap="round"/><rect x="26.5" y="10.5" width="5" height="3.2" rx=".8" fill="#5bbf8a"/><circle cx="29" cy="18" r="1.6" fill="#8a8279"/><circle cx="29" cy="22.5" r="1.6" fill="#8a8279"/><rect x="5" y="29" width="4" height="2" rx=".6" fill="#8a8279"/><rect x="27" y="29" width="4" height="2" rx=".6" fill="#8a8279"/></svg>`,
  tray:`<svg viewBox="0 0 36 36" width="34" height="34" aria-hidden="true"><ellipse cx="18" cy="20" rx="16" ry="9.5" fill="#c9a77c"/><ellipse cx="18" cy="18.5" rx="16" ry="9.5" fill="#e8cfa6"/><ellipse cx="18" cy="18.5" rx="12.6" ry="7" fill="#f6e7cd"/><ellipse cx="18" cy="18" rx="5.5" ry="3" fill="#fff" opacity=".8"/></svg>`,
