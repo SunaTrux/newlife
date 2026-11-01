@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>新生活おすすめグッズ</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="新生活グッズ">
+<meta name="theme-color" content="#fbf7f0">
 <style>
 :root{
   --bg:#fbf7f0; --card:#fff; --ink:#3a3330; --sub:#8a7f78; --line:#ece4d8;
@@ -14,7 +20,8 @@
 html,body{margin:0;background:var(--bg);color:var(--ink);
   font-family:"Hiragino Maru Gothic ProN","Hiragino Sans","Noto Sans JP",system-ui,sans-serif;
   -webkit-text-size-adjust:100%}
-header{padding:20px 16px 8px;text-align:center}
+header{position:relative;padding:20px 16px 8px;text-align:center}
+.gear{position:absolute;top:10px;right:8px;width:40px;height:40px;border:none;background:none;font-size:20px;border-radius:50%}
 header h1{margin:0;font-size:22px;letter-spacing:.04em}
 header h1 span{color:var(--main)}
 header p{margin:6px 0 0;font-size:12px;color:var(--sub)}
@@ -78,6 +85,17 @@ textarea{min-height:140px;font-family:ui-monospace,Menlo,monospace;font-size:13p
 .hv{margin-bottom:14px}.hv b{font-size:14px}.hv small{color:var(--sub);margin-left:6px}
 .hv ul{margin:4px 0 0;padding-left:20px;font-size:13px;line-height:1.7}
 .lnk{color:var(--sky);font-weight:700;text-decoration:none;white-space:nowrap}
+.install-bar{display:flex;align-items:center;gap:4px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:6px 6px 6px 8px;margin:10px 12px 0;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.install-bar-main{flex:1;display:flex;align-items:center;gap:10px;background:none;border:none;padding:2px;color:var(--ink);font:inherit;font-size:14px;font-weight:700;text-align:left}
+.install-bar-ic{width:36px;height:36px;border-radius:8px;flex:none}
+.install-bar-close{width:36px;height:36px;border:none;background:none;color:var(--sub);font-size:22px;flex:none}
+#installBar .install-guide{margin:10px 12px 0}
+.install-guide{background:#fff;border:1.5px solid var(--main);border-radius:12px;padding:12px 14px;margin-top:10px;font-size:13px}
+.install-guide-t{font-weight:700;color:var(--main-d);margin-bottom:6px}
+.install-guide ol{margin:0 0 8px;padding-left:20px;line-height:1.7}
+.install-guide-note{margin:0 0 6px;color:var(--sub);font-size:12px;line-height:1.6}
+.install-guide-note.warn{color:#b0702a}
+.ok-msg{margin:0;color:#4e8a5c;font-size:13px;font-weight:700}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);opacity:0;background:#3a3330;color:#fff;padding:10px 16px;border-radius:999px;font-size:13px;transition:.25s;pointer-events:none;z-index:20}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 .seg{display:flex;gap:6px;margin-bottom:10px}
@@ -90,7 +108,9 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
 </style>
 </head>
 <body>
+<div id="installBar"></div>
 <header>
+  <button class="gear" id="gearBtn" aria-label="設定">⚙️</button>
   <h1>🌱 新生活<span>おすすめ</span>グッズ</h1>
   <p>あなたにぴったりのグッズを選んで、本当にあって良かったものを集めよう</p>
 </header>
@@ -186,12 +206,27 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
   <h2>更新履歴</h2><div id="hist"></div>
   <button class="btn sub" id="verClose">閉じる</button>
 </div></div>
+<div class="modal" id="setModal"><div class="sheet">
+  <h2>⚙️ 設定</h2>
+  <div class="card">
+    <div class="lbl">ホーム画面に追加</div>
+    <div id="installSet"></div>
+  </div>
+  <div class="card">
+    <div class="lbl">このアプリについて</div>
+    <p class="hint" style="margin:0">バージョン <b id="setVer"></b></p>
+    <button class="btn sub sm" id="histBtn">更新履歴を見る</button>
+    <p class="hint">入力したデータはこの端末の中だけに保存され、サーバーには送られません。</p>
+  </div>
+  <button class="btn sub" id="setClose">閉じる</button>
+</div></div>
 <div class="toast" id="toast"></div>
 
 <script>
 // ===== バージョン =====
-const VERSION="1.3";
+const VERSION="1.4";
 const HISTORY=[
+ {v:"1.4",d:"2026-11-01",c:["右上に⚙️設定を追加。「ホーム画面に追加」ボタンと、バージョン・更新履歴","ブラウザで開いたとき、画面の上に「アプリとしてホーム画面に追加」の案内を出すように（×で閉じると2週間は出ません）","服のミスト（衣類用しわ取りスプレー）を追加","足元センサーライトを人感センサーライトに","タジン鍋・電子レンジ・電子レンジ用トレイ・人感センサーライトのアイコンを変更"]},
  {v:"1.3",d:"2026-10-31",c:["着ぐるみを追加","突っ張り棒・遠近両用メガネを削除","防音マットと静床ライトをひとつに","丸い木の棒・ゴキジェット・電源タップの名前や説明を変更","ポータブル電源のアイコンを家庭用ポータブル電源の形に"]},
  {v:"1.2",d:"2026-10-31",c:["マイリストで「失敗だった」を残せるように（失敗エピソードも書ける・共有もできる）","ポータブル電源・骨盤サポートチェアを追加","防災セットに「わが家の防災リスト」へのリンクを追加","ダンボールストッカーを「コジット ダンボールストッカー」に"]},
  {v:"1.1",d:"2026-10-31",c:["買う時期のラベルを「入居日から」「余裕があれば」の2つに整理","バージョン表示と更新履歴を追加"]},
@@ -216,12 +251,12 @@ const PERSONA={lazy:"めんどくさがり",clean:"きれい好き",cook:"料理
 // p:人数 t:性格タグ e:星座エレメント a:年代 g:性別
 const ITEMS=[
  {n:"ロボット掃除機",w:"later",i:"🤖",d:"出かけている間に床がきれいに。床にモノを置かなくなる効果も。",p:[1,2],t:["lazy","clean"],e:["earth","air"],a:[20,30,40,50,60]},
- {n:"タジン鍋",w:"later",i:"🫕",d:"野菜とお肉を入れてレンジや火にかけるだけ。ヘルシーで洗い物も少なめ。",p:[1,2],t:["cook","lazy"],e:["fire","water"],a:[20,30,40,50,60]},
+ {n:"タジン鍋",w:"later",i:"svg:tagine",d:"野菜とお肉を入れてレンジや火にかけるだけ。ヘルシーで洗い物も少なめ。",p:[1,2],t:["cook","lazy"],e:["fire","water"],a:[20,30,40,50,60]},
  {n:"クッカー",w:"later",i:"🍲",d:"ひとり鍋・ラーメン・炊飯まで1台で。小さなキッチンの心強い味方。",p:[1],t:["lazy","thrift","active"],e:["fire"],a:[20,30]},
  {n:"セリア 洗面鏡ナナメスタンド",w:"now",i:"🪞",d:"100均で買える角度つきスタンド。洗面台まわりの見やすさがグッと上がる。",p:[1,2],t:["thrift","picky","clean"],e:["earth","air"],a:[20,30,40,50,60],c:["cheap"]},
  {n:"TimeTree（共有カレンダー）",w:"now",i:"📅",d:"ふたりの予定を共有できる無料アプリ。すれ違い防止に。",p:[2],t:["picky","active"],e:["air"],a:[20,30,40,50,60],c:["cheap"]},
  {n:"電気ケトル",w:"now",i:"☕",d:"すぐお湯が沸く。コーヒー、カップ麺、湯たんぽにも。",p:[1,2],t:["lazy","indoor"],e:["fire","water"],a:[20,30,40,50,60]},
- {n:"電子レンジ（フラット庫内）",w:"now",i:"📦",d:"ターンテーブルなしは掃除がラク。作り置きの温め直しに必須。",p:[1,2],t:["lazy","clean"],e:["earth"],a:[20,30,40,50,60]},
+ {n:"電子レンジ（フラット庫内）",w:"now",i:"svg:microwave",d:"ターンテーブルなしは掃除がラク。作り置きの温め直しに必須。",p:[1,2],t:["lazy","clean"],e:["earth"],a:[20,30,40,50,60]},
  {n:"3合炊き炊飯器",w:"now",i:"🍚",d:"まとめて炊いて冷凍が節約の基本。",p:[1],t:["thrift","cook"],e:["earth"],a:[20,30,40,50,60]},
  {n:"5合炊き炊飯器",w:"now",i:"🍚",d:"ふたり分＋お弁当や冷凍分まで余裕。",p:[2],t:["thrift","cook"],e:["earth"],a:[20,30,40,50,60]},
  {n:"ホットサンドメーカー",w:"later",i:"🥪",d:"パンと具をはさむだけで朝ごはんが楽しみに。",p:[1,2],t:["cook","indoor"],e:["fire","air"],a:[20,30]},
@@ -258,7 +293,7 @@ const ITEMS=[
  {n:"ゆったりソファ",w:"later",i:"🛋️",d:"ふたりで並んで座れるサイズを。おうち時間の中心に。",p:[2],t:["relax","indoor"],e:["water","earth"],a:[20,30,40]},
  {n:"ペアのマグカップ",w:"later",i:"🍵",d:"ふたり暮らしのスタートに。色違いで自分のものが分かる。",p:[2],t:["relax","picky"],e:["water"],a:[20,30],c:["cheap"]},
  {n:"ハンディマッサージャー",w:"later",i:"💆",d:"肩や腰をおうちでほぐせる。ふとした疲れのケアに。",p:[1,2],t:["relax","indoor"],e:["water","earth"],a:[40,50,60]},
- {n:"足元センサーライト",w:"now",i:"🔦",d:"夜中のトイレや廊下で自動点灯。新しい家の暗がり対策に。",p:[1,2],t:["lazy","picky"],e:["earth","water"],a:[40,50,60],c:["cheap"]},
+ {n:"人感センサーライト",w:"now",i:"svg:sensorlight",d:"人が近づくと自動で点灯。夜中のトイレや廊下、玄関、クローゼットの暗がり対策に。",p:[1,2],t:["lazy","picky"],e:["earth","water"],a:[20,30,40,50,60],c:["cheap"]},
  {n:"浴室の滑り止めマット",w:"now",i:"🛁",d:"慣れない新居のお風呂でも安心。",p:[1,2],t:["clean","picky"],e:["earth","water"],a:[50,60],c:["cheap"]},
  {n:"電動アシスト自転車",w:"later",i:"🚴",d:"坂道も買い出しもラクラク。行動範囲がぐっと広がる。",p:[1,2],t:["active"],e:["fire","air"],a:[30,40,50,60],c:["eco"]},
  {n:"150〜180cmくらいの丸い木の棒",w:"later",i:"🧘‍♀️",d:"棒を使って肩や肩甲骨を回す運動がインスタで流行りました。",p:[1,2],t:["relax","active","indoor"],e:["water","fire"],a:[20,30,40,50,60],c:["cheap"]},
@@ -273,13 +308,14 @@ const ITEMS=[
  {n:"ラベルレスペットボトル飲料水",w:"now",i:"💧",d:"箱買いして防災のローリングストックに。ラベルをはがす手間がなくゴミも減ってエコ。",p:[1,2],t:["lazy","clean","thrift"],e:["water","earth"],a:[20,30,40,50,60],c:["eco"]},
  {n:"尾西の携帯おにぎり",w:"now",i:"🍙",d:"水を注ぐだけで食べられる。長期保存できて防災にも。",p:[1,2],t:["active","picky"],e:["earth","fire"],a:[20,30,40,50,60]},
  {n:"コンパクトなバスタオル",w:"now",i:"🛀",d:"大きいと場所を取るので小さめで。吸水性の高いものならコンパクトで充分。乾きも早い。",p:[1,2],t:["clean","thrift","picky"],e:["water","earth"],a:[20,30,40,50,60],c:["eco","cheap"]},
- {n:"電子レンジ用トレイ",w:"later",i:"🍱",d:"レンジから取り出してそのまま食卓へ運べる。熱いお皿も安心。",p:[1,2],t:["lazy","cook"],e:["earth"],a:[20,30,40,50,60],c:["cheap"]},
+ {n:"電子レンジ用トレイ",w:"later",i:"svg:tray",d:"レンジから取り出してそのまま食卓へ運べる。熱いお皿も安心。",p:[1,2],t:["lazy","cook"],e:["earth"],a:[20,30,40,50,60],c:["cheap"]},
  {n:"電子レンジ用シリコンラップ",w:"later",i:"🟢",d:"お皿にかぶせてそのままチン。洗って繰り返し使えるのでラップ代も節約。",p:[1,2],t:["thrift","cook","clean"],e:["earth","water"],a:[20,30,40,50,60],c:["eco","cheap"]},
  {n:"100均のシャワードリップ",w:"later",i:"☕",d:"ドリッパーにのせてお湯を注ぐだけ。ゆっくりお湯が落ちている間に別のことができる。",p:[1,2],t:["lazy","relax","thrift"],e:["water","air"],a:[20,30,40,50,60],c:["cheap"]},
  {n:"コジット ダンボールストッカー",w:"later",i:"📦",d:"たまりがちなダンボールをすっきり収納。ダンボールストッカーならコジットのものがベスト。使い方はインスタなどで見てみて。",p:[1,2],t:["clean","picky"],e:["earth"],a:[20,30,40,50,60],c:["eco"]},
  {n:"ポータブル電源",w:"later",i:"svg:power",d:"停電時もスマホの充電や家電が使える。キャンプや車中泊など屋外でも活躍。",p:[1,2],t:["active","picky"],e:["fire","earth"],a:[20,30,40,50,60]},
  {n:"骨盤サポートチェア",w:"later",i:"🪑",d:"普通の椅子もこれがあるとテレワーク対応に。高価で大きいゲーミングチェアの前に試してみて。",p:[1,2],t:["indoor","picky","thrift"],e:["earth","water"],a:[20,30,40,50,60],c:["cheap"]},
  {n:"着ぐるみ",w:"later",i:"🧸",d:"楽しい！部屋着にすれば冬もぬくぬく。友だちが来た日や写真撮影にも。",d2:"楽しい！おそろいで着れば部屋着の時間がもっと楽しく。冬もぬくぬく。",p:[1,2],t:["relax","indoor"],e:["fire","water","air"],a:[20,30,40]},
+ {n:"服のミスト（衣類用しわ取りスプレー）",w:"now",i:"🧴",d:"シュッとかけて手でのばすだけでシワがとれる。アイロンもスチーマーも出さずに、朝の身支度がすぐ終わる。",p:[1,2],t:["lazy","picky"],e:["air","fire"],a:[20,30,40,50,60],c:["cheap"]},
  {n:"ブランケット",w:"later",i:"🧣",d:"ソファでの映画やうたた寝に。冬の電気代も節約。",p:[1,2],t:["relax","indoor","thrift"],e:["water"],a:[20,30,40,50,60],c:["eco", "cheap"]}
 ];
 
@@ -402,6 +438,10 @@ function horoHtml(){
 }
 function inList(n){return mine.some(m=>m.name===n)}
 const SVG_ICONS={
+ tagine:`<svg viewBox="0 0 36 36" width="34" height="34" aria-hidden="true"><circle cx="18" cy="5" r="2.2" fill="#b4522f"/><path d="M18 6.5C16 13 11 20 7.5 25h21C25 20 20 13 18 6.5z" fill="#d9663f"/><path d="M15.2 15.5h5.6M13 19.5h10" stroke="#f4c9a8" stroke-width="1.4" stroke-linecap="round"/><path d="M3 25h30v1.8c0 2.8-3.4 5.2-7.5 5.2h-15C6.4 32 3 29.6 3 26.8z" fill="#b4522f"/><path d="M3 25h30" stroke="#8f3e22" stroke-width="1.6" stroke-linecap="round"/></svg>`,
+ microwave:`<svg viewBox="0 0 36 36" width="34" height="34" aria-hidden="true"><rect x="2" y="7" width="32" height="22" rx="3" fill="#e9e5df" stroke="#8a8279" stroke-width="1.6"/><rect x="5.5" y="10.5" width="19" height="15" rx="1.8" fill="#3d4a52"/><path d="M8.5 13.5l4 0M8.5 16l2 0" stroke="#7d9aaa" stroke-width="1.2" stroke-linecap="round"/><rect x="26.5" y="10.5" width="5" height="3.2" rx=".8" fill="#5bbf8a"/><circle cx="29" cy="18" r="1.6" fill="#8a8279"/><circle cx="29" cy="22.5" r="1.6" fill="#8a8279"/><rect x="5" y="29" width="4" height="2" rx=".6" fill="#8a8279"/><rect x="27" y="29" width="4" height="2" rx=".6" fill="#8a8279"/></svg>`,
+ tray:`<svg viewBox="0 0 36 36" width="34" height="34" aria-hidden="true"><ellipse cx="18" cy="20" rx="16" ry="9.5" fill="#c9a77c"/><ellipse cx="18" cy="18.5" rx="16" ry="9.5" fill="#e8cfa6"/><ellipse cx="18" cy="18.5" rx="12.6" ry="7" fill="#f6e7cd"/><ellipse cx="18" cy="18" rx="5.5" ry="3" fill="#fff" opacity=".8"/></svg>`,
+ sensorlight:`<svg viewBox="0 0 36 36" width="34" height="34" aria-hidden="true"><path d="M5 30l4-7M31 30l-4-7M18 32v-6" stroke="#f2c94c" stroke-width="2" stroke-linecap="round"/><rect x="7" y="4" width="22" height="20" rx="3.5" fill="#f4f1ea" stroke="#9c958a" stroke-width="1.6"/><rect x="10.5" y="7.5" width="15" height="9.5" rx="1.6" fill="#fff4c2"/><circle cx="18" cy="20.5" r="1.8" fill="#5e6770"/></svg>`,
  power:`<svg viewBox="0 0 36 36" width="34" height="34" aria-hidden="true"><path d="M11 9V6.5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2V9" fill="none" stroke="#5b5f66" stroke-width="2.4" stroke-linecap="round"/><rect x="3" y="9" width="30" height="23" rx="4" fill="#f2a23a"/><rect x="3" y="9" width="30" height="5" rx="2" fill="#5b5f66"/><rect x="6.5" y="17" width="11" height="8" rx="1.5" fill="#2f3439"/><text x="12" y="23.4" font-size="5.5" font-family="sans-serif" font-weight="700" fill="#7fe3a0" text-anchor="middle">88%</text><circle cx="23" cy="21" r="2.2" fill="#2f3439"/><circle cx="29" cy="21" r="2.2" fill="#2f3439"/><rect x="21" y="26.2" width="3.4" height="2" rx=".6" fill="#2f3439"/><rect x="27.3" y="26.2" width="3.4" height="2" rx=".6" fill="#2f3439"/></svg>`
 };
 const icon=i=>i.startsWith("svg:")?SVG_ICONS[i.slice(4)]:i;
@@ -566,6 +606,79 @@ const vm=document.getElementById("verModal");
 document.getElementById("verBtn").onclick=()=>vm.classList.add("on");
 document.getElementById("verClose").onclick=()=>vm.classList.remove("on");
 vm.onclick=e=>{if(e.target===vm)vm.classList.remove("on")};
+
+// ===== 設定 =====
+const sm=document.getElementById("setModal");
+document.getElementById("setVer").textContent="v"+VERSION;
+document.getElementById("gearBtn").onclick=()=>{renderInstall();sm.classList.add("on")};
+document.getElementById("setClose").onclick=()=>sm.classList.remove("on");
+sm.onclick=e=>{if(e.target===sm)sm.classList.remove("on")};
+document.getElementById("histBtn").onclick=()=>vm.classList.add("on");
+
+// ===== ホーム画面に追加（ブラウザで開いたときの案内バーと、設定のボタン） =====
+// Android・PCのChrome系：ブラウザの「インストール」画面をそのまま出す（beforeinstallprompt）
+// iPhone・iPad：ブラウザからは追加できないので、共有ボタンからの手順を案内する
+const IS_HOSTED=location.protocol==="https:"&&/github\.io$/.test(location.hostname);
+if(IS_HOSTED&&"serviceWorker" in navigator){try{navigator.serviceWorker.register("sw.js").catch(()=>{})}catch(e){}}
+const INSTALL_DISMISS_KEY="ssg-install-dismiss-v1";
+const INSTALL_TEST=/[?&]installtest=1/.test(location.search);
+let deferredInstall=null,installGuide=null;
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredInstall=e;renderInstall()});
+window.addEventListener("appinstalled",()=>{deferredInstall=null;installGuide=null;renderInstall();toast("ホーム画面に追加しました")});
+function isStandalone(){
+  try{if(window.matchMedia&&window.matchMedia("(display-mode: standalone)").matches)return true}catch(e){}
+  return navigator.standalone===true;
+}
+function installPlatform(){
+  const ua=navigator.userAgent||"";
+  if(/Line\/|FBAN|FBAV|Instagram|Twitter|MicroMessenger/i.test(ua))return "inapp";
+  if(/iPhone|iPad|iPod/.test(ua)||(/Macintosh/.test(ua)&&navigator.maxTouchPoints>1))return "ios";
+  if(/Android/.test(ua))return "android";
+  return "pc";
+}
+function installBarVisible(){
+  if(!(IS_HOSTED||INSTALL_TEST)||isStandalone())return false;
+  try{if(window.top!==window.self)return false}catch(e){return false}
+  if(installPlatform()==="pc"&&!deferredInstall)return false;   // PCは、ブラウザがインストールに対応しているときだけ
+  const t=+store.get(INSTALL_DISMISS_KEY,0)||0;
+  return !t||(Date.now()-t)>14*24*3600*1000;   // ×で閉じたら2週間は出さない
+}
+function startInstall(where){
+  if(deferredInstall){
+    const ev=deferredInstall;ev.prompt();
+    if(ev.userChoice&&ev.userChoice.then)ev.userChoice.then(r=>{if(r&&r.outcome==="accepted")deferredInstall=null;renderInstall()});
+    return;
+  }
+  installGuide=installGuide===where?null:where;renderInstall();
+}
+function installGuideHtml(){
+  const p=installPlatform();let steps;
+  if(p==="inapp")steps=["今はアプリの中のブラウザ（LINEなど）で開いています。ホーム画面に追加するには、SafariやChromeで開き直してください","右上（または右下）のメニューから「ブラウザで開く」「Safariで開く」を選びます","開いたら、もう一度この案内のボタンを押してください"];
+  else if(p==="ios")steps=["画面下（または上）の共有ボタン <b>□↑</b> を押します（見当たらないときは「…」から）","メニューを下にスクロールして「<b>ホーム画面に追加</b>」を選びます","右上の「追加」を押すと、ホーム画面に「新生活グッズ」のアイコンができます"];
+  else if(p==="android")steps=["ブラウザ右上のメニュー <b>⋮</b> を押します","「<b>ホーム画面に追加</b>」または「<b>アプリをインストール</b>」を選びます","「追加」「インストール」を押すと、ホーム画面にアイコンができます"];
+  else steps=["Chrome・Edge：アドレスバーの右端のインストールのアイコン、またはメニューの「アプリをインストール」","Mac の Safari：メニューの「ファイル」→「Dockに追加」","スマホのホーム画面に置きたいときは、スマホでこのページを開いてください"];
+  let h=`<div class="install-guide"><div class="install-guide-t">ホーム画面に追加する手順</div><ol>${steps.map(t=>`<li>${t}</li>`).join("")}</ol>`;
+  h+=`<p class="install-guide-note">追加すると、アプリのように全画面で開けます。</p>`;
+  if(p==="ios"||p==="inapp")h+=`<p class="install-guide-note warn">⚠ iPhone・iPadでは、ブラウザで使っていたマイリストはホーム画面のアプリに引き継がれません。残したいときは、先に「共有」タブで「ぜんぶ」をコピーして、ホーム画面のアプリで取り込んでください。</p>`;
+  return h+`<button class="btn sub sm" data-guide-close>閉じる</button></div>`;
+}
+function renderInstall(){
+  // 画面上の案内バー
+  const bar=document.getElementById("installBar");
+  if(installGuide==="bar")bar.innerHTML=installGuideHtml();
+  else if(installBarVisible())bar.innerHTML=`<div class="install-bar"><button class="install-bar-main" data-install="bar"><img src="icons/icon-192.png" alt="" class="install-bar-ic"><span>アプリとしてホーム画面に追加</span></button><button class="install-bar-close" data-install-close aria-label="閉じる">×</button></div>`;
+  else bar.innerHTML="";
+  // 設定
+  const set=document.getElementById("installSet");
+  if(isStandalone())set.innerHTML=`<p class="ok-msg">✓ ホーム画面のアプリで開いています</p>`;
+  else set.innerHTML=`<p class="hint" style="margin-top:0">ホーム画面に追加すると、アプリのように全画面で開けます。</p><button class="btn" data-install="set" style="margin-top:8px">ホーム画面に追加</button>${installGuide==="set"?installGuideHtml():""}`;
+}
+document.addEventListener("click",e=>{
+  const b=e.target.closest("[data-install]");if(b){startInstall(b.dataset.install);return}
+  if(e.target.closest("[data-install-close]")){store.set(INSTALL_DISMISS_KEY,Date.now());renderInstall();toast("設定 →「ホーム画面に追加」からいつでも追加できます");return}
+  if(e.target.closest("[data-guide-close]")){installGuide=null;renderInstall()}
+});
+renderInstall();
 </script>
 </body>
 </html>
