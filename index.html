@@ -103,6 +103,8 @@ textarea{min-height:140px;font-family:ui-monospace,Menlo,monospace;font-size:13p
 .person{border:1.5px dashed var(--line);border-radius:12px;padding:10px 12px;margin-top:12px}
 .person h3{margin:0 0 4px;font-size:14px;color:var(--main-d)}
 .person .lbl{margin-top:8px}
+.chk{display:flex;align-items:center;gap:8px;font-size:13px;margin:10px 0 8px}
+.chk input{width:18px;height:18px;accent-color:var(--main)}
 .hint{font-size:12px;color:var(--sub);line-height:1.7;margin:6px 0 0}
 code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
 </style>
@@ -182,9 +184,10 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
       <button class="chip" data-m="bad">失敗だけ</button>
       <button class="chip" data-m="all">ぜんぶ</button>
     </div>
+    <label class="chk"><input type="checkbox" id="withLink"> このアプリのリンクも付ける</label>
     <textarea id="exp" readonly></textarea>
-    <button class="btn" id="copyBtn">コピーする</button>
-    <p class="hint">コピーしたテキストを LINE やメールで送ってね。</p>
+    <div class="row"><button class="btn" id="sendBtn">友だちに送る</button><button class="btn sub" id="copyBtn">コピーする</button></div>
+    <p class="hint">LINE やメールで送ってね。リンクを付けると、受け取った友だちもアプリを開いてそのまま取り込めます。</p>
   </div>
   <div class="card">
     <h2>📥 友だちのリストを取り込む</h2>
@@ -213,6 +216,13 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
     <div id="installSet"></div>
   </div>
   <div class="card">
+    <div class="lbl">このアプリを友達に勧める</div>
+    <p class="hint" style="margin-top:0">友達に、このアプリのURLと簡単な説明を送れます。送る前に、文章を確認・書きかえできます。</p>
+    <textarea id="recText" rows="8" aria-label="送る文章" style="font-family:inherit;margin-top:8px"></textarea>
+    <div class="row"><button class="btn" id="recSend">友達に送る</button><button class="btn sub" id="recCopy">文章をコピー</button></div>
+    <button class="btn sub sm" id="recReset" style="display:none">最初の文章に戻す</button>
+  </div>
+  <div class="card">
     <div class="lbl">このアプリについて</div>
     <p class="hint" style="margin:0">バージョン <b id="setVer"></b></p>
     <button class="btn sub sm" id="histBtn">更新履歴を見る</button>
@@ -224,8 +234,10 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
 
 <script>
 // ===== バージョン =====
-const VERSION="1.6";
+const SHARE_URL="https://sunatrux.github.io/newlife/";
+const VERSION="1.7";
 const HISTORY=[
+ {v:"1.7",d:"2026-11-02",c:["設定に「このアプリを友達に勧める」を追加。アプリのURLと説明を、LINEなどでそのまま送れます（文章は送る前に書きかえOK）","共有の「友だちに送る」に、アプリのリンクを付けられるように。「友だちに送る」ボタンも追加"]},
  {v:"1.6",d:"2026-11-01",c:["水回りの防水テープ・換気扇の埃フィルターを追加"]},
  {v:"1.5",d:"2026-11-01",c:["圧力鍋・折りたたみコンテナを削除","セリア 洗面鏡ナナメスタンド・大風量ドライヤー・ゴキジェット・骨盤サポートチェア・着ぐるみのアイコンを変更"]},
  {v:"1.4",d:"2026-11-01",c:["右上に⚙️設定を追加。「ホーム画面に追加」ボタンと、バージョン・更新履歴","ブラウザで開いたとき、画面の上に「アプリとしてホーム画面に追加」の案内を出すように（×で閉じると2週間は出ません）","服のミスト（衣類用しわ取りスプレー）を追加","足元センサーライトを人感センサーライトに","タジン鍋・電子レンジ・電子レンジ用トレイ・人感センサーライトのアイコンを変更"]},
@@ -569,13 +581,25 @@ function renderExport(){
   const flat=t=>t.replace(/\n/g," ");
   let md=`# ${nm?nm+"の":""}${expMode==="good"?"あって良かった":expMode==="bad"?"失敗した":""}新生活グッズ\n\n`;
   md+=list.length?list.map(m=>`- ${m.good?"★ ":""}${m.bad?"✖ ":""}${m.w?WHEN_ICON[m.w]+" ":""}${flat(m.name)}${m.memo?" : "+flat(m.memo):""}${m.bad&&m.ep?"\n  - 失敗：" +flat(m.ep):""}`).join("\n"):`（まだ${expMode==="bad"?"失敗":"★"}のアイテムがありません）`;
+  if(withLink.checked)md+=`\n\n新生活おすすめグッズで作ったリストです。アプリを開いて「共有」→「取り込む」に貼り付けると、そのまま読み込めます。\n${SHARE_URL}`;
   document.getElementById("exp").value=md+"\n";
 }
-document.getElementById("copyBtn").onclick=async()=>{
-  const t=document.getElementById("exp");
-  try{await navigator.clipboard.writeText(t.value);toast("コピーしました")}
-  catch(e){t.focus();t.select();toast("選択しました。長押しでコピーしてね")}
-};
+const withLink=document.getElementById("withLink");
+withLink.checked=store.get("ssg_withlink",true);
+withLink.onchange=()=>{store.set("ssg_withlink",withLink.checked);renderExport()};
+async function copyText(text,okMsg,ta){
+  try{await navigator.clipboard.writeText(text);toast(okMsg);return true}
+  catch(e){if(ta){ta.focus();ta.select();toast("選択しました。長押しでコピーしてね")}return false}
+}
+async function sendText(text,title,ta){
+  if(navigator.share){
+    try{await navigator.share({title,text});return}   // 本文にURLが入っているので text だけで送る
+    catch(err){if(err&&err.name==="AbortError")return}
+    copyText(text,"送れなかったので、文章をコピーしました。LINEなどに貼り付けて送ってください。",ta);
+  }else copyText(text,"この端末では直接送れないので、文章をコピーしました。LINEやメールに貼り付けて送ってください。",ta);
+}
+document.getElementById("copyBtn").onclick=()=>{const t=document.getElementById("exp");copyText(t.value,"コピーしました",t)};
+document.getElementById("sendBtn").onclick=()=>{const t=document.getElementById("exp");sendText(t.value,"新生活グッズのリスト",t)};
 function parseMd(text){
   let from="";const items=[];
   text.split(/\r?\n/).forEach(line=>{
@@ -623,6 +647,19 @@ document.getElementById("gearBtn").onclick=()=>{renderInstall();sm.classList.add
 document.getElementById("setClose").onclick=()=>sm.classList.remove("on");
 sm.onclick=e=>{if(e.target===sm)sm.classList.remove("on")};
 document.getElementById("histBtn").onclick=()=>vm.classList.add("on");
+
+// ===== 友達に勧める（文章は送る前に書きかえOK。書きかえた文章は開いている間だけ覚えておく） =====
+const recText=document.getElementById("recText"),recReset=document.getElementById("recReset");
+let recDraft=null;
+const defaultRecText=()=>"新生活おすすめグッズ\n"+
+  "性別・年代・性格・星座から、新生活にぴったりのグッズを選んでくれるアプリです。ふたり暮らしなら1人目・2人目それぞれで選べます。使ってみて本当にあって良かったもの・失敗だったものをマイリストに残して、友だちと送り合えます。ホーム画面に追加すると、アプリのように使えます。入力したデータはこの端末の中だけに保存され、サーバーには送られません。\n"+SHARE_URL;
+const recNow=()=>recDraft===null?defaultRecText():recDraft;
+function renderRec(){recText.value=recNow();recReset.style.display=recDraft!==null&&recDraft!==defaultRecText()?"inline-block":"none"}
+recText.oninput=()=>{recDraft=recText.value;recReset.style.display=recDraft!==defaultRecText()?"inline-block":"none"};
+document.getElementById("recSend").onclick=()=>sendText(recNow(),"新生活おすすめグッズ",recText);
+document.getElementById("recCopy").onclick=()=>copyText(recNow(),"文章をコピーしました。",recText);
+recReset.onclick=()=>{recDraft=null;renderRec()};
+renderRec();
 
 // ===== ホーム画面に追加（ブラウザで開いたときの案内バーと、設定のボタン） =====
 // Android・PCのChrome系：ブラウザの「インストール」画面をそのまま出す（beforeinstallprompt）
