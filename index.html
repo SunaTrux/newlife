@@ -235,8 +235,9 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
 <script>
 // ===== バージョン =====
 const SHARE_URL="https://sunatrux.github.io/newlife/";
-const VERSION="1.7";
+const VERSION="1.8";
 const HISTORY=[
+ {v:"1.8",d:"2026-11-02",c:["友だちに送るリスト（★だけ・ぜんぶ）を、「入居日から」「余裕があれば」の見出しごとに分けて並べるように"]},
  {v:"1.7",d:"2026-11-02",c:["設定に「このアプリを友達に勧める」を追加。アプリのURLと説明を、LINEなどでそのまま送れます（文章は送る前に書きかえOK）","共有の「友だちに送る」に、アプリのリンクを付けられるように。「友だちに送る」ボタンも追加"]},
  {v:"1.6",d:"2026-11-01",c:["水回りの防水テープ・換気扇の埃フィルターを追加"]},
  {v:"1.5",d:"2026-11-01",c:["圧力鍋・折りたたみコンテナを削除","セリア 洗面鏡ナナメスタンド・大風量ドライヤー・ゴキジェット・骨盤サポートチェア・着ぐるみのアイコンを変更"]},
@@ -580,7 +581,14 @@ function renderExport(){
   const nm=myName.value.trim();
   const flat=t=>t.replace(/\n/g," ");
   let md=`# ${nm?nm+"の":""}${expMode==="good"?"あって良かった":expMode==="bad"?"失敗した":""}新生活グッズ\n\n`;
-  md+=list.length?list.map(m=>`- ${m.good?"★ ":""}${m.bad?"✖ ":""}${m.w?WHEN_ICON[m.w]+" ":""}${flat(m.name)}${m.memo?" : "+flat(m.memo):""}${m.bad&&m.ep?"\n  - 失敗：" +flat(m.ep):""}`).join("\n"):`（まだ${expMode==="bad"?"失敗":"★"}のアイテムがありません）`;
+  const line=(m,withW)=>`- ${m.good?"★ ":""}${m.bad?"✖ ":""}${withW&&m.w?WHEN_ICON[m.w]+" ":""}${flat(m.name)}${m.memo?" : "+flat(m.memo):""}${m.bad&&m.ep?"\n  - 失敗："+flat(m.ep):""}`;
+  if(!list.length)md+=`（まだ${expMode==="bad"?"失敗":"★"}のアイテムがありません）`;
+  else if(expMode==="bad")md+=list.map(m=>line(m,true)).join("\n");
+  else{
+    // ★だけ・ぜんぶ：買う時期ごとに見出しを付けて並べる
+    const groups=[["now",WHEN.now],["later",WHEN.later],["","🗂 時期未定"]];
+    md+=groups.map(([k,title])=>{const g=list.filter(m=>(m.w||"")===k);return g.length?`## ${title}\n${g.map(m=>line(m,false)).join("\n")}`:""}).filter(Boolean).join("\n\n");
+  }
   if(withLink.checked)md+=`\n\n新生活おすすめグッズで作ったリストです。アプリを開いて「共有」→「取り込む」に貼り付けると、そのまま読み込めます。\n${SHARE_URL}`;
   document.getElementById("exp").value=md+"\n";
 }
@@ -601,10 +609,12 @@ async function sendText(text,title,ta){
 document.getElementById("copyBtn").onclick=()=>{const t=document.getElementById("exp");copyText(t.value,"コピーしました",t)};
 document.getElementById("sendBtn").onclick=()=>{const t=document.getElementById("exp");sendText(t.value,"新生活グッズのリスト",t)};
 function parseMd(text){
-  let from="";const items=[];
+  let from="",curW="";const items=[];
   text.split(/\r?\n/).forEach(line=>{
     const f=line.match(/^\s+[-*・]\s*失敗[:：]\s*(.*)$/);
     if(f){if(items.length){const l=items[items.length-1];l.bad=true;l.ep=f[1].trim()}return}
+    const hh=line.match(/^##+\s*(.*)$/);
+    if(hh){curW="";for(const k in WHEN_ICON){if(hh[1].startsWith(WHEN_ICON[k])||hh[1].includes(WHEN[k].replace(/^\S+\s*/,"")))curW=k}if(hh[1].startsWith("📅"))curW="later";return}
     const h=line.match(/^#\s*(.+?)の/);if(h&&!from){from=h[1].trim();return}
     const m=line.match(/^\s*(?:[-*・]|\d+\.)\s+(.*)$/);if(!m)return;
     let s=m[1].trim(),good=false,bad=false;
@@ -615,7 +625,7 @@ function parseMd(text){
     let w="";for(const k in WHEN_ICON){if(s.startsWith(WHEN_ICON[k])){w=k;s=s.slice(WHEN_ICON[k].length).replace(/^\uFE0F/,"").trim();break}}
     const sp=s.split(/\s+[:：]\s+|\s+[—–-]{1,2}\s+/);
     const name=sp.shift().replace(/\*\*/g,"").trim();if(!name)return;
-    items.push({name,memo:sp.join(" ").trim(),good,bad,ep:"",w});
+    items.push({name,memo:sp.join(" ").trim(),good,bad,ep:"",w:w||curW});
   });
   return {from,items};
 }
