@@ -2,6 +2,9 @@
 
 新生活おすすめグッズ（https://sunatrux.github.io/newlife/）の変更点です。
 
+## 1.16.0（2026-11-03）
+- Anker Nano Charging Station に、Anker公式ページへのリンクを追加
+
 ## 1.15.0（2026-11-03）
 - コジット ダンボールストッカー・服のミスト・TimeTreeに、公式ページへのリンクを追加
 

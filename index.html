@@ -258,11 +258,12 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
 <script>
 // ===== バージョン =====
 const SHARE_URL="https://sunatrux.github.io/newlife/";
-const APP_VERSION = '1.15.0';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
+const APP_VERSION = '1.16.0';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
 const APP_RELEASE_DATE = '2026-11-03';
 const VERSION=APP_VERSION;
 const CHANGELOG_URL="https://github.com/sunatrux/newlife/blob/main/CHANGELOG.md";
 const HISTORY=[
+ {v:"1.16.0",d:"2026-11-03",c:["Anker Nano Charging Station に、Anker公式ページへのリンクを追加"]},
  {v:"1.15.0",d:"2026-11-03",c:["コジット ダンボールストッカー・服のミスト・TimeTreeに、公式ページへのリンクを追加"]},
  {v:"1.14.0",d:"2026-11-03",c:["シェアレンタル自転車を追加","電動アシスト自転車を削除","レンチン炊飯器をふたり暮らしでもおすすめするように"]},
  {v:"1.13.0",d:"2026-11-03",c:["レンチン炊飯器を追加（電気なし）","クッカーを削除"]},
@@ -348,7 +349,7 @@ const ITEMS=[
  {n:"サーモグラス",w:"later",i:"🥃",d:"二重構造で氷が溶けにくく、結露しない。毎日の一杯がちょっと特別に。",p:[1,2],t:["picky","relax"],e:["water","air"],a:[20,30,40,50,60]},
  {n:"アレクサ＋Fire TV Stick＋プロジェクター",el:1,w:"later",i:"🗣️",d:"アレクサ→Fire TV Stick→プロジェクターとつなぐと、声だけで映画やYouTubeを再生・操作できる。リモコンを探さなくていい。",d2:"アレクサ→Fire TV Stick→プロジェクターとつなぐと、声だけで再生・操作できる。ソファに並んだまま「アレクサ、映画つけて」。",p:[1,2],t:["lazy","indoor","picky"],e:["air","water"],a:[20,30,40,50,60]},
  {n:"防音マット（静床ライト）",w:"later",i:"🔇",d:"足音や椅子の音を軽減して、下の階への気づかいに。静床ライトなら敷くだけのタイルマットで、汚れた1枚だけ外して洗える。床のキズ防止にも。",p:[1,2],t:["picky","indoor","active","clean"],e:["earth","water"],a:[20,30,40,50,60]},
- {n:"今時の電源タップ Anker Nano Charging Station",el:1,w:"later",i:"🔌",d:"USB-CとUSB-A、コンセントを1台に。コンパクトで旅行時にも便利な電源タップ。",p:[1,2],t:["picky","active"],e:["air","fire"],a:[20,30,40,50]},
+ {n:"今時の電源タップ Anker Nano Charging Station",el:1,w:"later",i:"🔌",d:"USB-CとUSB-A、コンセントを1台に。コンパクトで旅行時にも便利な電源タップ。",p:[1,2],t:["picky","active"],e:["air","fire"],a:[20,30,40,50],l:{t:"Anker 公式ページ（6-in-1, 67W）",u:"https://www.ankerjapan.com/products/a9129"}},
  {n:"ラベルレスペットボトル飲料水",w:"now",i:"💧",d:"箱買いして防災のローリングストックに。ラベルをはがす手間がなくゴミも減ってエコ。",p:[1,2],t:["lazy","clean","thrift"],e:["water","earth"],a:[20,30,40,50,60],c:["eco"]},
  {n:"尾西の携帯おにぎり",w:"now",i:"🍙",d:"水を注ぐだけで食べられる。長期保存できて防災にも。",p:[1,2],t:["active","picky"],e:["earth","fire"],a:[20,30,40,50,60]},
  {n:"コンパクトなバスタオル",w:"now",i:"🛀",d:"大きいと場所を取るので小さめで。吸水性の高いものならコンパクトで充分。乾きも早い。",p:[1,2],t:["clean","thrift","picky"],e:["water","earth"],a:[20,30,40,50,60],c:["eco","cheap"]},
