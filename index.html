@@ -58,8 +58,8 @@ h2{font-size:15px;margin:0 0 10px}
 .why span.p{background:#eaf2fb;color:#4a7bb0}
 .add{flex:none;border:1.5px solid var(--main);background:#fff;color:var(--main);border-radius:10px;padding:6px 10px;font:inherit;font-size:12px;font-weight:700}
 .add.done{border-color:var(--leaf);color:var(--leaf)}
-input[type=text],input[type=search],textarea{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:10px;font:inherit;font-size:14px;background:#fff;color:var(--ink)}
-textarea{min-height:140px;font-family:ui-monospace,Menlo,monospace;font-size:13px;line-height:1.6}
+input[type=text],input[type=search],textarea{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:10px;font:inherit;font-size:16px;background:#fff;color:var(--ink)}
+textarea{min-height:140px;font-family:ui-monospace,Menlo,monospace;font-size:16px;line-height:1.6}
 .row{display:flex;gap:8px}.row>*{flex:1}
 .mine .top{display:flex;align-items:center;gap:8px}
 .mine .nm{flex:1;font-weight:700;font-size:15px;word-break:break-all}
@@ -69,7 +69,7 @@ textarea{min-height:140px;font-family:ui-monospace,Menlo,monospace;font-size:13p
 .bad.on{background:#eef0f3;border-color:#9aa3ad;color:#5b6570}
 .mine .ep{background:#f6f7f9;border-color:#d9dee4}
 .del{border:none;background:none;color:#c8bdb2;font-size:18px;padding:0 4px}
-.mine .memo{margin-top:8px;font-size:13px;min-height:auto;font-family:inherit;padding:8px}
+.mine .memo{margin-top:8px;font-size:16px;min-height:auto;font-family:inherit;padding:8px}
 .when{display:flex;gap:4px;margin-top:8px;flex-wrap:wrap}
 .wbtn{border:1px solid var(--line);background:#fff;color:var(--sub);border-radius:999px;padding:3px 9px;font:inherit;font-size:11px}
 .wbtn.on.now{background:#fde4e0;color:#c0473a;border-color:#f3b9b0;font-weight:700}
@@ -105,6 +105,10 @@ textarea{min-height:140px;font-family:ui-monospace,Menlo,monospace;font-size:13p
 .person .lbl{margin-top:8px}
 .chk{display:flex;align-items:center;gap:8px;font-size:13px;margin:10px 0 8px}
 .chk input{width:18px;height:18px;accent-color:var(--main)}
+/* iPhoneは16px未満の入力欄にフォーカスすると画面が拡大されるため、入力欄は16px */
+.search{position:relative}
+.search-ic{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:15px;pointer-events:none;opacity:.7}
+.search input{padding-left:36px}
 .hint{font-size:12px;color:var(--sub);line-height:1.7;margin:6px 0 0}
 code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
 </style>
@@ -142,7 +146,7 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
 <!-- アイテム一覧 -->
 <section id="all">
   <div class="card" style="padding:10px">
-    <input type="search" id="q" placeholder="🔍 アイテムを検索（例：レンジ、防災、エコ）">
+    <div class="search"><span class="search-ic" aria-hidden="true">🔍</span><input type="search" id="q" placeholder="アイテムを検索（例：レンジ、防災、エコ）" aria-label="アイテムを検索"></div>
     <div class="chips" id="allFilter" style="margin-top:8px">
       <button class="chip on" data-v="">すべて</button><button class="chip" data-v="eco">♻️ エコ</button><button class="chip" data-v="cheap">💴 安価</button><button class="chip" data-v="1">ひとり向け</button><button class="chip" data-v="2">ふたり向け</button>
     </div>
@@ -235,8 +239,9 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
 <script>
 // ===== バージョン =====
 const SHARE_URL="https://sunatrux.github.io/newlife/";
-const VERSION="1.8";
+const VERSION="1.9";
 const HISTORY=[
+ {v:"1.9",d:"2026-11-02",c:["iPhoneで入力欄を押すと画面が拡大されてしまうのを修正","検索欄の🔍を入力欄の左に固定し、カーソルが🔍の後ろに来るように"]},
  {v:"1.8",d:"2026-11-02",c:["友だちに送るリスト（★だけ・ぜんぶ）を、「入居日から」「余裕があれば」の見出しごとに分けて並べるように"]},
  {v:"1.7",d:"2026-11-02",c:["設定に「このアプリを友達に勧める」を追加。アプリのURLと説明を、LINEなどでそのまま送れます（文章は送る前に書きかえOK）","共有の「友だちに送る」に、アプリのリンクを付けられるように。「友だちに送る」ボタンも追加"]},
  {v:"1.6",d:"2026-11-01",c:["水回りの防水テープ・換気扇の埃フィルターを追加"]},
