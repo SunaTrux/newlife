@@ -258,11 +258,12 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
 <script>
 // ===== バージョン =====
 const SHARE_URL="https://sunatrux.github.io/newlife/";
-const APP_VERSION = '1.12.0';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
+const APP_VERSION = '1.13.0';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
 const APP_RELEASE_DATE = '2026-11-03';
 const VERSION=APP_VERSION;
 const CHANGELOG_URL="https://github.com/sunatrux/newlife/blob/main/CHANGELOG.md";
 const HISTORY=[
+ {v:"1.13.0",d:"2026-11-03",c:["レンチン炊飯器を追加（電気なし）","クッカーを削除"]},
  {v:"1.12.0",d:"2026-11-03",c:["おすすめの「重視すること」に「🔌 家電」「🍃 電気なし」を追加。選ぶと、電気を使うもの／使わないものだけでおすすめします","一覧にも「🔌 家電」「🍃 電気なし」の絞り込みを追加"]},
  {v:"1.11.0",d:"2026-11-03",c:["設定に「アプリの更新」を追加。最新版かどうかを確認して、その場で更新できます","新しいバージョンが出たら、画面の上でお知らせ（「再読み込み」で更新）","アップデートしたあと、最初に開いたときに「何が変わったか」を一度だけお知らせ","バージョン番号を「1.11.0」形式に。設定の一番下にバージョンと更新日、更新履歴を表示","設定の「ホーム画面に追加」に、追加するとできることの説明を追加"]},
  {v:"1.10.0",d:"2026-11-03",c:["アプリタイトルを左寄せに","ヒント文を「本当にあって良かったものだけを集めよう」に","設定ボタンを、画面になじむ丸いボタンに"]},
@@ -297,7 +298,6 @@ const PERSONA={lazy:"めんどくさがり",clean:"きれい好き",cook:"料理
 const ITEMS=[
  {n:"ロボット掃除機",el:1,w:"later",i:"🤖",d:"出かけている間に床がきれいに。床にモノを置かなくなる効果も。",p:[1,2],t:["lazy","clean"],e:["earth","air"],a:[20,30,40,50,60]},
  {n:"タジン鍋",w:"later",i:"svg:tagine",d:"野菜とお肉を入れてレンジや火にかけるだけ。ヘルシーで洗い物も少なめ。",p:[1,2],t:["cook","lazy"],e:["fire","water"],a:[20,30,40,50,60]},
- {n:"クッカー",w:"later",i:"🍲",d:"ひとり鍋・ラーメン・炊飯まで1台で。小さなキッチンの心強い味方。",p:[1],t:["lazy","thrift","active"],e:["fire"],a:[20,30]},
  {n:"セリア 洗面鏡ナナメスタンド",w:"now",i:"svg:slantstand",d:"100均で買える角度つきスタンド。洗面台まわりの見やすさがグッと上がる。",p:[1,2],t:["thrift","picky","clean"],e:["earth","air"],a:[20,30,40,50,60],c:["cheap"]},
  {n:"TimeTree（共有カレンダー）",el:1,w:"now",i:"📅",d:"ふたりの予定を共有できる無料アプリ。すれ違い防止に。",p:[2],t:["picky","active"],e:["air"],a:[20,30,40,50,60],c:["cheap"]},
  {n:"電気ケトル",el:1,w:"now",i:"☕",d:"すぐお湯が沸く。コーヒー、カップ麺、湯たんぽにも。",p:[1,2],t:["lazy","indoor"],e:["fire","water"],a:[20,30,40,50,60]},
@@ -361,6 +361,7 @@ const ITEMS=[
  {n:"服のミスト（衣類用しわ取りスプレー）",w:"now",i:"🧴",d:"シュッとかけて手でのばすだけでシワがとれる。アイロンもスチーマーも出さずに、朝の身支度がすぐ終わる。",p:[1,2],t:["lazy","picky"],e:["air","fire"],a:[20,30,40,50,60],c:["cheap"]},
  {n:"水回りの防水テープ",w:"now",i:"svg:tape",d:"洗面所・キッチン・お風呂のすき間に、入居時に貼っておくとカビ防止に。賃貸でも安心。",p:[1,2],t:["clean","picky","thrift"],e:["earth","water"],a:[20,30,40,50,60],c:["cheap"]},
  {n:"換気扇の埃フィルター",w:"now",i:"svg:fanfilter",d:"お風呂やキッチンの換気扇に貼っておくと、ホコリや油汚れを受け止めて掃除の手間が減る。",p:[1,2],t:["clean","lazy"],e:["earth","air"],a:[20,30,40,50,60],c:["cheap"]},
+ {n:"レンチン炊飯器",w:"later",i:"svg:mugrice",d:"お米と水を入れてレンジでチンするだけ。マグカップのような器で1合をふっくら炊けて、炊飯器を置く場所もいらない。",p:[1],t:["lazy","cook","thrift"],e:["fire","earth"],a:[20,30,40,50,60],c:["cheap"]},
  {n:"ブランケット",w:"later",i:"🧣",d:"ソファでの映画やうたた寝に。冬の電気代も節約。",p:[1,2],t:["relax","indoor","thrift"],e:["water"],a:[20,30,40,50,60],c:["eco", "cheap"]}
 ];
 
@@ -491,6 +492,7 @@ function horoHtml(){
 }
 function inList(n){return mine.some(m=>m.name===n)}
 const SVG_ICONS={
+ mugrice:`<svg viewBox="0 0 36 36" width="34" height="34" aria-hidden="true"><path d="M27 14h1.5a4.5 4.5 0 0 1 4.5 4.5v1a4.5 4.5 0 0 1-4.5 4.5H27" fill="none" stroke="#2b2b2b" stroke-width="2.8"/><path d="M5 11h22v16c0 3.3-2.7 6-6 6H11c-3.3 0-6-2.7-6-6z" fill="#2f2f2f"/><path d="M8 17.5h6M17 15h7M9 22.5h9M13 27h9M20 20h4" stroke="#5a5a5a" stroke-width="1" stroke-linecap="round"/><ellipse cx="16" cy="11" rx="11" ry="2" fill="#1f1f1f"/><path d="M8 11c0-3.2 3.6-5 8-5s8 1.8 8 5z" fill="#3a3a3a"/><path d="M10.5 9.5h11" stroke="#555" stroke-width=".8"/><rect x="13" y="2" width="6" height="4.5" rx="1.6" fill="#2b2b2b"/><ellipse cx="16" cy="2.4" rx="3" ry=".9" fill="#4a4a4a"/><circle cx="19.5" cy="8.6" r=".7" fill="#111"/></svg>`,
  tape:`<svg viewBox="0 0 36 36" width="34" height="34" aria-hidden="true"><path d="M18 22h15v6H18z" fill="#bfe3ef" stroke="#7fb9cf" stroke-width="1.2"/><circle cx="14" cy="18" r="11" fill="#9fd3e6"/><circle cx="14" cy="18" r="11" fill="none" stroke="#6fb0c9" stroke-width="1.4"/><circle cx="14" cy="18" r="5" fill="#fbf7f0" stroke="#6fb0c9" stroke-width="1.4"/><path d="M27 20c1.2 1.6 1.2 3 0 4.4" stroke="#fff" stroke-width="1" fill="none" opacity=".8"/><path d="M30.5 9c0 2-1.6 3.2-1.6 4.6a1.6 1.6 0 0 0 3.2 0c0-1.4-1.6-2.6-1.6-4.6z" fill="#5aa9e6"/></svg>`,
  fanfilter:`<svg viewBox="0 0 36 36" width="34" height="34" aria-hidden="true"><rect x="4" y="4" width="28" height="28" rx="3" fill="#e9e5df" stroke="#8a8279" stroke-width="1.6"/><circle cx="18" cy="18" r="10" fill="#cfc8bd"/><path d="M18 18c0-5 2-7 4-7-0 3-1.5 5.5-4 7zM18 18c5 0 7 2 7 4-3 0-5.5-1.5-7-4zM18 18c0 5-2 7-4 7 0-3 1.5-5.5 4-7zM18 18c-5 0-7-2-7-4 3 0 5.5 1.5 7 4z" fill="#8a8279"/><rect x="6" y="6" width="24" height="24" rx="2" fill="#fff" fill-opacity=".55" stroke="#9fd3a8" stroke-width="1.4" stroke-dasharray="2.5 2"/><path d="M8 12h20M8 18h20M8 24h20M12 8v20M18 8v20M24 8v20" stroke="#9fd3a8" stroke-width=".7" opacity=".7"/></svg>`,
  slantstand:`<svg viewBox="0 0 36 36" width="34" height="34" aria-hidden="true"><rect x="9" y="5" width="8" height="18" rx="2.5" transform="rotate(-22 13 14)" fill="#7ec8e3"/><rect x="9.6" y="2.2" width="6.8" height="3.4" rx="1" transform="rotate(-22 13 14)" fill="#3f8fb0"/><rect x="17" y="7" width="7" height="16" rx="1.5" transform="rotate(-22 20 15)" fill="#f2a6b8"/><rect x="18.6" y="4.4" width="3.8" height="3" rx=".8" transform="rotate(-22 20 15)" fill="#c95f7a"/><rect x="24.5" y="9.5" width="6" height="14" rx="3" transform="rotate(-22 27.5 16.5)" fill="#e9e3d6"/><rect x="25.6" y="7.4" width="3.8" height="2.6" rx=".8" transform="rotate(-22 27.5 16.5)" fill="#9a8f7c"/><path d="M4 31l5-13h25l-4 13z" fill="#cfe8f3" fill-opacity=".55" stroke="#8fbfd6" stroke-width="1.4" stroke-linejoin="round"/><path d="M6.5 28h24" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round" opacity=".8"/></svg>`,
