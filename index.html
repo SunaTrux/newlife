@@ -58,6 +58,7 @@ h2{font-size:15px;margin:0 0 10px}
 .why span.k{background:#fdf3dc;color:#a87a12}
 .why span.w{background:#fde4e0;color:#c0473a;font-weight:700}
 .why span.w.later{background:#f3eefe;color:#7a5fc0}
+.why span.sp{background:#e7f1ec;color:#3f7a5a;font-weight:700}
 .why span.p{background:#eaf2fb;color:#4a7bb0}
 .add{flex:none;border:1.5px solid var(--main);background:#fff;color:var(--main);border-radius:10px;padding:6px 10px;font:inherit;font-size:12px;font-weight:700}
 .add.done{border-color:var(--leaf);color:var(--leaf)}
@@ -166,7 +167,7 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
   <div class="card" style="padding:10px">
     <div class="search"><span class="search-ic" aria-hidden="true">🔍</span><input type="search" id="q" placeholder="アイテムを検索（例：レンジ、防災、エコ）" aria-label="アイテムを検索"></div>
     <div class="chips" id="allFilter" style="margin-top:8px">
-      <button class="chip on" data-v="">すべて</button><button class="chip" data-v="eco">♻️ エコ</button><button class="chip" data-v="cheap">💴 安価</button><button class="chip" data-v="1">ひとり向け</button><button class="chip" data-v="2">ふたり向け</button><button class="chip" data-v="on">🔌 家電</button><button class="chip" data-v="off">🍃 電気なし</button>
+      <button class="chip on" data-v="">すべて</button><button class="chip" data-v="eco">♻️ エコ</button><button class="chip" data-v="cheap">💴 安価</button><button class="chip" data-v="1">ひとり向け</button><button class="chip" data-v="2">ふたり向け</button><button class="chip" data-v="on">🔌 家電</button><button class="chip" data-v="off">🍃 電気なし</button><button class="chip" data-v="sp">📌 指定</button>
     </div>
     <div class="chips" id="whenFilter" style="margin-top:6px">
       <button class="chip on" data-v="">いつでも</button><button class="chip" data-v="now">🚨 入居日から</button><button class="chip" data-v="later">✨ 余裕があれば</button>
@@ -258,11 +259,12 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
 <script>
 // ===== バージョン =====
 const SHARE_URL="https://sunatrux.github.io/newlife/";
-const APP_VERSION = '1.16.0';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
+const APP_VERSION = '1.17.0';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
 const APP_RELEASE_DATE = '2026-11-03';
 const VERSION=APP_VERSION;
 const CHANGELOG_URL="https://github.com/sunatrux/newlife/blob/main/CHANGELOG.md";
 const HISTORY=[
+ {v:"1.17.0",d:"2026-11-03",c:["商品を指定しているアイテムに「📌 指定」の目印を付け、一覧で絞り込めるように","折りたためる洗濯かごを追加","サーモグラスを真空断熱タンブラーに","クッション付きフラフープの説明を変更"]},
  {v:"1.16.0",d:"2026-11-03",c:["Anker Nano Charging Station に、Anker公式ページへのリンクを追加"]},
  {v:"1.15.0",d:"2026-11-03",c:["コジット ダンボールストッカー・服のミスト・TimeTreeに、公式ページへのリンクを追加"]},
  {v:"1.14.0",d:"2026-11-03",c:["シェアレンタル自転車を追加","電動アシスト自転車を削除","レンチン炊飯器をふたり暮らしでもおすすめするように"]},
@@ -301,8 +303,8 @@ const PERSONA={lazy:"めんどくさがり",clean:"きれい好き",cook:"料理
 const ITEMS=[
  {n:"ロボット掃除機",el:1,w:"later",i:"🤖",d:"出かけている間に床がきれいに。床にモノを置かなくなる効果も。",p:[1,2],t:["lazy","clean"],e:["earth","air"],a:[20,30,40,50,60]},
  {n:"タジン鍋",w:"later",i:"svg:tagine",d:"野菜とお肉を入れてレンジや火にかけるだけ。ヘルシーで洗い物も少なめ。",p:[1,2],t:["cook","lazy"],e:["fire","water"],a:[20,30,40,50,60]},
- {n:"セリア 洗面鏡ナナメスタンド",w:"now",i:"svg:slantstand",d:"100均で買える角度つきスタンド。洗面台まわりの見やすさがグッと上がる。",p:[1,2],t:["thrift","picky","clean"],e:["earth","air"],a:[20,30,40,50,60],c:["cheap"]},
- {n:"TimeTree（共有カレンダー）",el:1,w:"now",i:"📅",d:"ふたりの予定を共有できる無料アプリ。すれ違い防止に。",p:[2],t:["picky","active"],e:["air"],a:[20,30,40,50,60],c:["cheap"],l:{t:"TimeTree 公式サイト",u:"https://timetreeapp.com/"}},
+ {n:"セリア 洗面鏡ナナメスタンド",sp:1,w:"now",i:"svg:slantstand",d:"100均で買える角度つきスタンド。洗面台まわりの見やすさがグッと上がる。",p:[1,2],t:["thrift","picky","clean"],e:["earth","air"],a:[20,30,40,50,60],c:["cheap"]},
+ {n:"TimeTree（共有カレンダー）",sp:1,el:1,w:"now",i:"📅",d:"ふたりの予定を共有できる無料アプリ。すれ違い防止に。",p:[2],t:["picky","active"],e:["air"],a:[20,30,40,50,60],c:["cheap"],l:{t:"TimeTree 公式サイト",u:"https://timetreeapp.com/"}},
  {n:"電気ケトル",el:1,w:"now",i:"☕",d:"すぐお湯が沸く。コーヒー、カップ麺、湯たんぽにも。",p:[1,2],t:["lazy","indoor"],e:["fire","water"],a:[20,30,40,50,60]},
  {n:"電子レンジ（フラット庫内）",el:1,w:"now",i:"svg:microwave",d:"ターンテーブルなしは掃除がラク。作り置きの温め直しに必須。",p:[1,2],t:["lazy","clean"],e:["earth"],a:[20,30,40,50,60]},
  {n:"3合炊き炊飯器",el:1,w:"now",i:"🍚",d:"まとめて炊いて冷凍が節約の基本。",p:[1],t:["thrift","cook"],e:["earth"],a:[20,30,40,50,60]},
@@ -342,29 +344,30 @@ const ITEMS=[
  {n:"人感センサーライト",el:1,w:"now",i:"svg:sensorlight",d:"人が近づくと自動で点灯。夜中のトイレや廊下、玄関、クローゼットの暗がり対策に。",p:[1,2],t:["lazy","picky"],e:["earth","water"],a:[20,30,40,50,60],c:["cheap"]},
  {n:"浴室の滑り止めマット",w:"now",i:"🛁",d:"慣れない新居のお風呂でも安心。",p:[1,2],t:["clean","picky"],e:["earth","water"],a:[50,60],c:["cheap"]},
  {n:"150〜180cmくらいの丸い木の棒",w:"later",i:"🧘‍♀️",d:"棒を使って肩や肩甲骨を回す運動がインスタで流行りました。",p:[1,2],t:["relax","active","indoor"],e:["water","fire"],a:[20,30,40,50,60],c:["cheap"]},
- {n:"クッション付きフラフープ",w:"later",i:"⭕",d:"回すだけで運動不足解消。クッション付きなので痛くなりにくい。",p:[1,2],t:["active","indoor"],e:["fire","air"],a:[20,30,40,50]},
- {n:"ゴキジェット",w:"now",i:"svg:spraycan",d:"新居は出がち！引っ越し初日から1本あると安心。",p:[1,2],t:["clean","picky"],e:["fire","earth"],a:[20,30,40,50,60],c:["cheap"]},
+ {n:"クッション付きフラフープ",w:"later",i:"⭕",d:"回すだけで運動不足解消。クッション付きだから体に当たっても痛くなりにくく、落としても音が抑えられる。",p:[1,2],t:["active","indoor"],e:["fire","air"],a:[20,30,40,50]},
+ {n:"ゴキジェット",sp:1,w:"now",i:"svg:spraycan",d:"新居は出がち！引っ越し初日から1本あると安心。",p:[1,2],t:["clean","picky"],e:["fire","earth"],a:[20,30,40,50,60],c:["cheap"]},
  {n:"レンチン目玉焼きクッカー",w:"later",i:"🍳",d:"卵を割ってレンジで1分。フライパンを洗わずに朝ごはん。",p:[1,2],t:["lazy","cook"],e:["fire","air"],a:[20,30,40,50,60],c:["cheap"]},
  {n:"耐熱ガラス容器",w:"later",i:"🫙",d:"作り置き→レンジ→そのまま食卓へ。においや色移りしにくい。",p:[1,2],t:["cook","clean","thrift"],e:["earth","water"],a:[20,30,40,50,60],c:["eco"]},
- {n:"サーモグラス",w:"later",i:"🥃",d:"二重構造で氷が溶けにくく、結露しない。毎日の一杯がちょっと特別に。",p:[1,2],t:["picky","relax"],e:["water","air"],a:[20,30,40,50,60]},
- {n:"アレクサ＋Fire TV Stick＋プロジェクター",el:1,w:"later",i:"🗣️",d:"アレクサ→Fire TV Stick→プロジェクターとつなぐと、声だけで映画やYouTubeを再生・操作できる。リモコンを探さなくていい。",d2:"アレクサ→Fire TV Stick→プロジェクターとつなぐと、声だけで再生・操作できる。ソファに並んだまま「アレクサ、映画つけて」。",p:[1,2],t:["lazy","indoor","picky"],e:["air","water"],a:[20,30,40,50,60]},
- {n:"防音マット（静床ライト）",w:"later",i:"🔇",d:"足音や椅子の音を軽減して、下の階への気づかいに。静床ライトなら敷くだけのタイルマットで、汚れた1枚だけ外して洗える。床のキズ防止にも。",p:[1,2],t:["picky","indoor","active","clean"],e:["earth","water"],a:[20,30,40,50,60]},
- {n:"今時の電源タップ Anker Nano Charging Station",el:1,w:"later",i:"🔌",d:"USB-CとUSB-A、コンセントを1台に。コンパクトで旅行時にも便利な電源タップ。",p:[1,2],t:["picky","active"],e:["air","fire"],a:[20,30,40,50],l:{t:"Anker 公式ページ（6-in-1, 67W）",u:"https://www.ankerjapan.com/products/a9129"}},
+ {n:"真空断熱タンブラー",w:"later",i:"🥤",d:"保冷も保温も一年中使える。氷が溶けにくく、結露もしない。塩分の多いスープや、牛乳・ジュースの入れっぱなしは避けて。",p:[1,2],t:["picky","relax"],e:["water","air"],a:[20,30,40,50,60]},
+ {n:"アレクサ＋Fire TV Stick＋プロジェクター",sp:1,el:1,w:"later",i:"🗣️",d:"アレクサ→Fire TV Stick→プロジェクターとつなぐと、声だけで映画やYouTubeを再生・操作できる。リモコンを探さなくていい。",d2:"アレクサ→Fire TV Stick→プロジェクターとつなぐと、声だけで再生・操作できる。ソファに並んだまま「アレクサ、映画つけて」。",p:[1,2],t:["lazy","indoor","picky"],e:["air","water"],a:[20,30,40,50,60]},
+ {n:"防音マット（静床ライト）",sp:1,w:"later",i:"🔇",d:"足音や椅子の音を軽減して、下の階への気づかいに。静床ライトなら敷くだけのタイルマットで、汚れた1枚だけ外して洗える。床のキズ防止にも。",p:[1,2],t:["picky","indoor","active","clean"],e:["earth","water"],a:[20,30,40,50,60]},
+ {n:"今時の電源タップ Anker Nano Charging Station",sp:1,el:1,w:"later",i:"🔌",d:"USB-CとUSB-A、コンセントを1台に。コンパクトで旅行時にも便利な電源タップ。",p:[1,2],t:["picky","active"],e:["air","fire"],a:[20,30,40,50],l:{t:"Anker 公式ページ（6-in-1, 67W）",u:"https://www.ankerjapan.com/products/a9129"}},
  {n:"ラベルレスペットボトル飲料水",w:"now",i:"💧",d:"箱買いして防災のローリングストックに。ラベルをはがす手間がなくゴミも減ってエコ。",p:[1,2],t:["lazy","clean","thrift"],e:["water","earth"],a:[20,30,40,50,60],c:["eco"]},
- {n:"尾西の携帯おにぎり",w:"now",i:"🍙",d:"水を注ぐだけで食べられる。長期保存できて防災にも。",p:[1,2],t:["active","picky"],e:["earth","fire"],a:[20,30,40,50,60]},
+ {n:"尾西の携帯おにぎり",sp:1,w:"now",i:"🍙",d:"水を注ぐだけで食べられる。長期保存できて防災にも。",p:[1,2],t:["active","picky"],e:["earth","fire"],a:[20,30,40,50,60]},
  {n:"コンパクトなバスタオル",w:"now",i:"🛀",d:"大きいと場所を取るので小さめで。吸水性の高いものならコンパクトで充分。乾きも早い。",p:[1,2],t:["clean","thrift","picky"],e:["water","earth"],a:[20,30,40,50,60],c:["eco","cheap"]},
  {n:"電子レンジ用トレイ",w:"later",i:"svg:tray",d:"レンジから取り出してそのまま食卓へ運べる。熱いお皿も安心。",p:[1,2],t:["lazy","cook"],e:["earth"],a:[20,30,40,50,60],c:["cheap"]},
  {n:"電子レンジ用シリコンラップ",w:"later",i:"🟢",d:"お皿にかぶせてそのままチン。洗って繰り返し使えるのでラップ代も節約。",p:[1,2],t:["thrift","cook","clean"],e:["earth","water"],a:[20,30,40,50,60],c:["eco","cheap"]},
  {n:"100均のシャワードリップ",w:"later",i:"☕",d:"ドリッパーにのせてお湯を注ぐだけ。ゆっくりお湯が落ちている間に別のことができる。",p:[1,2],t:["lazy","relax","thrift"],e:["water","air"],a:[20,30,40,50,60],c:["cheap"]},
- {n:"コジット ダンボールストッカー",w:"later",i:"📦",d:"たまりがちなダンボールをすっきり収納。ダンボールストッカーならコジットのものがベスト。使い方はインスタなどで見てみて。",p:[1,2],t:["clean","picky"],e:["earth"],a:[20,30,40,50,60],c:["eco"],l:{t:"コジット 公式ページ",u:"https://www.cogit.co.jp/goods/10597"}},
+ {n:"コジット ダンボールストッカー",sp:1,w:"later",i:"📦",d:"たまりがちなダンボールをすっきり収納。ダンボールストッカーならコジットのものがベスト。使い方はインスタなどで見てみて。",p:[1,2],t:["clean","picky"],e:["earth"],a:[20,30,40,50,60],c:["eco"],l:{t:"コジット 公式ページ",u:"https://www.cogit.co.jp/goods/10597"}},
  {n:"ポータブル電源",el:1,w:"later",i:"svg:power",d:"停電時もスマホの充電や家電が使える。キャンプや車中泊など屋外でも活躍。",p:[1,2],t:["active","picky"],e:["fire","earth"],a:[20,30,40,50,60]},
  {n:"骨盤サポートチェア",w:"later",i:"svg:backpain",d:"普通の椅子もこれがあるとテレワーク対応に。高価で大きいゲーミングチェアの前に試してみて。",p:[1,2],t:["indoor","picky","thrift"],e:["earth","water"],a:[20,30,40,50,60],c:["cheap"]},
  {n:"着ぐるみ",w:"later",i:"svg:kigurumi",d:"楽しい！部屋着にすれば冬もぬくぬく。友だちが来た日や写真撮影にも。",d2:"楽しい！おそろいで着れば部屋着の時間がもっと楽しく。冬もぬくぬく。",p:[1,2],t:["relax","indoor"],e:["fire","water","air"],a:[20,30,40]},
- {n:"服のミスト（衣類用しわ取りスプレー）",w:"now",i:"🧴",d:"シュッとかけて手でのばすだけでシワがとれる。アイロンもスチーマーも出さずに、朝の身支度がすぐ終わる。",p:[1,2],t:["lazy","picky"],e:["air","fire"],a:[20,30,40,50,60],c:["cheap"],l:{t:"花王 スタイルケア 服のミスト",u:"https://www.kao-kirei.com/ja/item/khg/stylecare/4901301217967/"}},
+ {n:"服のミスト（衣類用しわ取りスプレー）",sp:1,w:"now",i:"🧴",d:"シュッとかけて手でのばすだけでシワがとれる。アイロンもスチーマーも出さずに、朝の身支度がすぐ終わる。",p:[1,2],t:["lazy","picky"],e:["air","fire"],a:[20,30,40,50,60],c:["cheap"],l:{t:"花王 スタイルケア 服のミスト",u:"https://www.kao-kirei.com/ja/item/khg/stylecare/4901301217967/"}},
  {n:"水回りの防水テープ",w:"now",i:"svg:tape",d:"洗面所・キッチン・お風呂のすき間に、入居時に貼っておくとカビ防止に。賃貸でも安心。",p:[1,2],t:["clean","picky","thrift"],e:["earth","water"],a:[20,30,40,50,60],c:["cheap"]},
  {n:"換気扇の埃フィルター",w:"now",i:"svg:fanfilter",d:"お風呂やキッチンの換気扇に貼っておくと、ホコリや油汚れを受け止めて掃除の手間が減る。",p:[1,2],t:["clean","lazy"],e:["earth","air"],a:[20,30,40,50,60],c:["cheap"]},
  {n:"レンチン炊飯器",w:"later",i:"svg:mugrice",d:"お米と水を入れてレンジでチンするだけ。マグカップのような器で1合をふっくら炊けて、炊飯器を置く場所もいらない。",d2:"お米と水を入れてレンジでチンするだけ。マグカップのような器で1合ずつふっくら炊ける。ふたりなら2つ並べて、炊飯器を置く場所もいらない。",p:[1,2],t:["lazy","cook","thrift"],e:["fire","earth"],a:[20,30,40,50,60],c:["cheap"]},
  {n:"シェアレンタル自転車",el:1,w:"later",i:"🚲",d:"近所のシェアサイクルを契約。電動アシストに慣れると、車や電車以外の足になるよ。",p:[1,2],t:["active","thrift"],e:["fire","air"],a:[20,30,40,50,60],c:["eco"]},
+ {n:"折りたためる洗濯かご",w:"now",i:"🧺",d:"使わない時はたためる。狭い脱衣所でも場所をとらない。",p:[1,2],t:["clean","thrift"],e:["earth","water"],a:[20,30,40,50,60],c:["cheap"]},
  {n:"ブランケット",w:"later",i:"🧣",d:"ソファでの映画やうたた寝に。冬の電気代も節約。",p:[1,2],t:["relax","indoor","thrift"],e:["water"],a:[20,30,40,50,60],c:["eco", "cheap"]}
 ];
 
@@ -510,7 +513,7 @@ const SVG_ICONS={
  power:`<svg viewBox="0 0 36 36" width="34" height="34" aria-hidden="true"><path d="M11 9V6.5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2V9" fill="none" stroke="#5b5f66" stroke-width="2.4" stroke-linecap="round"/><rect x="3" y="9" width="30" height="23" rx="4" fill="#f2a23a"/><rect x="3" y="9" width="30" height="5" rx="2" fill="#5b5f66"/><rect x="6.5" y="17" width="11" height="8" rx="1.5" fill="#2f3439"/><text x="12" y="23.4" font-size="5.5" font-family="sans-serif" font-weight="700" fill="#7fe3a0" text-anchor="middle">88%</text><circle cx="23" cy="21" r="2.2" fill="#2f3439"/><circle cx="29" cy="21" r="2.2" fill="#2f3439"/><rect x="21" y="26.2" width="3.4" height="2" rx=".6" fill="#2f3439"/><rect x="27.3" y="26.2" width="3.4" height="2" rx=".6" fill="#2f3439"/></svg>`
 };
 const icon=i=>i.startsWith("svg:")?SVG_ICONS[i.slice(4)]:i;
-const itemHtml=it=>`<div class="card item"><div class="ic">${icon(it.i)}</div><div class="bd"><div class="nm">${esc(it.n)}</div><div class="ds">${esc(state.people==="2"&&it.d2?it.d2:it.d)}${it.l?` <a class="lnk" href="${it.l.u}" target="_blank" rel="noopener">${esc(it.l.t)} ↗</a>`:""}</div><div class="why"><span class="w ${it.w}">${WHEN[it.w]}</span>${it.why.map(w=>`<span class="${w.c}">${esc(w.t)}</span>`).join("")}</div></div><button class="add ${inList(it.n)?"done":""}" data-n="${esc(it.n)}">${inList(it.n)?"追加済み":"＋リスト"}</button></div>`;
+const itemHtml=it=>`<div class="card item"><div class="ic">${icon(it.i)}</div><div class="bd"><div class="nm">${esc(it.n)}</div><div class="ds">${esc(state.people==="2"&&it.d2?it.d2:it.d)}${it.l?` <a class="lnk" href="${it.l.u}" target="_blank" rel="noopener">${esc(it.l.t)} ↗</a>`:""}</div><div class="why"><span class="w ${it.w}">${WHEN[it.w]}</span>${it.sp?`<span class="sp">📌 指定</span>`:""}${it.why.map(w=>`<span class="${w.c}">${esc(w.t)}</span>`).join("")}</div></div><button class="add ${inList(it.n)?"done":""}" data-n="${esc(it.n)}">${inList(it.n)?"追加済み":"＋リスト"}</button></div>`;
 const FIRST=12,STEP=10;
 let allList=[],shown=0;
 function showMore(){
@@ -540,10 +543,11 @@ function renderAll(){
   const list=ITEMS.filter(it=>{
     if(allF==="eco"||allF==="cheap"){if(!(it.c||[]).includes(allF))return false}
     else if(allF==="on"||allF==="off"){if(allF==="on"?!it.el:it.el)return false}
+    else if(allF==="sp"){if(!it.sp)return false}
     else if(allF){if(!it.p.includes(+allF))return false}
     if(whenF&&it.w!==whenF)return false;
     if(!q)return true;
-    const hay=[it.n,it.d,it.d2||"",...it.t.map(t=>PERSONA[t]),...(it.c||[]).map(c=>CATS[c]),WHEN[it.w],it.el?"家電 電気":"電気なし"].join(" ").toLowerCase();
+    const hay=[it.n,it.d,it.d2||"",...it.t.map(t=>PERSONA[t]),...(it.c||[]).map(c=>CATS[c]),WHEN[it.w],it.el?"家電 電気":"電気なし",it.sp?"指定":""].join(" ").toLowerCase();
     return q.split(/\s+/).every(w=>hay.includes(w));
   }).map(it=>({...it,why:[...(it.c||[]).map(c=>({c:"k",t:CATS[c]})),...(it.p.length===1?[{c:"p",t:it.p[0]===2?"ふたり暮らし向け":"ひとり暮らし向け"}]:[])]}));
   document.getElementById("allCnt").textContent=`${list.length}件 / 全${ITEMS.length}件`;
