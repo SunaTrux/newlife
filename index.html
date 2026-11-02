@@ -110,6 +110,12 @@ textarea{min-height:140px;font-family:ui-monospace,Menlo,monospace;font-size:16p
 .app-version{text-align:center;font-size:12px;color:var(--sub);line-height:1.8;margin-bottom:12px}
 .update-msg{font-size:13px;margin-top:8px;line-height:1.6}
 .update-msg.ok{color:#4e8a5c;font-weight:700}.update-msg.ng{color:#c0473a}.update-msg.new{color:var(--main-d);font-weight:700;margin:0 0 4px}
+.deme{border:none;background:none;padding:0 2px;font:inherit;font-size:12px;font-weight:700;color:#b0702a;text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
+.deme span{display:inline-block;margin-left:3px;vertical-align:1px;transition:transform .2s;text-decoration:none}
+.deme[aria-expanded="true"] span{transform:rotate(180deg)}
+.dm-body{margin-top:6px;padding:8px 10px;border-radius:8px;background:#fbf3e6;border-left:3px solid #e8b56b;font-size:12.5px;line-height:1.6;color:#6b5a45}
+.totop{position:fixed;right:16px;bottom:22px;z-index:15;border:none;border-radius:999px;background:var(--ink);color:#fff;font:inherit;font-size:13px;font-weight:700;padding:10px 16px;box-shadow:0 4px 14px rgba(0,0,0,.18);opacity:0;transform:translateY(12px);pointer-events:none;transition:.2s}
+.totop.on{opacity:.92;transform:none;pointer-events:auto}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);opacity:0;background:#3a3330;color:#fff;padding:10px 16px;border-radius:999px;font-size:13px;transition:.25s;pointer-events:none;z-index:20}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 .seg{display:flex;gap:6px;margin-bottom:10px}
@@ -254,16 +260,18 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
   <div class="app-version">バージョン <span id="setVer"></span><br><button class="linkbtn" id="histBtn">更新履歴</button></div>
   <button class="btn sub" id="setClose">閉じる</button>
 </div></div>
+<button class="totop" id="toTop" aria-label="先頭に戻る">↑ 先頭に戻る</button>
 <div class="toast" id="toast"></div>
 
 <script>
 // ===== バージョン =====
 const SHARE_URL="https://sunatrux.github.io/newlife/";
-const APP_VERSION = '1.17.0';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
+const APP_VERSION = '1.18.0';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
 const APP_RELEASE_DATE = '2026-11-03';
 const VERSION=APP_VERSION;
 const CHANGELOG_URL="https://github.com/sunatrux/newlife/blob/main/CHANGELOG.md";
 const HISTORY=[
+ {v:"1.18.0",d:"2026-11-03",c:["アイテムの紹介の最後に「デメ」を追加。押すとデメリットが開きます","おすすめと一覧で一番下までスクロールしたら「↑ 先頭に戻る」ボタンを出すように"]},
  {v:"1.17.0",d:"2026-11-03",c:["商品を指定しているアイテムに「📌 指定」の目印を付け、一覧で絞り込めるように","折りたためる洗濯かごを追加","サーモグラスを真空断熱タンブラーに","クッション付きフラフープの説明を変更"]},
  {v:"1.16.0",d:"2026-11-03",c:["Anker Nano Charging Station に、Anker公式ページへのリンクを追加"]},
  {v:"1.15.0",d:"2026-11-03",c:["コジット ダンボールストッカー・服のミスト・TimeTreeに、公式ページへのリンクを追加"]},
@@ -301,74 +309,74 @@ const PERSONA={lazy:"めんどくさがり",clean:"きれい好き",cook:"料理
 
 // p:人数 t:性格タグ e:星座エレメント a:年代 g:性別
 const ITEMS=[
- {n:"ロボット掃除機",el:1,w:"later",i:"🤖",d:"出かけている間に床がきれいに。床にモノを置かなくなる効果も。",p:[1,2],t:["lazy","clean"],e:["earth","air"],a:[20,30,40,50,60]},
- {n:"タジン鍋",w:"later",i:"svg:tagine",d:"野菜とお肉を入れてレンジや火にかけるだけ。ヘルシーで洗い物も少なめ。",p:[1,2],t:["cook","lazy"],e:["fire","water"],a:[20,30,40,50,60]},
- {n:"セリア 洗面鏡ナナメスタンド",sp:1,w:"now",i:"svg:slantstand",d:"100均で買える角度つきスタンド。洗面台まわりの見やすさがグッと上がる。",p:[1,2],t:["thrift","picky","clean"],e:["earth","air"],a:[20,30,40,50,60],c:["cheap"]},
- {n:"TimeTree（共有カレンダー）",sp:1,el:1,w:"now",i:"📅",d:"ふたりの予定を共有できる無料アプリ。すれ違い防止に。",p:[2],t:["picky","active"],e:["air"],a:[20,30,40,50,60],c:["cheap"],l:{t:"TimeTree 公式サイト",u:"https://timetreeapp.com/"}},
- {n:"電気ケトル",el:1,w:"now",i:"☕",d:"すぐお湯が沸く。コーヒー、カップ麺、湯たんぽにも。",p:[1,2],t:["lazy","indoor"],e:["fire","water"],a:[20,30,40,50,60]},
- {n:"電子レンジ（フラット庫内）",el:1,w:"now",i:"svg:microwave",d:"ターンテーブルなしは掃除がラク。作り置きの温め直しに必須。",p:[1,2],t:["lazy","clean"],e:["earth"],a:[20,30,40,50,60]},
- {n:"3合炊き炊飯器",el:1,w:"now",i:"🍚",d:"まとめて炊いて冷凍が節約の基本。",p:[1],t:["thrift","cook"],e:["earth"],a:[20,30,40,50,60]},
- {n:"5合炊き炊飯器",el:1,w:"now",i:"🍚",d:"ふたり分＋お弁当や冷凍分まで余裕。",p:[2],t:["thrift","cook"],e:["earth"],a:[20,30,40,50,60]},
- {n:"ホットサンドメーカー",el:1,w:"later",i:"🥪",d:"パンと具をはさむだけで朝ごはんが楽しみに。",p:[1,2],t:["cook","indoor"],e:["fire","air"],a:[20,30]},
- {n:"ホットプレート",el:1,w:"later",i:"🥘",d:"焼肉、たこ焼き、ふたりでワイワイ。友だちが来た日にも。",p:[2],t:["cook","indoor"],e:["fire","air"],a:[20,30,40]},
- {n:"保存容器セット",w:"later",i:"🥡",d:"作り置き・冷凍に。サイズをそろえると冷蔵庫がスッキリ。",p:[1,2],t:["cook","thrift","clean"],e:["earth"],a:[20,30,40,50,60],c:["cheap"]},
- {n:"キッチンバサミ",w:"now",i:"✂️",d:"まな板を出さずに肉もネギも切れる。洗い物が減る。",p:[1,2],t:["lazy","cook"],e:["fire"],a:[20,30,40,50,60],c:["cheap"]},
- {n:"工事不要タイプの食洗機",el:1,w:"later",i:"🍽️",d:"水を注ぐだけで賃貸でも置ける。手間が減るだけでなく、温水洗いで衛生的。",p:[1,2],t:["lazy","clean"],e:["earth","air"],a:[30,40,50,60],c:["eco"]},
- {n:"マグネット収納",w:"later",i:"🧲",d:"冷蔵庫や洗濯機の側面がそのまま収納に。",p:[1,2],t:["clean","picky"],e:["earth","air"],a:[20,30,40],c:["cheap"]},
- {n:"スイッチ付き延長コード",el:1,w:"now",i:"🔌",d:"コンセントが足りない問題を解決。待機電力カットで節約にも。",p:[1,2],t:["thrift","lazy"],e:["earth","air"],a:[20,30,40,50,60],c:["eco", "cheap"]},
- {n:"室内物干し",w:"now",i:"👕",d:"雨の日・花粉の季節に。突っ張りタイプは場所をとらない。",p:[1,2],t:["clean","thrift"],e:["water","earth"],a:[20,30,40,50,60],c:["eco", "cheap"]},
- {n:"ドラム式洗濯乾燥機",el:1,w:"later",i:"🌀",d:"干す手間がゼロに。ふたり暮らしの家事分担がラクになる。",p:[2],t:["lazy","clean","picky"],e:["air","earth"],a:[30,40,50,60]},
- {n:"衣類スチーマー",el:1,w:"later",i:"💨",d:"ハンガーにかけたままシワ取り。アイロン台いらず。",p:[1,2],t:["picky","lazy"],e:["air"],a:[20,30,40]},
- {n:"布団乾燥機",el:1,w:"later",i:"🛏️",d:"いつでもふかふか。冬は布団を温めてから寝られる幸せ。",p:[1,2],t:["relax","clean","indoor"],e:["water"],a:[20,30,40,50,60]},
- {n:"サーキュレーター",el:1,w:"later",i:"🌬️",d:"部屋干しの乾きが早くなり、冷暖房の効きもアップ。",p:[1,2],t:["thrift","clean"],e:["air"],a:[20,30,40,50,60],c:["eco"]},
- {n:"除湿機",el:1,w:"later",i:"💧",d:"梅雨のカビ対策と部屋干しに。",p:[1,2],t:["clean","picky"],e:["water","earth"],a:[30,40,50,60]},
- {n:"遮光・防音カーテン",w:"now",i:"🪟",d:"朝寝坊の日もぐっすり。外の音もやわらげて、断熱で冷暖房費も節約。",p:[1,2],t:["indoor","relax","thrift"],e:["water"],a:[20,30,40,50,60],c:["eco"]},
- {n:"間接照明",el:1,w:"later",i:"💡",d:"夜の部屋が一気にくつろぎ空間に。",p:[1,2],t:["relax","indoor","picky"],e:["water","air"],a:[20,30,40]},
- {n:"アロマディフューザー",el:1,w:"later",i:"🌿",d:"好きな香りで帰宅が楽しみに。",p:[1,2],t:["relax","picky"],e:["water"],a:[20,30,40,50,60],g:"f"},
- {n:"観葉植物（ポトス）",w:"later",i:"🪴",d:"丈夫で育てやすい。部屋に緑があるだけで気分が上がる。",p:[1,2],t:["relax","picky"],e:["earth","water"],a:[20,30,40,50,60],c:["cheap"]},
- {n:"ヨガマット",w:"later",i:"🧘",d:"家でストレッチや筋トレ。運動不足の解消に。",p:[1,2],t:["active","relax"],e:["fire","water"],a:[20,30,40,50,60],c:["cheap"]},
- {n:"プロジェクター",el:1,w:"later",i:"📽️",d:"白い壁が映画館に。休日はひとり映画館で贅沢な時間を。",d2:"白い壁が映画館に。ふたりの映画ナイトにも。",p:[1,2],t:["indoor","picky"],e:["air","water"],a:[20,30]},
- {n:"ワイヤレスイヤホン",el:1,w:"later",i:"🎧",d:"家事しながら音楽やラジオ。夜でも周りを気にせず楽しめる。",d2:"家事しながら音楽やラジオ。ふたり暮らしで音を気にせず楽しめる。",p:[1,2],t:["active","indoor"],e:["air","fire"],a:[20,30]},
- {n:"大風量ドライヤー",el:1,w:"later",i:"svg:dryer",d:"乾かす時間が短くなるだけで毎晩がラクに。",p:[1,2],t:["lazy","picky"],e:["fire"],a:[20,30,40],g:"f"},
- {n:"メイク用ライト付きミラー",el:1,w:"later",i:"💄",d:"自然光に近い明るさで朝の支度がスムーズ。",p:[1,2],t:["picky"],e:["air","water"],a:[20,30,40],g:"f"},
- {n:"電気シェーバー",el:1,w:"now",i:"🪒",d:"朝の時短に。洗えるタイプが衛生的。",p:[1,2],t:["lazy","clean"],e:["fire","earth"],a:[20,30,40,50,60],g:"m"},
- {n:"工具セット（小）",w:"now",i:"🔧",d:"家具の組み立て、ネジのゆるみ直しに。引っ越し初日から活躍。",p:[1,2],t:["active","thrift"],e:["fire","earth"],a:[20,30,40,50,60]},
- {n:"防災セット",w:"now",i:"🎒",d:"水・ライト・モバイルバッテリー。新居に住み始めたら早めに。防災の備えは専用アプリも参考に。",l:{t:"わが家の防災リスト",u:"https://sunatrux.github.io/bousailist/"},p:[1,2],t:["picky","clean"],e:["earth"],a:[20,30,40,50,60]},
- {n:"体組成計",el:1,w:"later",i:"⚖️",d:"アプリ連携で健康管理。自炊のモチベにも。",p:[1,2],t:["active","picky"],e:["fire","earth"],a:[30,40,50,60]},
- {n:"自転車",w:"later",i:"🚲",d:"近所の開拓と買い出しに。新しい街を知る一番の近道。",p:[1,2],t:["active","thrift"],e:["fire","air"],a:[20,30],c:["eco"]},
- {n:"共有家計簿アプリ",el:1,w:"later",i:"💰",d:"ふたりの出費を見える化。お金の話がしやすくなる。",p:[2],t:["thrift","picky"],e:["earth","air"],a:[20,30,40],c:["cheap"]},
- {n:"買い物メモ用ホワイトボード",w:"later",i:"📝",d:"冷蔵庫に貼って「切れたもの」をすぐメモ。ふたりで共有。",p:[2],t:["clean","thrift"],e:["air","earth"],a:[20,30,40,50,60],c:["cheap"]},
- {n:"ゆったりソファ",w:"later",i:"🛋️",d:"ふたりで並んで座れるサイズを。おうち時間の中心に。",p:[2],t:["relax","indoor"],e:["water","earth"],a:[20,30,40]},
- {n:"ペアのマグカップ",w:"later",i:"🍵",d:"ふたり暮らしのスタートに。色違いで自分のものが分かる。",p:[2],t:["relax","picky"],e:["water"],a:[20,30],c:["cheap"]},
- {n:"ハンディマッサージャー",el:1,w:"later",i:"💆",d:"肩や腰をおうちでほぐせる。ふとした疲れのケアに。",p:[1,2],t:["relax","indoor"],e:["water","earth"],a:[40,50,60]},
- {n:"人感センサーライト",el:1,w:"now",i:"svg:sensorlight",d:"人が近づくと自動で点灯。夜中のトイレや廊下、玄関、クローゼットの暗がり対策に。",p:[1,2],t:["lazy","picky"],e:["earth","water"],a:[20,30,40,50,60],c:["cheap"]},
- {n:"浴室の滑り止めマット",w:"now",i:"🛁",d:"慣れない新居のお風呂でも安心。",p:[1,2],t:["clean","picky"],e:["earth","water"],a:[50,60],c:["cheap"]},
- {n:"150〜180cmくらいの丸い木の棒",w:"later",i:"🧘‍♀️",d:"棒を使って肩や肩甲骨を回す運動がインスタで流行りました。",p:[1,2],t:["relax","active","indoor"],e:["water","fire"],a:[20,30,40,50,60],c:["cheap"]},
- {n:"クッション付きフラフープ",w:"later",i:"⭕",d:"回すだけで運動不足解消。クッション付きだから体に当たっても痛くなりにくく、落としても音が抑えられる。",p:[1,2],t:["active","indoor"],e:["fire","air"],a:[20,30,40,50]},
- {n:"ゴキジェット",sp:1,w:"now",i:"svg:spraycan",d:"新居は出がち！引っ越し初日から1本あると安心。",p:[1,2],t:["clean","picky"],e:["fire","earth"],a:[20,30,40,50,60],c:["cheap"]},
- {n:"レンチン目玉焼きクッカー",w:"later",i:"🍳",d:"卵を割ってレンジで1分。フライパンを洗わずに朝ごはん。",p:[1,2],t:["lazy","cook"],e:["fire","air"],a:[20,30,40,50,60],c:["cheap"]},
- {n:"耐熱ガラス容器",w:"later",i:"🫙",d:"作り置き→レンジ→そのまま食卓へ。においや色移りしにくい。",p:[1,2],t:["cook","clean","thrift"],e:["earth","water"],a:[20,30,40,50,60],c:["eco"]},
- {n:"真空断熱タンブラー",w:"later",i:"🥤",d:"保冷も保温も一年中使える。氷が溶けにくく、結露もしない。塩分の多いスープや、牛乳・ジュースの入れっぱなしは避けて。",p:[1,2],t:["picky","relax"],e:["water","air"],a:[20,30,40,50,60]},
- {n:"アレクサ＋Fire TV Stick＋プロジェクター",sp:1,el:1,w:"later",i:"🗣️",d:"アレクサ→Fire TV Stick→プロジェクターとつなぐと、声だけで映画やYouTubeを再生・操作できる。リモコンを探さなくていい。",d2:"アレクサ→Fire TV Stick→プロジェクターとつなぐと、声だけで再生・操作できる。ソファに並んだまま「アレクサ、映画つけて」。",p:[1,2],t:["lazy","indoor","picky"],e:["air","water"],a:[20,30,40,50,60]},
- {n:"防音マット（静床ライト）",sp:1,w:"later",i:"🔇",d:"足音や椅子の音を軽減して、下の階への気づかいに。静床ライトなら敷くだけのタイルマットで、汚れた1枚だけ外して洗える。床のキズ防止にも。",p:[1,2],t:["picky","indoor","active","clean"],e:["earth","water"],a:[20,30,40,50,60]},
- {n:"今時の電源タップ Anker Nano Charging Station",sp:1,el:1,w:"later",i:"🔌",d:"USB-CとUSB-A、コンセントを1台に。コンパクトで旅行時にも便利な電源タップ。",p:[1,2],t:["picky","active"],e:["air","fire"],a:[20,30,40,50],l:{t:"Anker 公式ページ（6-in-1, 67W）",u:"https://www.ankerjapan.com/products/a9129"}},
- {n:"ラベルレスペットボトル飲料水",w:"now",i:"💧",d:"箱買いして防災のローリングストックに。ラベルをはがす手間がなくゴミも減ってエコ。",p:[1,2],t:["lazy","clean","thrift"],e:["water","earth"],a:[20,30,40,50,60],c:["eco"]},
- {n:"尾西の携帯おにぎり",sp:1,w:"now",i:"🍙",d:"水を注ぐだけで食べられる。長期保存できて防災にも。",p:[1,2],t:["active","picky"],e:["earth","fire"],a:[20,30,40,50,60]},
- {n:"コンパクトなバスタオル",w:"now",i:"🛀",d:"大きいと場所を取るので小さめで。吸水性の高いものならコンパクトで充分。乾きも早い。",p:[1,2],t:["clean","thrift","picky"],e:["water","earth"],a:[20,30,40,50,60],c:["eco","cheap"]},
- {n:"電子レンジ用トレイ",w:"later",i:"svg:tray",d:"レンジから取り出してそのまま食卓へ運べる。熱いお皿も安心。",p:[1,2],t:["lazy","cook"],e:["earth"],a:[20,30,40,50,60],c:["cheap"]},
- {n:"電子レンジ用シリコンラップ",w:"later",i:"🟢",d:"お皿にかぶせてそのままチン。洗って繰り返し使えるのでラップ代も節約。",p:[1,2],t:["thrift","cook","clean"],e:["earth","water"],a:[20,30,40,50,60],c:["eco","cheap"]},
- {n:"100均のシャワードリップ",w:"later",i:"☕",d:"ドリッパーにのせてお湯を注ぐだけ。ゆっくりお湯が落ちている間に別のことができる。",p:[1,2],t:["lazy","relax","thrift"],e:["water","air"],a:[20,30,40,50,60],c:["cheap"]},
- {n:"コジット ダンボールストッカー",sp:1,w:"later",i:"📦",d:"たまりがちなダンボールをすっきり収納。ダンボールストッカーならコジットのものがベスト。使い方はインスタなどで見てみて。",p:[1,2],t:["clean","picky"],e:["earth"],a:[20,30,40,50,60],c:["eco"],l:{t:"コジット 公式ページ",u:"https://www.cogit.co.jp/goods/10597"}},
- {n:"ポータブル電源",el:1,w:"later",i:"svg:power",d:"停電時もスマホの充電や家電が使える。キャンプや車中泊など屋外でも活躍。",p:[1,2],t:["active","picky"],e:["fire","earth"],a:[20,30,40,50,60]},
- {n:"骨盤サポートチェア",w:"later",i:"svg:backpain",d:"普通の椅子もこれがあるとテレワーク対応に。高価で大きいゲーミングチェアの前に試してみて。",p:[1,2],t:["indoor","picky","thrift"],e:["earth","water"],a:[20,30,40,50,60],c:["cheap"]},
- {n:"着ぐるみ",w:"later",i:"svg:kigurumi",d:"楽しい！部屋着にすれば冬もぬくぬく。友だちが来た日や写真撮影にも。",d2:"楽しい！おそろいで着れば部屋着の時間がもっと楽しく。冬もぬくぬく。",p:[1,2],t:["relax","indoor"],e:["fire","water","air"],a:[20,30,40]},
- {n:"服のミスト（衣類用しわ取りスプレー）",sp:1,w:"now",i:"🧴",d:"シュッとかけて手でのばすだけでシワがとれる。アイロンもスチーマーも出さずに、朝の身支度がすぐ終わる。",p:[1,2],t:["lazy","picky"],e:["air","fire"],a:[20,30,40,50,60],c:["cheap"],l:{t:"花王 スタイルケア 服のミスト",u:"https://www.kao-kirei.com/ja/item/khg/stylecare/4901301217967/"}},
- {n:"水回りの防水テープ",w:"now",i:"svg:tape",d:"洗面所・キッチン・お風呂のすき間に、入居時に貼っておくとカビ防止に。賃貸でも安心。",p:[1,2],t:["clean","picky","thrift"],e:["earth","water"],a:[20,30,40,50,60],c:["cheap"]},
- {n:"換気扇の埃フィルター",w:"now",i:"svg:fanfilter",d:"お風呂やキッチンの換気扇に貼っておくと、ホコリや油汚れを受け止めて掃除の手間が減る。",p:[1,2],t:["clean","lazy"],e:["earth","air"],a:[20,30,40,50,60],c:["cheap"]},
- {n:"レンチン炊飯器",w:"later",i:"svg:mugrice",d:"お米と水を入れてレンジでチンするだけ。マグカップのような器で1合をふっくら炊けて、炊飯器を置く場所もいらない。",d2:"お米と水を入れてレンジでチンするだけ。マグカップのような器で1合ずつふっくら炊ける。ふたりなら2つ並べて、炊飯器を置く場所もいらない。",p:[1,2],t:["lazy","cook","thrift"],e:["fire","earth"],a:[20,30,40,50,60],c:["cheap"]},
- {n:"シェアレンタル自転車",el:1,w:"later",i:"🚲",d:"近所のシェアサイクルを契約。電動アシストに慣れると、車や電車以外の足になるよ。",p:[1,2],t:["active","thrift"],e:["fire","air"],a:[20,30,40,50,60],c:["eco"]},
- {n:"折りたためる洗濯かご",w:"now",i:"🧺",d:"使わない時はたためる。狭い脱衣所でも場所をとらない。",p:[1,2],t:["clean","thrift"],e:["earth","water"],a:[20,30,40,50,60],c:["cheap"]},
- {n:"ブランケット",w:"later",i:"🧣",d:"ソファでの映画やうたた寝に。冬の電気代も節約。",p:[1,2],t:["relax","indoor","thrift"],e:["water"],a:[20,30,40,50,60],c:["eco", "cheap"]}
+ {n:"ロボット掃除機",dm:"床にモノやコードがあると止まりやすい。段差や狭いすき間は苦手。本体とゴミ捨て・ブラシのお手入れが必要。",el:1,w:"later",i:"🤖",d:"出かけている間に床がきれいに。床にモノを置かなくなる効果も。",p:[1,2],t:["lazy","clean"],e:["earth","air"],a:[20,30,40,50,60]},
+ {n:"タジン鍋",dm:"土鍋タイプは重く、割れやすい。とんがったふたが収納でかさばる。",w:"later",i:"svg:tagine",d:"野菜とお肉を入れてレンジや火にかけるだけ。ヘルシーで洗い物も少なめ。",p:[1,2],t:["cook","lazy"],e:["fire","water"],a:[20,30,40,50,60]},
+ {n:"セリア 洗面鏡ナナメスタンド",dm:"背の高いボトルや大きいチューブは入らないことがある。店舗によっては品切れや取り扱いがない。",sp:1,w:"now",i:"svg:slantstand",d:"100均で買える角度つきスタンド。洗面台まわりの見やすさがグッと上がる。",p:[1,2],t:["thrift","picky","clean"],e:["earth","air"],a:[20,30,40,50,60],c:["cheap"]},
+ {n:"TimeTree（共有カレンダー）",dm:"ふたりとも入れて書き込まないと意味がない。無料版は広告が出る。",sp:1,el:1,w:"now",i:"📅",d:"ふたりの予定を共有できる無料アプリ。すれ違い防止に。",p:[2],t:["picky","active"],e:["air"],a:[20,30,40,50,60],c:["cheap"],l:{t:"TimeTree 公式サイト",u:"https://timetreeapp.com/"}},
+ {n:"電気ケトル",dm:"一度にたくさんは沸かせない。中の水アカのお手入れが必要。",el:1,w:"now",i:"☕",d:"すぐお湯が沸く。コーヒー、カップ麺、湯たんぽにも。",p:[1,2],t:["lazy","indoor"],e:["fire","water"],a:[20,30,40,50,60]},
+ {n:"電子レンジ（フラット庫内）",dm:"ターンテーブル式より価格が高め。置き場所と、まわりのすき間が必要。",el:1,w:"now",i:"svg:microwave",d:"ターンテーブルなしは掃除がラク。作り置きの温め直しに必須。",p:[1,2],t:["lazy","clean"],e:["earth"],a:[20,30,40,50,60]},
+ {n:"3合炊き炊飯器",dm:"お客さんが来たときや、まとめ炊きには足りないことがある。",el:1,w:"now",i:"🍚",d:"まとめて炊いて冷凍が節約の基本。",p:[1],t:["thrift","cook"],e:["earth"],a:[20,30,40,50,60]},
+ {n:"5合炊き炊飯器",dm:"場所を取る。少量だけ炊くとおいしさが落ちることがある。",el:1,w:"now",i:"🍚",d:"ふたり分＋お弁当や冷凍分まで余裕。",p:[2],t:["thrift","cook"],e:["earth"],a:[20,30,40,50,60]},
+ {n:"ホットサンドメーカー",dm:"焼き面の洗い物が増える。毎日使わないと出番が減りがち。",el:1,w:"later",i:"🥪",d:"パンと具をはさむだけで朝ごはんが楽しみに。",p:[1,2],t:["cook","indoor"],e:["fire","air"],a:[20,30]},
+ {n:"ホットプレート",dm:"大きくて収納場所に困る。油はねと後片付けが面倒。",el:1,w:"later",i:"🥘",d:"焼肉、たこ焼き、ふたりでワイワイ。友だちが来た日にも。",p:[2],t:["cook","indoor"],e:["fire","air"],a:[20,30,40]},
+ {n:"保存容器セット",dm:"増えすぎると棚を圧迫する。ふたと本体の組み合わせ探しが面倒になりがち。",w:"later",i:"🥡",d:"作り置き・冷凍に。サイズをそろえると冷蔵庫がスッキリ。",p:[1,2],t:["cook","thrift","clean"],e:["earth"],a:[20,30,40,50,60],c:["cheap"]},
+ {n:"キッチンバサミ",dm:"かたいもの・大きいものは切りにくい。刃の付け根の汚れが残りやすい。",w:"now",i:"✂️",d:"まな板を出さずに肉もネギも切れる。洗い物が減る。",p:[1,2],t:["lazy","cook"],e:["fire"],a:[20,30,40,50,60],c:["cheap"]},
+ {n:"工事不要タイプの食洗機",dm:"置き場所を取る。毎回の給水と、たまに中のお手入れが必要。初期費用は高め。",el:1,w:"later",i:"🍽️",d:"水を注ぐだけで賃貸でも置ける。手間が減るだけでなく、温水洗いで衛生的。",p:[1,2],t:["lazy","clean"],e:["earth","air"],a:[30,40,50,60],c:["eco"]},
+ {n:"マグネット収納",dm:"磁石がつかない面には使えない。重いものを載せると落ちることがある。",w:"later",i:"🧲",d:"冷蔵庫や洗濯機の側面がそのまま収納に。",p:[1,2],t:["clean","picky"],e:["earth","air"],a:[20,30,40],c:["cheap"]},
+ {n:"スイッチ付き延長コード",dm:"たこ足配線にしすぎると危ない。ホコリがたまるとトラッキング火災の原因に。",el:1,w:"now",i:"🔌",d:"コンセントが足りない問題を解決。待機電力カットで節約にも。",p:[1,2],t:["thrift","lazy"],e:["earth","air"],a:[20,30,40,50,60],c:["eco", "cheap"]},
+ {n:"室内物干し",dm:"部屋が狭く感じる。生乾きのにおい対策（換気・除湿）が必要。",w:"now",i:"👕",d:"雨の日・花粉の季節に。突っ張りタイプは場所をとらない。",p:[1,2],t:["clean","thrift"],e:["water","earth"],a:[20,30,40,50,60],c:["eco", "cheap"]},
+ {n:"ドラム式洗濯乾燥機",dm:"場所を取る、置けない場合もある。初期費用としては高価。乾燥フィルターのお手入れが必要。",el:1,w:"later",i:"🌀",d:"干す手間がゼロに。ふたり暮らしの家事分担がラクになる。",p:[2],t:["lazy","clean","picky"],e:["air","earth"],a:[30,40,50,60]},
+ {n:"衣類スチーマー",dm:"アイロンほどパリッとはしない。熱い蒸気でやけどに注意。",el:1,w:"later",i:"💨",d:"ハンガーにかけたままシワ取り。アイロン台いらず。",p:[1,2],t:["picky","lazy"],e:["air"],a:[20,30,40]},
+ {n:"布団乾燥機",dm:"使っている間の電気代と時間がかかる。収納場所が必要。",el:1,w:"later",i:"🛏️",d:"いつでもふかふか。冬は布団を温めてから寝られる幸せ。",p:[1,2],t:["relax","clean","indoor"],e:["water"],a:[20,30,40,50,60]},
+ {n:"サーキュレーター",dm:"羽根やガードにホコリがたまりやすい。動作音が気になることも。",el:1,w:"later",i:"🌬️",d:"部屋干しの乾きが早くなり、冷暖房の効きもアップ。",p:[1,2],t:["thrift","clean"],e:["air"],a:[20,30,40,50,60],c:["eco"]},
+ {n:"除湿機",dm:"本体が大きく重め。タンクの水捨てが手間。部屋が暑くなるタイプもある。",el:1,w:"later",i:"💧",d:"梅雨のカビ対策と部屋干しに。",p:[1,2],t:["clean","picky"],e:["water","earth"],a:[30,40,50,60]},
+ {n:"遮光・防音カーテン",dm:"昼でも部屋が暗くなる。普通のカーテンより重く、価格も高め。完全な防音ではない。",w:"now",i:"🪟",d:"朝寝坊の日もぐっすり。外の音もやわらげて、断熱で冷暖房費も節約。",p:[1,2],t:["indoor","relax","thrift"],e:["water"],a:[20,30,40,50,60],c:["eco"]},
+ {n:"間接照明",dm:"手元を照らすには暗い。コードが増える。",el:1,w:"later",i:"💡",d:"夜の部屋が一気にくつろぎ空間に。",p:[1,2],t:["relax","indoor","picky"],e:["water","air"],a:[20,30,40]},
+ {n:"アロマディフューザー",dm:"水の入れ替えとお手入れが必要。香りが苦手な人やペットがいると気をつかう。",el:1,w:"later",i:"🌿",d:"好きな香りで帰宅が楽しみに。",p:[1,2],t:["relax","picky"],e:["water"],a:[20,30,40,50,60],g:"f"},
+ {n:"観葉植物（ポトス）",dm:"水やりを忘れると枯れる。虫がつくこともある。",w:"later",i:"🪴",d:"丈夫で育てやすい。部屋に緑があるだけで気分が上がる。",p:[1,2],t:["relax","picky"],e:["earth","water"],a:[20,30,40,50,60],c:["cheap"]},
+ {n:"ヨガマット",dm:"出しっぱなしだとじゃま、しまうと使わなくなりがち。",w:"later",i:"🧘",d:"家でストレッチや筋トレ。運動不足の解消に。",p:[1,2],t:["active","relax"],e:["fire","water"],a:[20,30,40,50,60],c:["cheap"]},
+ {n:"プロジェクター",dm:"部屋を暗くしないと見えにくい。映せる白い壁やスクリーンが必要。",el:1,w:"later",i:"📽️",d:"白い壁が映画館に。休日はひとり映画館で贅沢な時間を。",d2:"白い壁が映画館に。ふたりの映画ナイトにも。",p:[1,2],t:["indoor","picky"],e:["air","water"],a:[20,30]},
+ {n:"ワイヤレスイヤホン",dm:"充電を忘れると使えない。小さくてなくしやすい。",el:1,w:"later",i:"🎧",d:"家事しながら音楽やラジオ。夜でも周りを気にせず楽しめる。",d2:"家事しながら音楽やラジオ。ふたり暮らしで音を気にせず楽しめる。",p:[1,2],t:["active","indoor"],e:["air","fire"],a:[20,30]},
+ {n:"大風量ドライヤー",dm:"本体が重め。音が大きい。価格が高い機種も多い。",el:1,w:"later",i:"svg:dryer",d:"乾かす時間が短くなるだけで毎晩がラクに。",p:[1,2],t:["lazy","picky"],e:["fire"],a:[20,30,40],g:"f"},
+ {n:"メイク用ライト付きミラー",dm:"電池や充電が必要。場所を取る。",el:1,w:"later",i:"💄",d:"自然光に近い明るさで朝の支度がスムーズ。",p:[1,2],t:["picky"],e:["air","water"],a:[20,30,40],g:"f"},
+ {n:"電気シェーバー",dm:"深剃りはカミソリに負ける。刃の交換に費用がかかる。",el:1,w:"now",i:"🪒",d:"朝の時短に。洗えるタイプが衛生的。",p:[1,2],t:["lazy","clean"],e:["fire","earth"],a:[20,30,40,50,60],g:"m"},
+ {n:"工具セット（小）",dm:"安いセットは精度が低いことがある。使うのは年に数回かも。",w:"now",i:"🔧",d:"家具の組み立て、ネジのゆるみ直しに。引っ越し初日から活躍。",p:[1,2],t:["active","thrift"],e:["fire","earth"],a:[20,30,40,50,60]},
+ {n:"防災セット",dm:"中身の期限チェックが必要。市販セットは家族に合わない中身が入っていることも。",w:"now",i:"🎒",d:"水・ライト・モバイルバッテリー。新居に住み始めたら早めに。防災の備えは専用アプリも参考に。",l:{t:"わが家の防災リスト",u:"https://sunatrux.github.io/bousailist/"},p:[1,2],t:["picky","clean"],e:["earth"],a:[20,30,40,50,60]},
+ {n:"体組成計",dm:"数字に一喜一憂しがち。測る時間や条件で数値がぶれる。",el:1,w:"later",i:"⚖️",d:"アプリ連携で健康管理。自炊のモチベにも。",p:[1,2],t:["active","picky"],e:["fire","earth"],a:[30,40,50,60]},
+ {n:"自転車",dm:"置き場所と防犯登録が必要。雨の日は使えない。パンクなどの整備も。",w:"later",i:"🚲",d:"近所の開拓と買い出しに。新しい街を知る一番の近道。",p:[1,2],t:["active","thrift"],e:["fire","air"],a:[20,30],c:["eco"]},
+ {n:"共有家計簿アプリ",dm:"入力を続けないと意味がない。お金の考え方の違いで、もめるきっかけになることも。",el:1,w:"later",i:"💰",d:"ふたりの出費を見える化。お金の話がしやすくなる。",p:[2],t:["thrift","picky"],e:["earth","air"],a:[20,30,40],c:["cheap"]},
+ {n:"買い物メモ用ホワイトボード",dm:"外出先からは見られない。書き忘れると結局買い忘れる。",w:"later",i:"📝",d:"冷蔵庫に貼って「切れたもの」をすぐメモ。ふたりで共有。",p:[2],t:["clean","thrift"],e:["air","earth"],a:[20,30,40,50,60],c:["cheap"]},
+ {n:"ゆったりソファ",dm:"大きくて部屋を圧迫する。引っ越しや処分が大変。",w:"later",i:"🛋️",d:"ふたりで並んで座れるサイズを。おうち時間の中心に。",p:[2],t:["relax","indoor"],e:["water","earth"],a:[20,30,40]},
+ {n:"ペアのマグカップ",dm:"片方が割れるとそろわなくなる。",w:"later",i:"🍵",d:"ふたり暮らしのスタートに。色違いで自分のものが分かる。",p:[2],t:["relax","picky"],e:["water"],a:[20,30],c:["cheap"]},
+ {n:"ハンディマッサージャー",dm:"やりすぎると逆に痛める。音が大きめ。",el:1,w:"later",i:"💆",d:"肩や腰をおうちでほぐせる。ふとした疲れのケアに。",p:[1,2],t:["relax","indoor"],e:["water","earth"],a:[40,50,60]},
+ {n:"人感センサーライト",dm:"電池交換が必要なタイプもある。反応しすぎたり、しなかったりすることがある。",el:1,w:"now",i:"svg:sensorlight",d:"人が近づくと自動で点灯。夜中のトイレや廊下、玄関、クローゼットの暗がり対策に。",p:[1,2],t:["lazy","picky"],e:["earth","water"],a:[20,30,40,50,60],c:["cheap"]},
+ {n:"浴室の滑り止めマット",dm:"裏にカビやぬめりが出やすく、こまめに洗う必要がある。",w:"now",i:"🛁",d:"慣れない新居のお風呂でも安心。",p:[1,2],t:["clean","picky"],e:["earth","water"],a:[50,60],c:["cheap"]},
+ {n:"150〜180cmくらいの丸い木の棒",dm:"長くて置き場所に困る。振り回すときは周りに注意。",w:"later",i:"🧘‍♀️",d:"棒を使って肩や肩甲骨を回す運動がインスタで流行りました。",p:[1,2],t:["relax","active","indoor"],e:["water","fire"],a:[20,30,40,50,60],c:["cheap"]},
+ {n:"クッション付きフラフープ",dm:"回すスペースが必要。慣れるまでは腰やお腹があざになることも。",w:"later",i:"⭕",d:"回すだけで運動不足解消。クッション付きだから体に当たっても痛くなりにくく、落としても音が抑えられる。",p:[1,2],t:["active","indoor"],e:["fire","air"],a:[20,30,40,50]},
+ {n:"ゴキジェット",dm:"においが残る。使ったあとの片付けが必要。",sp:1,w:"now",i:"svg:spraycan",d:"新居は出がち！引っ越し初日から1本あると安心。",p:[1,2],t:["clean","picky"],e:["fire","earth"],a:[20,30,40,50,60],c:["cheap"]},
+ {n:"レンチン目玉焼きクッカー",dm:"黄身が破裂することがある。焼き目はつかない。",w:"later",i:"🍳",d:"卵を割ってレンジで1分。フライパンを洗わずに朝ごはん。",p:[1,2],t:["lazy","cook"],e:["fire","air"],a:[20,30,40,50,60],c:["cheap"]},
+ {n:"耐熱ガラス容器",dm:"重い。落とすと割れる。",w:"later",i:"🫙",d:"作り置き→レンジ→そのまま食卓へ。においや色移りしにくい。",p:[1,2],t:["cook","clean","thrift"],e:["earth","water"],a:[20,30,40,50,60],c:["eco"]},
+ {n:"真空断熱タンブラー",dm:"塩分の多いものや、牛乳・ジュースの入れっぱなしは向かない。電子レンジにかけられない。",w:"later",i:"🥤",d:"保冷も保温も一年中使える。氷が溶けにくく、結露もしない。塩分の多いスープや、牛乳・ジュースの入れっぱなしは避けて。",p:[1,2],t:["picky","relax"],e:["water","air"],a:[20,30,40,50,60]},
+ {n:"アレクサ＋Fire TV Stick＋プロジェクター",dm:"最初のつなぎ込み設定が少し手間。声がうまく伝わらないこともある。",sp:1,el:1,w:"later",i:"🗣️",d:"アレクサ→Fire TV Stick→プロジェクターとつなぐと、声だけで映画やYouTubeを再生・操作できる。リモコンを探さなくていい。",d2:"アレクサ→Fire TV Stick→プロジェクターとつなぐと、声だけで再生・操作できる。ソファに並んだまま「アレクサ、映画つけて」。",p:[1,2],t:["lazy","indoor","picky"],e:["air","water"],a:[20,30,40,50,60]},
+ {n:"防音マット（静床ライト）",dm:"敷く面積が広いと費用がかかる。段差ができて、つまずくことも。",sp:1,w:"later",i:"🔇",d:"足音や椅子の音を軽減して、下の階への気づかいに。静床ライトなら敷くだけのタイルマットで、汚れた1枚だけ外して洗える。床のキズ防止にも。",p:[1,2],t:["picky","indoor","active","clean"],e:["earth","water"],a:[20,30,40,50,60]},
+ {n:"今時の電源タップ Anker Nano Charging Station",dm:"普通の電源タップより高価。たくさん同時に充電すると、1台あたりの出力が下がる。",sp:1,el:1,w:"later",i:"🔌",d:"USB-CとUSB-A、コンセントを1台に。コンパクトで旅行時にも便利な電源タップ。",p:[1,2],t:["picky","active"],e:["air","fire"],a:[20,30,40,50],l:{t:"Anker 公式ページ（6-in-1, 67W）",u:"https://www.ankerjapan.com/products/a9129"}},
+ {n:"ラベルレスペットボトル飲料水",dm:"箱買いだと置き場所が必要。ローリングストックは、飲んだら買い足すのを忘れないように。",w:"now",i:"💧",d:"箱買いして防災のローリングストックに。ラベルをはがす手間がなくゴミも減ってエコ。",p:[1,2],t:["lazy","clean","thrift"],e:["water","earth"],a:[20,30,40,50,60],c:["eco"]},
+ {n:"尾西の携帯おにぎり",dm:"水を入れてから食べられるまで時間がかかる。ふつうのごはんより割高。",sp:1,w:"now",i:"🍙",d:"水を注ぐだけで食べられる。長期保存できて防災にも。",p:[1,2],t:["active","picky"],e:["earth","fire"],a:[20,30,40,50,60]},
+ {n:"コンパクトなバスタオル",dm:"髪が長いと1枚では足りないことがある。",w:"now",i:"🛀",d:"大きいと場所を取るので小さめで。吸水性の高いものならコンパクトで充分。乾きも早い。",p:[1,2],t:["clean","thrift","picky"],e:["water","earth"],a:[20,30,40,50,60],c:["eco","cheap"]},
+ {n:"電子レンジ用トレイ",dm:"レンジの庫内サイズに合わないことがある。",w:"later",i:"svg:tray",d:"レンジから取り出してそのまま食卓へ運べる。熱いお皿も安心。",p:[1,2],t:["lazy","cook"],e:["earth"],a:[20,30,40,50,60],c:["cheap"]},
+ {n:"電子レンジ用シリコンラップ",dm:"器の形によっては密着しにくい。においや色が移ることがある。",w:"later",i:"🟢",d:"お皿にかぶせてそのままチン。洗って繰り返し使えるのでラップ代も節約。",p:[1,2],t:["thrift","cook","clean"],e:["earth","water"],a:[20,30,40,50,60],c:["eco","cheap"]},
+ {n:"100均のシャワードリップ",dm:"ドリッパーとの相性で合わないことがある。お湯の落ち方の調整はできない。",w:"later",i:"☕",d:"ドリッパーにのせてお湯を注ぐだけ。ゆっくりお湯が落ちている間に別のことができる。",p:[1,2],t:["lazy","relax","thrift"],e:["water","air"],a:[20,30,40,50,60],c:["cheap"]},
+ {n:"コジット ダンボールストッカー",dm:"針の先がとがっているのでケガに注意。厚い段ボールは刺しにくい。",sp:1,w:"later",i:"📦",d:"たまりがちなダンボールをすっきり収納。ダンボールストッカーならコジットのものがベスト。使い方はインスタなどで見てみて。",p:[1,2],t:["clean","picky"],e:["earth"],a:[20,30,40,50,60],c:["eco"],l:{t:"コジット 公式ページ",u:"https://www.cogit.co.jp/goods/10597"}},
+ {n:"ポータブル電源",dm:"高価で重い。ときどき充電しておかないといざという時に使えない。",el:1,w:"later",i:"svg:power",d:"停電時もスマホの充電や家電が使える。キャンプや車中泊など屋外でも活躍。",p:[1,2],t:["active","picky"],e:["fire","earth"],a:[20,30,40,50,60]},
+ {n:"骨盤サポートチェア",dm:"椅子の形によっては合わない。長時間座ると逆に疲れることも。",w:"later",i:"svg:backpain",d:"普通の椅子もこれがあるとテレワーク対応に。高価で大きいゲーミングチェアの前に試してみて。",p:[1,2],t:["indoor","picky","thrift"],e:["earth","water"],a:[20,30,40,50,60],c:["cheap"]},
+ {n:"着ぐるみ",dm:"暑い時期は着られない。洗濯して乾くまでに時間がかかる。",w:"later",i:"svg:kigurumi",d:"楽しい！部屋着にすれば冬もぬくぬく。友だちが来た日や写真撮影にも。",d2:"楽しい！おそろいで着れば部屋着の時間がもっと楽しく。冬もぬくぬく。",p:[1,2],t:["relax","indoor"],e:["fire","water","air"],a:[20,30,40]},
+ {n:"服のミスト（衣類用しわ取りスプレー）",dm:"深いシワは取りきれない。水に弱い素材には使えない。",sp:1,w:"now",i:"🧴",d:"シュッとかけて手でのばすだけでシワがとれる。アイロンもスチーマーも出さずに、朝の身支度がすぐ終わる。",p:[1,2],t:["lazy","picky"],e:["air","fire"],a:[20,30,40,50,60],c:["cheap"],l:{t:"花王 スタイルケア 服のミスト",u:"https://www.kao-kirei.com/ja/item/khg/stylecare/4901301217967/"}},
+ {n:"水回りの防水テープ",dm:"はがすときに跡が残ることがある。テープの下にカビが出たら貼り替えが必要。",w:"now",i:"svg:tape",d:"洗面所・キッチン・お風呂のすき間に、入居時に貼っておくとカビ防止に。賃貸でも安心。",p:[1,2],t:["clean","picky","thrift"],e:["earth","water"],a:[20,30,40,50,60],c:["cheap"]},
+ {n:"換気扇の埃フィルター",dm:"サイズが合わないことがある。定期的な交換が必要。",w:"now",i:"svg:fanfilter",d:"お風呂やキッチンの換気扇に貼っておくと、ホコリや油汚れを受け止めて掃除の手間が減る。",p:[1,2],t:["clean","lazy"],e:["earth","air"],a:[20,30,40,50,60],c:["cheap"]},
+ {n:"レンチン炊飯器",dm:"一度に炊けるのは1合くらい。吹きこぼれに注意。陶器なので割れることも。",w:"later",i:"svg:mugrice",d:"お米と水を入れてレンジでチンするだけ。マグカップのような器で1合をふっくら炊けて、炊飯器を置く場所もいらない。",d2:"お米と水を入れてレンジでチンするだけ。マグカップのような器で1合ずつふっくら炊ける。ふたりなら2つ並べて、炊飯器を置く場所もいらない。",p:[1,2],t:["lazy","cook","thrift"],e:["fire","earth"],a:[20,30,40,50,60],c:["cheap"]},
+ {n:"シェアレンタル自転車",dm:"近くにステーションがないと使えない。乗るたびに料金がかかる。混む時間は空きがないことも。",el:1,w:"later",i:"🚲",d:"近所のシェアサイクルを契約。電動アシストに慣れると、車や電車以外の足になるよ。",p:[1,2],t:["active","thrift"],e:["fire","air"],a:[20,30,40,50,60],c:["eco"]},
+ {n:"折りたためる洗濯かご",dm:"濡れたものを入れるとへたりやすい。固いかごより安定しない。",w:"now",i:"🧺",d:"使わない時はたためる。狭い脱衣所でも場所をとらない。",p:[1,2],t:["clean","thrift"],e:["earth","water"],a:[20,30,40,50,60],c:["cheap"]},
+ {n:"ブランケット",dm:"毛玉ができやすい。洗濯で縮む素材もある。",w:"later",i:"🧣",d:"ソファでの映画やうたた寝に。冬の電気代も節約。",p:[1,2],t:["relax","indoor","thrift"],e:["water"],a:[20,30,40,50,60],c:["eco", "cheap"]}
 ];
 
 // ===== 保存（使えない環境でも動く） =====
@@ -513,7 +521,7 @@ const SVG_ICONS={
  power:`<svg viewBox="0 0 36 36" width="34" height="34" aria-hidden="true"><path d="M11 9V6.5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2V9" fill="none" stroke="#5b5f66" stroke-width="2.4" stroke-linecap="round"/><rect x="3" y="9" width="30" height="23" rx="4" fill="#f2a23a"/><rect x="3" y="9" width="30" height="5" rx="2" fill="#5b5f66"/><rect x="6.5" y="17" width="11" height="8" rx="1.5" fill="#2f3439"/><text x="12" y="23.4" font-size="5.5" font-family="sans-serif" font-weight="700" fill="#7fe3a0" text-anchor="middle">88%</text><circle cx="23" cy="21" r="2.2" fill="#2f3439"/><circle cx="29" cy="21" r="2.2" fill="#2f3439"/><rect x="21" y="26.2" width="3.4" height="2" rx=".6" fill="#2f3439"/><rect x="27.3" y="26.2" width="3.4" height="2" rx=".6" fill="#2f3439"/></svg>`
 };
 const icon=i=>i.startsWith("svg:")?SVG_ICONS[i.slice(4)]:i;
-const itemHtml=it=>`<div class="card item"><div class="ic">${icon(it.i)}</div><div class="bd"><div class="nm">${esc(it.n)}</div><div class="ds">${esc(state.people==="2"&&it.d2?it.d2:it.d)}${it.l?` <a class="lnk" href="${it.l.u}" target="_blank" rel="noopener">${esc(it.l.t)} ↗</a>`:""}</div><div class="why"><span class="w ${it.w}">${WHEN[it.w]}</span>${it.sp?`<span class="sp">📌 指定</span>`:""}${it.why.map(w=>`<span class="${w.c}">${esc(w.t)}</span>`).join("")}</div></div><button class="add ${inList(it.n)?"done":""}" data-n="${esc(it.n)}">${inList(it.n)?"追加済み":"＋リスト"}</button></div>`;
+const itemHtml=it=>`<div class="card item"><div class="ic">${icon(it.i)}</div><div class="bd"><div class="nm">${esc(it.n)}</div><div class="ds">${esc(state.people==="2"&&it.d2?it.d2:it.d)}${it.l?` <a class="lnk" href="${it.l.u}" target="_blank" rel="noopener">${esc(it.l.t)} ↗</a>`:""}${it.dm?` <button class="deme" aria-expanded="false">デメ<span><svg viewBox="0 0 10 6" width="9" height="6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>`:""}</div>${it.dm?`<div class="dm-body" hidden>${esc(it.dm)}</div>`:""}<div class="why"><span class="w ${it.w}">${WHEN[it.w]}</span>${it.sp?`<span class="sp">📌 指定</span>`:""}${it.why.map(w=>`<span class="${w.c}">${esc(w.t)}</span>`).join("")}</div></div><button class="add ${inList(it.n)?"done":""}" data-n="${esc(it.n)}">${inList(it.n)?"追加済み":"＋リスト"}</button></div>`;
 const FIRST=12,STEP=10;
 let allList=[],shown=0;
 function showMore(){
@@ -565,6 +573,8 @@ document.getElementById("whenFilter").addEventListener("click",e=>{
 document.getElementById("allItems").addEventListener("click",e=>addFromBtn(e));
 document.getElementById("result").addEventListener("click",e=>addFromBtn(e));
 function addFromBtn(e){
+  const dmBtn=e.target.closest(".deme");
+  if(dmBtn){const body=dmBtn.closest(".bd").querySelector(".dm-body");const open=body.hidden;body.hidden=!open;dmBtn.setAttribute("aria-expanded",open);return}
   const b=e.target.closest(".add");if(!b||b.classList.contains("done"))return;
   const it=ITEMS.find(x=>x.n===b.dataset.n);
   mine.unshift({id:uid(),name:it.n,memo:"",good:false,from:"",w:it.w});save();updateBadge();
@@ -797,6 +807,18 @@ function renderNotice(){
   document.getElementById("noticeHist").onclick=()=>vm.classList.add("on");
 }
 renderNotice();
+
+// ===== 先頭に戻る（おすすめ・一覧で、いちばん下まで来たら出す） =====
+const toTop=document.getElementById("toTop");
+function updToTop(){
+  const tab=document.querySelector("section.on");
+  const atBottom=window.scrollY+window.innerHeight>=document.documentElement.scrollHeight-160;
+  toTop.classList.toggle("on",!!tab&&(tab.id==="find"||tab.id==="all")&&window.scrollY>400&&atBottom);
+}
+window.addEventListener("scroll",updToTop,{passive:true});
+window.addEventListener("resize",updToTop);
+document.querySelectorAll("nav button").forEach(b=>b.addEventListener("click",()=>setTimeout(updToTop,0)));
+toTop.onclick=()=>{window.scrollTo({top:0,behavior:"smooth"});toTop.classList.remove("on")};
 
 // ===== 新バージョンの検知と更新（GitHub Pages 上でのみ動作） =====
 let newVersion=null,lastUpdateCheck=0,updateCheck={};
