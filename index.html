@@ -68,10 +68,12 @@ textarea{min-height:140px;font-family:ui-monospace,Menlo,monospace;font-size:16p
 .row{display:flex;gap:8px}.row>*{flex:1}
 .mine .top{display:flex;align-items:center;gap:8px}
 .mine .nm{flex:1;font-weight:700;font-size:15px;word-break:break-all}
-.star{border:none;background:none;font-size:22px;color:#d9d0c3;padding:0 2px;line-height:1}
-.star.on{color:var(--star)}
-.bad{border:1.5px solid var(--line);background:#fff;color:#c8bdb2;border-radius:8px;padding:2px 7px;font:inherit;font-size:11px;font-weight:700}
-.bad.on{background:#eef0f3;border-color:#9aa3ad;color:#5b6570}
+/* ⭐️と✖はどちらか一方（もう一度押すと外れる） */
+.rate{display:inline-flex;margin-top:8px;border:1.5px solid var(--line);border-radius:999px;overflow:hidden;background:#fff}
+.rate button{border:none;background:none;font:inherit;font-size:12.5px;font-weight:700;color:#b3a89c;padding:6px 12px;filter:grayscale(1);opacity:.75}
+.rate button+button{border-left:1.5px solid var(--line)}
+.rate .star.on{background:#fff4d6;color:#a87a12;filter:none;opacity:1}
+.rate .bad.on{background:#eef0f3;color:#4f5964;filter:none;opacity:1}
 .mine .ep{background:#f6f7f9;border-color:#d9dee4}
 .del{border:none;background:none;color:#c8bdb2;font-size:18px;padding:0 4px}
 .mine .memo{margin-top:8px;font-size:16px;min-height:auto;font-family:inherit;padding:8px}
@@ -189,7 +191,7 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
 
 <!-- マイリスト -->
 <section id="list">
-  <p class="tab-hint">本当にあって良かったものだけ、追加したり、感想をメモしたり。友達からのおすすめも取り込めます。</p>
+  <p class="tab-hint">自分だけのリスト。本当にあって良かったものは⭐️をつけよう。メモを追加したり、友達からのおすすめも取り込めます。</p>
   <div class="card">
     <h2>アイテムを追加</h2>
     <input type="text" id="newName" placeholder="例）ロボット掃除機">
@@ -198,8 +200,8 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
   </div>
   <div class="chips" id="filter" style="margin-bottom:10px">
     <button class="chip on" data-f="all">すべて</button>
-    <button class="chip" data-f="good">★ あって良かった</button>
-    <button class="chip" data-f="bad">失敗だった</button>
+    <button class="chip" data-f="good">⭐️ あって良かった</button>
+    <button class="chip" data-f="bad">✖ 失敗だった</button>
     <button class="chip" data-f="friend">友だちから</button>
     <button class="chip" data-f="now">🚨 入居日から</button>
   </div>
@@ -214,10 +216,11 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
     <h2>📤 友だちに送る</h2>
     <div class="lbl">あなたの名前（任意）</div>
     <input type="text" id="myName" placeholder="例）わたし">
-    <div class="seg chips" id="expMode" style="margin-top:10px">
-      <button class="chip on" data-m="good">★だけ</button>
-      <button class="chip" data-m="bad">失敗だけ</button>
-      <button class="chip" data-m="all">ぜんぶ</button>
+    <div class="lbl">送るもの</div>
+    <div class="chips" id="expMode">
+      <button class="chip on" data-m="good">⭐️ 良かったもの</button>
+      <button class="chip" data-m="bad">✖ 失敗したもの</button>
+      <button class="chip" data-m="all">📋 マイリストすべて</button>
     </div>
     <label class="chk"><input type="checkbox" id="withLink"> このアプリのリンクも付ける</label>
     <textarea id="exp" readonly></textarea>
@@ -272,11 +275,12 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
 <script>
 // ===== バージョン =====
 const SHARE_URL="https://sunatrux.github.io/newlife/";
-const APP_VERSION = '1.21.1';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
+const APP_VERSION = '1.22.0';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
 const APP_RELEASE_DATE = '2026-11-03';
 const VERSION=APP_VERSION;
 const CHANGELOG_URL="https://github.com/sunatrux/newlife/blob/main/CHANGELOG.md";
 const HISTORY=[
+ {v:"1.22.0",d:"2026-11-03",c:["マイリストの⭐️と失敗を、どちらか一方を選ぶ切り替えボタンに","友だちに送るものを「⭐️ 良かったもの／✖ 失敗したもの／📋 マイリストすべて」から選べるように","マイリストのヒント文を変更"]},
  {v:"1.21.1",d:"2026-11-03",c:["セリア 洗面鏡ナナメスタンドの時期を「余裕があれば」に変更"]},
  {v:"1.21.0",d:"2026-11-03",c:["おすすめ・一覧・マイリスト・共有の各タブの上に、使い方のヒント文を追加"]},
  {v:"1.20.0",d:"2026-11-03",c:["加湿器・フローリングワイパー・ケーブルボックスを追加"]},
@@ -609,13 +613,14 @@ document.getElementById("filter").addEventListener("click",e=>{
 function renderMine(){
   const list=mine.filter(m=>filter==="all"||(filter==="good"&&m.good)||(filter==="bad"&&(m.bad||m.fbad))||(filter==="friend"&&m.from)||(filter==="now"&&m.w==="now"));
   const goods=mine.filter(m=>m.good).length,bads=mine.filter(m=>m.bad).length;
-  document.getElementById("cnt").textContent=mine.length?`${mine.length}アイテム（★あって良かった ${goods}・失敗 ${bads}）`:"";
+  document.getElementById("cnt").textContent=mine.length?`${mine.length}アイテム（⭐️ あって良かった ${goods}・✖ 失敗 ${bads}）`:"";
   const el=document.getElementById("mine");
-  if(!list.length){el.innerHTML=`<div class="empty">${mine.length?"この条件のアイテムはありません":"まだアイテムがありません。<br>おすすめから追加するか、上で自分で追加してね。<br>使ってみて良かったら ★、失敗だったら「失敗」をつけよう。"}</div>`;return}
+  if(!list.length){el.innerHTML=`<div class="empty">${mine.length?"この条件のアイテムはありません":"まだアイテムがありません。<br>おすすめから追加するか、上で自分で追加してね。<br>使ってみて良かったら「⭐️ あって良かった」、イマイチなら「✖ 失敗だった」を選ぼう。"}</div>`;return}
   el.innerHTML=list.map(m=>`<div class="card mine" data-id="${m.id}">
-    <div class="top"><button class="star ${m.good?"on":""}" aria-label="あって良かった">★</button><button class="bad ${m.bad?"on":""}" aria-label="失敗だった">失敗</button>
+    <div class="top">
     <div class="nm">${esc(m.name)}${m.from?`<span class="from">from ${esc(m.from)}${m.fgood?" ★":""}${m.fbad?" 失敗":""}</span>`:""}</div>
     <button class="del" aria-label="削除">✕</button></div>
+    <div class="rate" role="radiogroup" aria-label="使ってみてどうだった？"><button class="star ${m.good?"on":""}" role="radio" aria-checked="${!!m.good}">⭐️ あって良かった</button><button class="bad ${m.bad?"on":""}" role="radio" aria-checked="${!!m.bad}">✖ 失敗だった</button></div>
     <div class="when" >${Object.keys(WHEN).map(k=>`<button class="wbtn ${m.w===k?"on "+k:""}" data-w="${k}">${WHEN[k]}</button>`).join("")}</div>
     <textarea class="memo" rows="1" placeholder="メモ（どこで買った・良かった点など）">${esc(m.memo)}</textarea>
     ${m.bad?`<textarea class="memo ep" rows="2" placeholder="失敗エピソード（何がダメだった？次はどうする？）">${esc(m.ep||"")}</textarea>`:""}</div>`).join("");
