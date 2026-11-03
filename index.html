@@ -282,7 +282,7 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
   <div class="card">
     <div class="lbl">データ管理（バックアップと復元）</div>
     <p class="hint" style="margin-top:0">マイリストなどのデータは、この端末のブラウザの中にだけ保存されています。ブラウザのデータ消去や機種変更で消えてしまうので、ときどきバックアップしておくと安心です。</p>
-    <div class="row"><button class="btn" id="bkSave">バックアップを保存</button><button class="btn sub" id="bkLoad">復元する</button></div>
+    <div class="row"><button class="btn" id="bkSave">バックアップ</button><button class="btn sub" id="bkLoad">復元する</button></div>
     <input type="file" id="bkFile" accept="application/json,.json" hidden>
     <div id="bkConfirm"></div>
   </div>
@@ -307,11 +307,12 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
 <script>
 // ===== バージョン =====
 const SHARE_URL="https://sunatrux.github.io/newlife/";
-const APP_VERSION = '1.26.0';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
+const APP_VERSION = '1.26.1';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
 const APP_RELEASE_DATE = '2026-11-03';
 const VERSION=APP_VERSION;
 const CHANGELOG_URL="https://github.com/sunatrux/newlife/blob/main/CHANGELOG.md";
 const HISTORY=[
+ {v:"1.26.1",d:"2026-11-03",c:["設定の「バックアップを保存」ボタンを「バックアップ」に"]},
  {v:"1.26.0",d:"2026-11-03",c:["設定に「作者に感想を送る」を追加（アプリのバージョンと端末の種類だけが自動で添えられます）","iPhoneでノッチやホームバーに画面が隠れないように、右端が切れないように調整"]},
  {v:"1.25.0",d:"2026-11-03",c:["設定に「データ管理」を追加。マイリストなど全データをファイルにバックアップして、丸ごと復元できます","取り込みの安全対策を強化（文字数・件数に上限、決まった項目だけを読み込む）","友だちに送る前に「この内容が相手に見えます」と表示"]},
  {v:"1.24.1",d:"2026-11-03",c:["マイリストで「❌ 失敗だった」を押すと画面が動いてしまうのを修正（失敗エピソード欄は出るだけで、自動で入力状態にしない）"]},
