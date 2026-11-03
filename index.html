@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; font-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'none'">
 <title>新生活おすすめグッズ</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
@@ -238,6 +239,7 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
     <div class="chips" id="expOpts"><button class="chip" data-o="url">🔗 商品のURL</button><button class="chip" data-o="app">📱 このアプリのリンク</button></div>
     <div style="height:8px"></div>
     <textarea id="exp" readonly></textarea>
+    <p class="hint" style="margin:6px 0 0">👀 この内容が、そのまま相手に見えます。メモに人に見せたくないことが書いてあれば、送る前に確かめてね。</p>
     <div class="row"><button class="btn" id="sendBtn">友だちに送る</button><button class="btn sub" id="copyBtn">コピーする</button></div>
     <p class="hint">LINE やメールで送ってね。リンクを付けると、受け取った友だちもアプリを開いてそのまま取り込めます。</p>
   </div>
@@ -275,6 +277,13 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
     <button class="btn sub sm" id="recReset" style="display:none">最初の文章に戻す</button>
   </div>
   <div class="card">
+    <div class="lbl">データ管理（バックアップと復元）</div>
+    <p class="hint" style="margin-top:0">マイリストなどのデータは、この端末のブラウザの中にだけ保存されています。ブラウザのデータ消去や機種変更で消えてしまうので、ときどきバックアップしておくと安心です。</p>
+    <div class="row"><button class="btn" id="bkSave">バックアップを保存</button><button class="btn sub" id="bkLoad">復元する</button></div>
+    <input type="file" id="bkFile" accept="application/json,.json" hidden>
+    <div id="bkConfirm"></div>
+  </div>
+  <div class="card">
     <div class="lbl">アプリの更新</div>
     <p class="hint" style="margin-top:0">ホーム画面のアプリは、閉じても裏で止まっているだけで、自動では新しくなりません。開いたときに最新版を確認しますが、すぐ知りたいときはここで確認できます。</p>
     <div id="updBox"></div>
@@ -289,11 +298,12 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
 <script>
 // ===== バージョン =====
 const SHARE_URL="https://sunatrux.github.io/newlife/";
-const APP_VERSION = '1.24.1';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
+const APP_VERSION = '1.25.0';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
 const APP_RELEASE_DATE = '2026-11-03';
 const VERSION=APP_VERSION;
 const CHANGELOG_URL="https://github.com/sunatrux/newlife/blob/main/CHANGELOG.md";
 const HISTORY=[
+ {v:"1.25.0",d:"2026-11-03",c:["設定に「データ管理」を追加。マイリストなど全データをファイルにバックアップして、丸ごと復元できます","取り込みの安全対策を強化（文字数・件数に上限、決まった項目だけを読み込む）","友だちに送る前に「この内容が相手に見えます」と表示"]},
  {v:"1.24.1",d:"2026-11-03",c:["マイリストで「❌ 失敗だった」を押すと画面が動いてしまうのを修正（失敗エピソード欄は出るだけで、自動で入力状態にしない）"]},
  {v:"1.24.0",d:"2026-11-03",c:["タブを「おすすめ・一覧 › マイリスト › 共有」の流れが分かる並びに","マイリストに追加したら、その場から「見る ›」でマイリストへ移れるように","マイリストに⭐️や❌があれば「友だちに送る ›」ボタン、空のときは「おすすめを見る ›」「一覧から探す ›」を出すように"]},
  {v:"1.23.1",d:"2026-11-03",c:["買い物メモ用ホワイトボードを削除","防音マット（静床ライト）に、ピアリビングの公式ページへのリンクを追加"]},
@@ -421,7 +431,24 @@ const store={
   set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
 };
 let hadSavedData=false;try{hadSavedData=!!(localStorage.getItem("ssg_list")||localStorage.getItem("ssg_q2"))}catch(e){}
-let mine=store.get("ssg_list",[]);
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+// ===== 取り込み・保存データの安全対策（アプリ定型10） =====
+const LIM={text:100000,items:500,name:100,memo:2000,from:40};
+const str=(v,max)=>typeof v==="string"?v.slice(0,max):"";
+// 決まった項目だけを取り出す（__proto__ などの想定外のキーは無視）
+function cleanMine(arr){
+  if(!Array.isArray(arr))return [];
+  const out=[];
+  for(const m of arr.slice(0,LIM.items)){
+    if(!m||typeof m!=="object")continue;
+    const name=str(m.name,LIM.name).trim();if(!name)continue;
+    out.push({id:str(m.id,40)||uid(),name,memo:str(m.memo,LIM.memo),ep:str(m.ep,LIM.memo),
+      good:m.good===true,bad:m.bad===true&&m.good!==true,fgood:m.fgood===true,fbad:m.fbad===true,
+      w:(m.w==="now"||m.w==="later")?m.w:"",from:str(m.from,LIM.from)});
+  }
+  return out;
+}
+let mine=cleanMine(store.get("ssg_list",[]));
 mine.forEach(m=>{if(m.w==="month")m.w="later"});
 const AGES_OK=["20","30","40","50","60"];
 const newPerson=()=>({gender:"any",age:"20",zodiac:"",persona:[]});
@@ -435,7 +462,7 @@ const WHEN={now:"🚨 入居日から",later:"✨ 余裕があれば"};
 const WHEN_ICON={now:"🚨",later:"✨"};
 const save=()=>store.set("ssg_list",mine);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+
 
 function toast(t,act){
   const el=document.getElementById("toast");el.textContent=t;el.classList.toggle("act",!!act);
@@ -562,7 +589,7 @@ const SVG_ICONS={
  power:`<svg viewBox="0 0 36 36" width="34" height="34" aria-hidden="true"><path d="M11 9V6.5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2V9" fill="none" stroke="#5b5f66" stroke-width="2.4" stroke-linecap="round"/><rect x="3" y="9" width="30" height="23" rx="4" fill="#f2a23a"/><rect x="3" y="9" width="30" height="5" rx="2" fill="#5b5f66"/><rect x="6.5" y="17" width="11" height="8" rx="1.5" fill="#2f3439"/><text x="12" y="23.4" font-size="5.5" font-family="sans-serif" font-weight="700" fill="#7fe3a0" text-anchor="middle">88%</text><circle cx="23" cy="21" r="2.2" fill="#2f3439"/><circle cx="29" cy="21" r="2.2" fill="#2f3439"/><rect x="21" y="26.2" width="3.4" height="2" rx=".6" fill="#2f3439"/><rect x="27.3" y="26.2" width="3.4" height="2" rx=".6" fill="#2f3439"/></svg>`
 };
 const icon=i=>i.startsWith("svg:")?SVG_ICONS[i.slice(4)]:i;
-const itemHtml=it=>`<div class="card item"><div class="ic">${icon(it.i)}</div><div class="bd"><div class="nm">${esc(it.n)}</div><div class="ds">${esc(state.people==="2"&&it.d2?it.d2:it.d)}${it.l?` <a class="lnk" href="${it.l.u}" target="_blank" rel="noopener">${esc(it.l.t)} ↗</a>`:""}${it.dm?` <button class="deme" aria-expanded="false">デメ<span><svg viewBox="0 0 10 6" width="9" height="6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>`:""}</div>${it.dm?`<div class="dm-body" hidden>${esc(it.dm)}</div>`:""}<div class="why">${it.ret?`<span class="ret">🌙 ${esc(it.ret)} 引退</span>`:""}<span class="w ${it.w}">${WHEN[it.w]}</span>${it.sp?`<span class="sp">📌 指定</span>`:""}${it.why.map(w=>`<span class="${w.c}">${esc(w.t)}</span>`).join("")}</div></div><button class="add ${inList(it.n)?"done":""}" data-n="${esc(it.n)}">${inList(it.n)?"追加済み":"＋リスト"}</button></div>`;
+const itemHtml=it=>`<div class="card item"><div class="ic">${icon(it.i)}</div><div class="bd"><div class="nm">${esc(it.n)}</div><div class="ds">${esc(state.people==="2"&&it.d2?it.d2:it.d)}${it.l?` <a class="lnk" href="${it.l.u}" target="_blank" rel="noopener noreferrer">${esc(it.l.t)} ↗</a>`:""}${it.dm?` <button class="deme" aria-expanded="false">デメ<span><svg viewBox="0 0 10 6" width="9" height="6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>`:""}</div>${it.dm?`<div class="dm-body" hidden>${esc(it.dm)}</div>`:""}<div class="why">${it.ret?`<span class="ret">🌙 ${esc(it.ret)} 引退</span>`:""}<span class="w ${it.w}">${WHEN[it.w]}</span>${it.sp?`<span class="sp">📌 指定</span>`:""}${it.why.map(w=>`<span class="${w.c}">${esc(w.t)}</span>`).join("")}</div></div><button class="add ${inList(it.n)?"done":""}" data-n="${esc(it.n)}">${inList(it.n)?"追加済み":"＋リスト"}</button></div>`;
 const FIRST=12,STEP=10;
 let allList=[],shown=0;
 function showMore(){
@@ -757,8 +784,12 @@ function parseMd(text){
   return {from,items};
 }
 document.getElementById("impBtn").onclick=()=>{
-  const ta=document.getElementById("imp");const {from,items}=parseMd(ta.value);
-  if(!items.length){toast("アイテムが見つかりませんでした");return}
+  const ta=document.getElementById("imp");
+  if(ta.value.length>LIM.text){toast("長すぎて取り込めません（10万文字まで）");return}
+  const r=parseMd(ta.value),from=str(r.from,LIM.from);
+  if(!r.items.length){toast("アイテムが見つかりませんでした");return}
+  if(mine.length+r.items.length>LIM.items){toast(`マイリストは${LIM.items}件までです`);return}
+  const items=r.items.map(it=>({...it,name:str(it.name,LIM.name),memo:str(it.memo,LIM.memo),ep:str(it.ep,LIM.memo)}));
   let add=0;
   items.forEach(it=>{
     const ex=mine.find(m=>m.name===it.name);
@@ -876,6 +907,57 @@ function renderNotice(){
   document.getElementById("noticeHist").onclick=()=>vm.classList.add("on");
 }
 renderNotice();
+
+// ===== 全データのバックアップと復元（アプリ定型06） =====
+const DATA_FORMAT=1;   // データ形式の番号（将来形式を変えるときに古いデータを変換する目印）
+function backupData(){
+  return {app:"newlife",format:DATA_FORMAT,version:APP_VERSION,savedAt:new Date().toISOString(),
+    data:{list:mine,query:state,name:store.get("ssg_name",""),withLink:withLink.checked,withUrl}};
+}
+document.getElementById("bkSave").onclick=async()=>{
+  const json=JSON.stringify(backupData(),null,1);
+  const d=new Date(),fname=`newlife-backup-${d.getFullYear()}${String(d.getMonth()+1).padStart(2,"0")}${String(d.getDate()).padStart(2,"0")}.json`;
+  const blob=new Blob([json],{type:"application/json"});
+  try{   // スマホは共有メニューから「ファイルに保存」できる
+    const file=new File([blob],fname,{type:"application/json"});
+    if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:fname});toast("バックアップを書き出しました");return}
+  }catch(e){if(e&&e.name==="AbortError")return}
+  try{const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=fname;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),2000);toast("バックアップを保存しました")}
+  catch(e){toast("保存できませんでした")}
+};
+const bkFile=document.getElementById("bkFile"),bkConfirm=document.getElementById("bkConfirm");
+document.getElementById("bkLoad").onclick=()=>{bkFile.value="";bkFile.click()};
+bkFile.onchange=()=>{
+  const f=bkFile.files[0];if(!f)return;
+  if(f.size>2*1024*1024){toast("ファイルが大きすぎます（2MBまで）");return}
+  const rd=new FileReader();
+  rd.onload=()=>{
+    let o;try{o=JSON.parse(rd.result)}catch(e){toast("バックアップのファイルではないようです");return}
+    if(!o||typeof o!=="object"||o.app!=="newlife"||typeof o.data!=="object"||!o.data){toast("このアプリのバックアップではないようです");return}
+    if(+o.format>DATA_FORMAT){toast("新しいバージョンのバックアップです。アプリを更新してから復元してください");return}
+    const list=cleanMine(o.data.list);
+    const when=str(o.savedAt,30).slice(0,10);
+    bkConfirm.innerHTML=`<div class="install-guide"><div class="install-guide-t">今のデータを上書きします</div><p class="install-guide-note">バックアップ（${esc(when)}・マイリスト${list.length}件）で、今のマイリスト${mine.length}件と設定を置きかえます。元に戻せません。</p><div class="row"><button class="btn" id="bkOk">上書きして復元</button><button class="btn sub" id="bkNo">やめる</button></div></div>`;
+    document.getElementById("bkNo").onclick=()=>{bkConfirm.innerHTML=""};
+    document.getElementById("bkOk").onclick=()=>{
+      mine=list;save();
+      const q=o.data.query;
+      if(q&&typeof q==="object"&&Array.isArray(q.persons)){
+        const pick=p=>({gender:["f","m","any"].includes(p&&p.gender)?p.gender:"any",age:AGES_OK.includes(p&&p.age)?p.age:"20",
+          zodiac:ZODIAC.some(z=>z[0]===(p&&p.zodiac))?p.zodiac:"",persona:Array.isArray(p&&p.persona)?p.persona.filter(x=>PERSONA[x]):[]});
+        state={people:q.people==="2"?"2":"1",persons:[pick(q.persons[0]),pick(q.persons[1])],
+          focus:Array.isArray(q.focus)?q.focus.filter(x=>x==="eco"||x==="cheap"):[],power:["on","off"].includes(q.power)?q.power:""};
+        saveQ();
+      }
+      store.set("ssg_name",str(o.data.name,40));myName.value=store.get("ssg_name","");
+      if(typeof o.data.withLink==="boolean"){withLink.checked=o.data.withLink;store.set("ssg_withlink",withLink.checked)}
+      if(typeof o.data.withUrl==="boolean"){withUrl=o.data.withUrl;store.set("ssg_withurl",withUrl)}
+      bkConfirm.innerHTML="";updateBadge();renderPersons();syncFocus();syncPower();syncOpts();renderMine();renderExport();
+      toast(`復元しました（マイリスト${mine.length}件）`);
+    };
+  };
+  rd.readAsText(f);
+};
 
 // ===== 先頭に戻る（おすすめ・一覧で、いちばん下まで来たら出す） =====
 const toTop=document.getElementById("toTop");
