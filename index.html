@@ -130,6 +130,7 @@ textarea{min-height:140px;font-family:ui-monospace,Menlo,monospace;font-size:16p
 .search{position:relative}
 .search-ic{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:15px;pointer-events:none;opacity:.7}
 .search input{padding-left:36px}
+.tab-hint{margin:2px 4px 12px;font-size:13px;line-height:1.7;color:var(--sub)}
 .hint{font-size:12px;color:var(--sub);line-height:1.7;margin:6px 0 0}
 code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
 </style>
@@ -155,6 +156,7 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
 
 <!-- おすすめ -->
 <section id="find" class="on">
+  <p class="tab-hint">時々、自動更新されるおすすめ。気になるものがあればマイリストに追加しておこう。</p>
   <div class="card">
     <div class="lbl">人数</div>
     <div class="chips seg" id="peopleChips">
@@ -171,6 +173,7 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
 
 <!-- アイテム一覧 -->
 <section id="all">
+  <p class="tab-hint">欲しいものを絞り込んで探してみよう。見つけたらマイリストへ追加しよう。</p>
   <div class="card" style="padding:10px">
     <div class="search"><span class="search-ic" aria-hidden="true">🔍</span><input type="search" id="q" placeholder="アイテムを検索（例：レンジ、防災、エコ）" aria-label="アイテムを検索"></div>
     <div class="chips" id="allFilter" style="margin-top:8px">
@@ -186,6 +189,7 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
 
 <!-- マイリスト -->
 <section id="list">
+  <p class="tab-hint">本当にあって良かったものだけ、追加したり、感想をメモしたり。友達からのおすすめも取り込めます。</p>
   <div class="card">
     <h2>アイテムを追加</h2>
     <input type="text" id="newName" placeholder="例）ロボット掃除機">
@@ -205,6 +209,7 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
 
 <!-- 共有 -->
 <section id="share">
+  <p class="tab-hint">本当に欲しいもの、使ってみたけどイマイチだったものを、誰かに共有したり、共有してもらったり。</p>
   <div class="card">
     <h2>📤 友だちに送る</h2>
     <div class="lbl">あなたの名前（任意）</div>
@@ -267,11 +272,12 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
 <script>
 // ===== バージョン =====
 const SHARE_URL="https://sunatrux.github.io/newlife/";
-const APP_VERSION = '1.20.0';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
+const APP_VERSION = '1.21.0';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
 const APP_RELEASE_DATE = '2026-11-03';
 const VERSION=APP_VERSION;
 const CHANGELOG_URL="https://github.com/sunatrux/newlife/blob/main/CHANGELOG.md";
 const HISTORY=[
+ {v:"1.21.0",d:"2026-11-03",c:["おすすめ・一覧・マイリスト・共有の各タブの上に、使い方のヒント文を追加"]},
  {v:"1.20.0",d:"2026-11-03",c:["加湿器・フローリングワイパー・ケーブルボックスを追加"]},
  {v:"1.19.0",d:"2026-11-03",c:["おすすめから外したアイテムを「引退」として残すように。一覧の「🌙 引退したもの」で見られます（マイリストにも入れられます）","毎月10日・20日に、おすすめアイテムの入れ替えを検討するように（追加は3品まで、引退は1品まで）"]},
  {v:"1.18.1",d:"2026-11-03",c:["ロボット掃除機・レンチン目玉焼きクッカーのデメリットを変更"]},
