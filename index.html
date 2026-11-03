@@ -248,8 +248,10 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
       <button class="chip" data-m="bad">❌ 失敗したもの</button>
       <button class="chip" data-m="all">📋 マイリストすべて</button>
     </div>
+    <div class="lbl">時期</div>
+    <div class="chips" id="expWhen"><button class="chip" data-w="">両方</button><button class="chip" data-w="now">🚨 入居日から</button><button class="chip" data-w="later">✨ 余裕があれば</button></div>
     <div class="lbl">いっしょに送るもの（押すとオン・オフ）</div>
-    <div class="chips" id="expOpts"><button class="chip" data-o="when">🗂 時期</button><button class="chip" data-o="memo">📝 メモ</button><button class="chip" data-o="ep">💬 失敗談</button><button class="chip" data-o="url">🔗 商品URL</button><button class="chip" data-o="app">📱 アプリのリンク</button></div>
+    <div class="chips" id="expOpts"><button class="chip" data-o="memo">📝 メモ</button><button class="chip" data-o="ep">💬 失敗談</button><button class="chip" data-o="url">🔗 商品URL</button><button class="chip" data-o="app">📱 アプリのリンク</button></div>
     <div style="height:8px"></div>
     <textarea id="exp" readonly></textarea>
     <p class="hint" style="margin:6px 0 0">👀 この内容が、そのまま相手に見えます。メモに人に見せたくないことが書いてあれば、送る前に確かめてね。</p>
@@ -336,11 +338,12 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 <script>
 // ===== バージョン =====
 const SHARE_URL="https://sunatrux.github.io/newlife/";
-const APP_VERSION = '1.29.0';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
+const APP_VERSION = '1.30.0';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
 const APP_RELEASE_DATE = '2026-11-03';
 const VERSION=APP_VERSION;
 const CHANGELOG_URL="https://github.com/sunatrux/newlife/blob/main/CHANGELOG.md";
 const HISTORY=[
+ {v:"1.30.0",d:"2026-11-03",c:["友だちに送るとき、時期を「両方／🚨 入居日から／✨ 余裕があれば」から選べるように"]},
  {v:"1.29.0",d:"2026-11-03",c:["友だちに送るとき、時期（入居日から・余裕があれば）・メモ・失敗談も、入れるかどうかを選べるように"]},
  {v:"1.28.1",d:"2026-11-03",c:["友だちに送る文の最後の案内を「マイリストに追加できます」に"]},
  {v:"1.28.0",d:"2026-11-03",c:["パソコンで開いたとき、スマホのカメラで読み取ってこのアプリを開ける「📱 スマホで開く」を表示（画面の左下と、設定の中）","パソコンの広い画面で、タブが横に間延びしないように。設定も画面の真ん中に出るように"]},
@@ -765,13 +768,13 @@ document.getElementById("expMode").addEventListener("click",e=>{
   document.querySelectorAll("#expMode .chip").forEach(x=>x.classList.toggle("on",x===c));renderExport();
 });
 function renderExport(){
-  const list=mine.filter(m=>expMode==="all"||(expMode==="good"&&m.good)||(expMode==="bad"&&m.bad));
+  const list=mine.filter(m=>(expMode==="all"||(expMode==="good"&&m.good)||(expMode==="bad"&&m.bad))&&(!expWhen||m.w===expWhen));
   const nm=myName.value.trim();
   const flat=t=>t.replace(/\n/g," ");
   let md=`# ${nm?nm+"の":""}${expMode==="good"?"あって良かった":expMode==="bad"?"失敗した":""}新生活グッズ\n\n`;
-  const line=(m,withW)=>`- ${m.good?"★ ":""}${m.bad?"❌ ":""}${withW&&expOpt.when&&m.w?WHEN_ICON[m.w]+" ":""}${flat(m.name)}${expOpt.memo&&m.memo?" : "+flat(m.memo):""}${expOpt.ep&&m.bad&&m.ep?"\n  - 失敗："+flat(m.ep):""}${withUrl&&itemUrl(m.name)?"\n  - 🔗 "+itemUrl(m.name):""}`;
+  const line=(m,withW)=>`- ${m.good?"★ ":""}${m.bad?"❌ ":""}${withW&&m.w?WHEN_ICON[m.w]+" ":""}${flat(m.name)}${expOpt.memo&&m.memo?" : "+flat(m.memo):""}${expOpt.ep&&m.bad&&m.ep?"\n  - 失敗："+flat(m.ep):""}${withUrl&&itemUrl(m.name)?"\n  - 🔗 "+itemUrl(m.name):""}`;
   if(!list.length)md+=`（まだ${expMode==="bad"?"❌ 失敗":"⭐️ あって良かった"}のアイテムがありません）`;
-  else if(expMode==="bad"||!expOpt.when)md+=list.map(m=>line(m,true)).join("\n");
+  else if(expMode==="bad")md+=list.map(m=>line(m,true)).join("\n");
   else{
     // ★だけ・ぜんぶ：買う時期ごとに見出しを付けて並べる
     const groups=[["now",WHEN.now],["later",WHEN.later],["","🗂 時期未定"]];
@@ -783,7 +786,13 @@ function renderExport(){
 // 付けるもの：時期・メモ・失敗談・商品URL・このアプリのリンク（チップで切り替え。最初はすべてオン）
 const withLink={checked:store.get("ssg_withlink",true)};
 let withUrl=store.get("ssg_withurl",true);
-const expOpt=Object.assign({when:true,memo:true,ep:true},(o=>o&&typeof o==="object"?{when:o.when!==false,memo:o.memo!==false,ep:o.ep!==false}:{})(store.get("ssg_expopts",null)));
+const expOpt=Object.assign({memo:true,ep:true},(o=>o&&typeof o==="object"?{memo:o.memo!==false,ep:o.ep!==false}:{})(store.get("ssg_expopts",null)));
+// 時期：両方／入居日からだけ／余裕があればだけ
+let expWhen=(w=>w==="now"||w==="later"?w:"")(store.get("ssg_expwhen",""));
+const whenEl=document.getElementById("expWhen");
+const syncWhen=()=>whenEl.querySelectorAll(".chip").forEach(c=>c.classList.toggle("on",c.dataset.w===expWhen));
+whenEl.addEventListener("click",e=>{const c=e.target.closest(".chip");if(!c)return;expWhen=c.dataset.w;store.set("ssg_expwhen",expWhen);syncWhen();renderExport()});
+syncWhen();
 const optsEl=document.getElementById("expOpts");
 const optOn=k=>k==="url"?withUrl:k==="app"?withLink.checked:expOpt[k];
 const syncOpts=()=>optsEl.querySelectorAll(".chip").forEach(c=>c.classList.toggle("on",optOn(c.dataset.o)));
