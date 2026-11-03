@@ -222,7 +222,9 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
       <button class="chip" data-m="bad">❌ 失敗したもの</button>
       <button class="chip" data-m="all">📋 マイリストすべて</button>
     </div>
-    <label class="chk"><input type="checkbox" id="withLink"> このアプリのリンクも付ける</label>
+    <div class="lbl">付けるもの（押すと切り替え）</div>
+    <div class="chips" id="expOpts"><button class="chip" data-o="url">🔗 商品のURL</button><button class="chip" data-o="app">📱 このアプリのリンク</button></div>
+    <div style="height:8px"></div>
     <textarea id="exp" readonly></textarea>
     <div class="row"><button class="btn" id="sendBtn">友だちに送る</button><button class="btn sub" id="copyBtn">コピーする</button></div>
     <p class="hint">LINE やメールで送ってね。リンクを付けると、受け取った友だちもアプリを開いてそのまま取り込めます。</p>
@@ -275,11 +277,12 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
 <script>
 // ===== バージョン =====
 const SHARE_URL="https://sunatrux.github.io/newlife/";
-const APP_VERSION = '1.22.1';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
+const APP_VERSION = '1.23.0';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
 const APP_RELEASE_DATE = '2026-11-03';
 const VERSION=APP_VERSION;
 const CHANGELOG_URL="https://github.com/sunatrux/newlife/blob/main/CHANGELOG.md";
 const HISTORY=[
+ {v:"1.23.0",d:"2026-11-03",c:["友だちに送るとき「🔗 商品のURL」チップを選ぶと、公式ページのあるアイテムにURLを付けるように","「このアプリのリンク」もチップで切り替えるように"]},
  {v:"1.22.1",d:"2026-11-03",c:["各タブのヒント文を変更","失敗の印を ✖ から ❌ に"]},
  {v:"1.22.0",d:"2026-11-03",c:["マイリストの⭐️と失敗を、どちらか一方を選ぶ切り替えボタンに","友だちに送るものを「⭐️ 良かったもの／✖ 失敗したもの／📋 マイリストすべて」から選べるように","マイリストのヒント文を変更"]},
  {v:"1.21.1",d:"2026-11-03",c:["セリア 洗面鏡ナナメスタンドの時期を「余裕があれば」に変更"]},
@@ -663,8 +666,8 @@ function renderExport(){
   const nm=myName.value.trim();
   const flat=t=>t.replace(/\n/g," ");
   let md=`# ${nm?nm+"の":""}${expMode==="good"?"あって良かった":expMode==="bad"?"失敗した":""}新生活グッズ\n\n`;
-  const line=(m,withW)=>`- ${m.good?"★ ":""}${m.bad?"❌ ":""}${withW&&m.w?WHEN_ICON[m.w]+" ":""}${flat(m.name)}${m.memo?" : "+flat(m.memo):""}${m.bad&&m.ep?"\n  - 失敗："+flat(m.ep):""}`;
-  if(!list.length)md+=`（まだ${expMode==="bad"?"失敗":"★"}のアイテムがありません）`;
+  const line=(m,withW)=>`- ${m.good?"★ ":""}${m.bad?"❌ ":""}${withW&&m.w?WHEN_ICON[m.w]+" ":""}${flat(m.name)}${m.memo?" : "+flat(m.memo):""}${m.bad&&m.ep?"\n  - 失敗："+flat(m.ep):""}${withUrl&&itemUrl(m.name)?"\n  - 🔗 "+itemUrl(m.name):""}`;
+  if(!list.length)md+=`（まだ${expMode==="bad"?"❌ 失敗":"⭐️ あって良かった"}のアイテムがありません）`;
   else if(expMode==="bad")md+=list.map(m=>line(m,true)).join("\n");
   else{
     // ★だけ・ぜんぶ：買う時期ごとに見出しを付けて並べる
@@ -674,9 +677,17 @@ function renderExport(){
   if(withLink.checked)md+=`\n\n新生活おすすめグッズで作ったリストです。アプリを開いて「共有」→「取り込む」に貼り付けると、そのまま読み込めます。\n${SHARE_URL}`;
   document.getElementById("exp").value=md+"\n";
 }
-const withLink=document.getElementById("withLink");
-withLink.checked=store.get("ssg_withlink",true);
-withLink.onchange=()=>{store.set("ssg_withlink",withLink.checked);renderExport()};
+// 付けるもの：商品のURL・このアプリのリンク（チップで切り替え）
+const withLink={checked:store.get("ssg_withlink",true)};
+let withUrl=store.get("ssg_withurl",true);
+const optsEl=document.getElementById("expOpts");
+const syncOpts=()=>{optsEl.querySelector('[data-o="url"]').classList.toggle("on",withUrl);optsEl.querySelector('[data-o="app"]').classList.toggle("on",withLink.checked)};
+optsEl.addEventListener("click",e=>{const c=e.target.closest(".chip");if(!c)return;
+  if(c.dataset.o==="url"){withUrl=!withUrl;store.set("ssg_withurl",withUrl)}
+  else{withLink.checked=!withLink.checked;store.set("ssg_withlink",withLink.checked)}
+  syncOpts();renderExport()});
+syncOpts();
+const itemUrl=name=>{const it=ITEMS.find(x=>x.n===name);return it&&it.l?it.l.u:""};
 async function copyText(text,okMsg,ta){
   try{await navigator.clipboard.writeText(text);toast(okMsg);return true}
   catch(e){if(ta){ta.focus();ta.select();toast("選択しました。長押しでコピーしてね")}return false}
@@ -693,6 +704,8 @@ document.getElementById("sendBtn").onclick=()=>{const t=document.getElementById(
 function parseMd(text){
   let from="",curW="";const items=[];
   text.split(/\r?\n/).forEach(line=>{
+    const u=line.match(/^\s+[-*・]\s*🔗\s*(\S+)/);
+    if(u){if(items.length){const l=items[items.length-1];if(!ITEMS.some(x=>x.n===l.name))l.memo=(l.memo?l.memo+" ":"")+u[1]}return}
     const f=line.match(/^\s+[-*・]\s*失敗[:：]\s*(.*)$/);
     if(f){if(items.length){const l=items[items.length-1];l.bad=true;l.ep=f[1].trim()}return}
     const hh=line.match(/^##+\s*(.*)$/);
