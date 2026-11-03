@@ -292,10 +292,10 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
     <div id="updBox"></div>
   </div>
   <div class="card">
-    <div class="lbl">作者に感想を送る</div>
-    <p class="hint" style="margin-top:0">使ってみた感想や「ここが使いにくい」「動かない」などは、下のフォームから気軽にどうぞ。不具合の場合は、どの画面で何をしたかを書いてもらえると助かります。</p>
-    <p class="hint">アプリのバージョンと使っている端末・ブラウザは、自動で一緒に送られます（<span id="fbInfo"></span>）。名前やマイリストの中身は送られません。</p>
-    <a class="btn" id="fbLink" href="https://tally.so/r/9qL0A4" target="_blank" rel="noopener noreferrer" style="text-align:center;text-decoration:none">感想を送る</a>
+    <div class="lbl">💌 作者へのおたより</div>
+    <p class="hint" style="margin-top:0">「これ買ってよかった！」「このアプリで新生活が楽しくなった」など、おたよりや応援メッセージを気軽にどうぞ。届いたおたよりは、作者のいちばんの励みになります。</p>
+    <a class="btn" id="fbLink" href="https://tally.so/r/9qL0A4" target="_blank" rel="noopener noreferrer" style="text-align:center;text-decoration:none">✉️ おたより・応援メッセージを送る</a>
+    <p class="hint" style="font-size:11px">名前やマイリストの中身は送られません。アプリのバージョンと端末の種類だけ、一緒に届きます（<span id="fbInfo"></span>）。</p>
   </div>
   <p class="hint" style="text-align:center;margin:4px 0 14px">入力したデータはこの端末の中だけに保存され、サーバーには送られません。</p>
   <div class="app-version">バージョン <span id="setVer"></span><br><button class="linkbtn" id="histBtn">更新履歴</button></div>
@@ -307,11 +307,12 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
 <script>
 // ===== バージョン =====
 const SHARE_URL="https://sunatrux.github.io/newlife/";
-const APP_VERSION = '1.26.1';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
+const APP_VERSION = '1.27.0';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
 const APP_RELEASE_DATE = '2026-11-03';
 const VERSION=APP_VERSION;
 const CHANGELOG_URL="https://github.com/sunatrux/newlife/blob/main/CHANGELOG.md";
 const HISTORY=[
+ {v:"1.27.0",d:"2026-11-03",c:["設定の「作者に感想を送る」を、おたよりや応援メッセージを送る「💌 作者へのおたより」コーナーに"]},
  {v:"1.26.1",d:"2026-11-03",c:["設定の「バックアップを保存」ボタンを「バックアップ」に"]},
  {v:"1.26.0",d:"2026-11-03",c:["設定に「作者に感想を送る」を追加（アプリのバージョンと端末の種類だけが自動で添えられます）","iPhoneでノッチやホームバーに画面が隠れないように、右端が切れないように調整"]},
  {v:"1.25.0",d:"2026-11-03",c:["設定に「データ管理」を追加。マイリストなど全データをファイルにバックアップして、丸ごと復元できます","取り込みの安全対策を強化（文字数・件数に上限、決まった項目だけを読み込む）","友だちに送る前に「この内容が相手に見えます」と表示"]},
