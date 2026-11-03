@@ -336,11 +336,12 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 <script>
 // ===== バージョン =====
 const SHARE_URL="https://sunatrux.github.io/newlife/";
-const APP_VERSION = '1.28.0';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
+const APP_VERSION = '1.28.1';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
 const APP_RELEASE_DATE = '2026-11-03';
 const VERSION=APP_VERSION;
 const CHANGELOG_URL="https://github.com/sunatrux/newlife/blob/main/CHANGELOG.md";
 const HISTORY=[
+ {v:"1.28.1",d:"2026-11-03",c:["友だちに送る文の最後の案内を「マイリストに追加できます」に"]},
  {v:"1.28.0",d:"2026-11-03",c:["パソコンで開いたとき、スマホのカメラで読み取ってこのアプリを開ける「📱 スマホで開く」を表示（画面の左下と、設定の中）","パソコンの広い画面で、タブが横に間延びしないように。設定も画面の真ん中に出るように"]},
  {v:"1.27.0",d:"2026-11-03",c:["設定の「作者に感想を送る」を、おたよりや応援メッセージを送る「💌 作者へのおたより」コーナーに"]},
  {v:"1.26.1",d:"2026-11-03",c:["設定の「バックアップを保存」ボタンを「バックアップ」に"]},
@@ -775,7 +776,7 @@ function renderExport(){
     const groups=[["now",WHEN.now],["later",WHEN.later],["","🗂 時期未定"]];
     md+=groups.map(([k,title])=>{const g=list.filter(m=>(m.w||"")===k);return g.length?`## ${title}\n${g.map(m=>line(m,false)).join("\n")}`:""}).filter(Boolean).join("\n\n");
   }
-  if(withLink.checked)md+=`\n\n新生活おすすめグッズで作ったリストです。アプリを開いて「共有」→「取り込む」に貼り付けると、そのまま読み込めます。\n${SHARE_URL}`;
+  if(withLink.checked)md+=`\n\n新生活おすすめグッズで作ったリストです。アプリを開いて「共有」→「取り込む」に貼り付けると、マイリストに追加できます。\n${SHARE_URL}`;
   document.getElementById("exp").value=md+"\n";
 }
 // 付けるもの：商品のURL・このアプリのリンク（チップで切り替え）
