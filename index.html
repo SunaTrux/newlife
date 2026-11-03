@@ -289,11 +289,12 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
 <script>
 // ===== バージョン =====
 const SHARE_URL="https://sunatrux.github.io/newlife/";
-const APP_VERSION = '1.24.0';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
+const APP_VERSION = '1.24.1';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
 const APP_RELEASE_DATE = '2026-11-03';
 const VERSION=APP_VERSION;
 const CHANGELOG_URL="https://github.com/sunatrux/newlife/blob/main/CHANGELOG.md";
 const HISTORY=[
+ {v:"1.24.1",d:"2026-11-03",c:["マイリストで「❌ 失敗だった」を押すと画面が動いてしまうのを修正（失敗エピソード欄は出るだけで、自動で入力状態にしない）"]},
  {v:"1.24.0",d:"2026-11-03",c:["タブを「おすすめ・一覧 › マイリスト › 共有」の流れが分かる並びに","マイリストに追加したら、その場から「見る ›」でマイリストへ移れるように","マイリストに⭐️や❌があれば「友だちに送る ›」ボタン、空のときは「おすすめを見る ›」「一覧から探す ›」を出すように"]},
  {v:"1.23.1",d:"2026-11-03",c:["買い物メモ用ホワイトボードを削除","防音マット（静床ライト）に、ピアリビングの公式ページへのリンクを追加"]},
  {v:"1.23.0",d:"2026-11-03",c:["友だちに送るとき「🔗 商品のURL」チップを選ぶと、公式ページのあるアイテムにURLを付けるように","「このアプリのリンク」もチップで切り替えるように"]},
@@ -628,6 +629,7 @@ function addFromBtn(e){
 
 // ===== マイリスト =====
 let filter="all";
+const keepScroll=fn=>{const y=window.scrollY;fn();window.scrollTo(0,y)};   // 描き直しても見ている位置を動かさない
 function updateBadge(){document.getElementById("badge").textContent=mine.length}
 document.getElementById("filter").addEventListener("click",e=>{
   const c=e.target.closest(".chip");if(!c)return;filter=c.dataset.f;
@@ -661,10 +663,10 @@ document.getElementById("mineNext").addEventListener("click",e=>{
 });
 document.getElementById("mine").addEventListener("click",e=>{
   const card=e.target.closest(".mine");if(!card)return;const m=mine.find(x=>x.id===card.dataset.id);
-  if(e.target.closest(".star")){m.good=!m.good;if(m.good)m.bad=false;save();renderMine()}
-  if(e.target.closest(".bad")){m.bad=!m.bad;if(m.bad)m.good=false;save();renderMine();
-    if(m.bad){const ep=document.querySelector(`.mine[data-id="${m.id}"] .ep`);if(ep&&!ep.value)ep.focus()}}
-  const wb=e.target.closest(".wbtn");if(wb){m.w=m.w===wb.dataset.w?"":wb.dataset.w;save();renderMine()}
+  if(e.target.closest(".star")){m.good=!m.good;if(m.good)m.bad=false;save();keepScroll(renderMine)}
+  // 失敗エピソード欄は出すだけ（自動で入力状態にすると、キーボードが開いて画面が動いてしまうため）
+  if(e.target.closest(".bad")){m.bad=!m.bad;if(m.bad)m.good=false;save();keepScroll(renderMine)}
+  const wb=e.target.closest(".wbtn");if(wb){m.w=m.w===wb.dataset.w?"":wb.dataset.w;save();keepScroll(renderMine)}
   if(e.target.closest(".del")){
     if(card.dataset.confirm){mine=mine.filter(x=>x!==m);save();updateBadge();renderMine()}
     else{card.dataset.confirm=1;e.target.textContent="削除？";setTimeout(()=>{if(card.isConnected){delete card.dataset.confirm;e.target.textContent="✕"}},2500)}
