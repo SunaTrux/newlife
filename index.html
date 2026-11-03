@@ -28,8 +28,14 @@ header .ttl h1{flex:1}
 header h1{margin:0;font-size:22px;letter-spacing:.04em}
 header h1 span{color:var(--main)}
 header p{margin:6px 0 0;font-size:12px;color:var(--sub)}
-nav{position:sticky;top:0;z-index:5;display:flex;gap:6px;padding:10px 12px;background:var(--bg);border-bottom:1px solid var(--line)}
-nav button{flex:1;white-space:nowrap;border:none;background:#f1e9dd;color:var(--sub);padding:10px 4px;border-radius:999px;font:inherit;font-size:14px;font-weight:700}
+nav{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:2px;padding:10px 10px;background:var(--bg);border-bottom:1px solid var(--line)}
+nav .grp{flex:2.1;display:flex;gap:3px;background:#f1e9dd;border-radius:999px;padding:3px}
+nav .arr{flex:none;width:12px;text-align:center;color:#c9b9a6;font-size:20px;font-weight:700;line-height:1;margin-top:-2px}
+nav button{flex:1;white-space:nowrap;border:none;background:#f1e9dd;color:var(--sub);padding:10px 4px;border-radius:999px;font:inherit;font-size:13.5px;font-weight:700}
+nav .grp button{padding:7px 2px}
+nav button.solo{flex:1.25}
+nav .badge.bump{animation:bump .5s ease}
+@keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.5)}100%{transform:scale(1)}}
 nav button.on{background:var(--main);color:#fff}
 nav .badge{display:inline-block;min-width:18px;padding:0 5px;margin-left:4px;border-radius:9px;background:#fff;color:var(--main);font-size:11px;line-height:18px}
 main{max-width:640px;margin:0 auto;padding:12px 12px 80px}
@@ -119,7 +125,9 @@ textarea{min-height:140px;font-family:ui-monospace,Menlo,monospace;font-size:16p
 .dm-body{margin-top:6px;padding:8px 10px;border-radius:8px;background:#fbf3e6;border-left:3px solid #e8b56b;font-size:12.5px;line-height:1.6;color:#6b5a45}
 .totop{position:fixed;right:16px;bottom:22px;z-index:15;border:none;border-radius:999px;background:var(--ink);color:#fff;font:inherit;font-size:13px;font-weight:700;padding:10px 16px;box-shadow:0 4px 14px rgba(0,0,0,.18);opacity:0;transform:translateY(12px);pointer-events:none;transition:.2s}
 .totop.on{opacity:.92;transform:none;pointer-events:auto}
-.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);opacity:0;background:#3a3330;color:#fff;padding:10px 16px;border-radius:999px;font-size:13px;transition:.25s;pointer-events:none;z-index:20}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);opacity:0;background:#3a3330;color:#fff;padding:10px 16px;border-radius:999px;font-size:13px;transition:.25s;pointer-events:none;z-index:20;display:flex;align-items:center;gap:10px;white-space:nowrap}
+.toast .ta{border:none;background:#fff;color:var(--ink);border-radius:999px;padding:5px 12px;font:inherit;font-size:12.5px;font-weight:700}
+.toast.on.act{pointer-events:auto}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 .seg{display:flex;gap:6px;margin-bottom:10px}
 .seg .chip{flex:1;text-align:center}
@@ -133,6 +141,8 @@ textarea{min-height:140px;font-family:ui-monospace,Menlo,monospace;font-size:16p
 .search-ic{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:15px;pointer-events:none;opacity:.7}
 .search input{padding-left:36px}
 .tab-hint{margin:2px 4px 12px;font-size:13px;line-height:1.7;color:var(--sub)}
+#mineNext{margin-top:4px}
+#mineNext .next{margin-top:6px}
 .hint{font-size:12px;color:var(--sub);line-height:1.7;margin:6px 0 0}
 code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
 </style>
@@ -148,11 +158,12 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
   <p>本当にあって良かったものだけを集めよう</p>
 </header>
 <div id="updNotice"></div>
-<nav>
-  <button data-tab="find" class="on">おすすめ</button>
-  <button data-tab="all">一覧</button>
-  <button data-tab="list">マイリスト<span class="badge" id="badge">0</span></button>
-  <button data-tab="share">共有</button>
+<nav aria-label="おすすめ・一覧で探して、マイリストに集めて、共有で送る">
+  <div class="grp"><button data-tab="find" class="on">おすすめ</button><button data-tab="all">一覧</button></div>
+  <span class="arr" aria-hidden="true">›</span>
+  <button data-tab="list" class="solo">マイリスト<span class="badge" id="badge">0</span></button>
+  <span class="arr" aria-hidden="true">›</span>
+  <button data-tab="share" class="solo">共有</button>
 </nav>
 <main>
 
@@ -207,6 +218,7 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
   </div>
   <p class="cnt" id="cnt"></p>
   <div id="mine"></div>
+  <div id="mineNext"></div>
 </section>
 
 <!-- 共有 -->
@@ -277,11 +289,12 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
 <script>
 // ===== バージョン =====
 const SHARE_URL="https://sunatrux.github.io/newlife/";
-const APP_VERSION = '1.23.1';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
+const APP_VERSION = '1.24.0';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
 const APP_RELEASE_DATE = '2026-11-03';
 const VERSION=APP_VERSION;
 const CHANGELOG_URL="https://github.com/sunatrux/newlife/blob/main/CHANGELOG.md";
 const HISTORY=[
+ {v:"1.24.0",d:"2026-11-03",c:["タブを「おすすめ・一覧 › マイリスト › 共有」の流れが分かる並びに","マイリストに追加したら、その場から「見る ›」でマイリストへ移れるように","マイリストに⭐️や❌があれば「友だちに送る ›」ボタン、空のときは「おすすめを見る ›」「一覧から探す ›」を出すように"]},
  {v:"1.23.1",d:"2026-11-03",c:["買い物メモ用ホワイトボードを削除","防音マット（静床ライト）に、ピアリビングの公式ページへのリンクを追加"]},
  {v:"1.23.0",d:"2026-11-03",c:["友だちに送るとき「🔗 商品のURL」チップを選ぶと、公式ページのあるアイテムにURLを付けるように","「このアプリのリンク」もチップで切り替えるように"]},
  {v:"1.22.1",d:"2026-11-03",c:["各タブのヒント文を変更","失敗の印を ✖ から ❌ に"]},
@@ -423,7 +436,12 @@ const save=()=>store.set("ssg_list",mine);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 
-function toast(t){const el=document.getElementById("toast");el.textContent=t;el.classList.add("on");clearTimeout(toast._t);toast._t=setTimeout(()=>el.classList.remove("on"),1800)}
+function toast(t,act){
+  const el=document.getElementById("toast");el.textContent=t;el.classList.toggle("act",!!act);
+  if(act){const b=document.createElement("button");b.className="ta";b.textContent=act.label;b.onclick=()=>{el.classList.remove("on");act.fn()};el.appendChild(b)}
+  el.classList.add("on");clearTimeout(toast._t);toast._t=setTimeout(()=>el.classList.remove("on"),act?3500:1800);
+}
+const goTab=id=>document.querySelector(`nav button[data-tab="${id}"]`).click();
 
 // ===== タブ =====
 document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
@@ -604,7 +622,8 @@ function addFromBtn(e){
   const b=e.target.closest(".add");if(!b||b.classList.contains("done"))return;
   const it=ITEMS.find(x=>x.n===b.dataset.n);
   mine.unshift({id:uid(),name:it.n,memo:"",good:false,from:"",w:it.w});save();updateBadge();
-  b.classList.add("done");b.textContent="追加済み";toast("マイリストに追加しました");
+  b.classList.add("done");b.textContent="追加済み";toast("マイリストに追加しました",{label:"見る ›",fn:()=>goTab("list")});
+  const bd=document.getElementById("badge");bd.classList.remove("bump");void bd.offsetWidth;bd.classList.add("bump");
 }
 
 // ===== マイリスト =====
@@ -619,6 +638,12 @@ function renderMine(){
   const goods=mine.filter(m=>m.good).length,bads=mine.filter(m=>m.bad).length;
   document.getElementById("cnt").textContent=mine.length?`${mine.length}アイテム（⭐️ あって良かった ${goods}・❌ 失敗 ${bads}）`:"";
   const el=document.getElementById("mine");
+  // 次の一歩：⭐️/❌があれば共有へ、空なら探す側へ
+  const nx=document.getElementById("mineNext");
+  if(!mine.length)nx.innerHTML=`<div class="row next"><button class="btn sub" data-go="find">おすすめを見る ›</button><button class="btn sub" data-go="all">一覧から探す ›</button></div>`;
+  else if(goods)nx.innerHTML=`<button class="btn next" data-go="share" data-mode="good">⭐️ 良かったものを友だちに送る ›</button>`;
+  else if(bads)nx.innerHTML=`<button class="btn next" data-go="share" data-mode="bad">❌ 失敗したものを友だちに送る ›</button>`;
+  else nx.innerHTML=`<p class="hint" style="text-align:center">使ってみたら ⭐️ か ❌ をつけよう。友だちに送れるようになります。</p>`;
   if(!list.length){el.innerHTML=`<div class="empty">${mine.length?"この条件のアイテムはありません":"まだアイテムがありません。<br>おすすめから追加するか、上で自分で追加してね。<br>使ってみて良かったら「⭐️ あって良かった」、イマイチなら「❌ 失敗だった」を選ぼう。"}</div>`;return}
   el.innerHTML=list.map(m=>`<div class="card mine" data-id="${m.id}">
     <div class="top">
@@ -629,6 +654,11 @@ function renderMine(){
     <textarea class="memo" rows="1" placeholder="メモ（どこで買った・良かった点など）">${esc(m.memo)}</textarea>
     ${m.bad?`<textarea class="memo ep" rows="2" placeholder="失敗エピソード（何がダメだった？次はどうする？）">${esc(m.ep||"")}</textarea>`:""}</div>`).join("");
 }
+document.getElementById("mineNext").addEventListener("click",e=>{
+  const b=e.target.closest("[data-go]");if(!b)return;
+  goTab(b.dataset.go);
+  if(b.dataset.mode){const c=document.querySelector(`#expMode [data-m="${b.dataset.mode}"]`);if(c)c.click()}
+});
 document.getElementById("mine").addEventListener("click",e=>{
   const card=e.target.closest(".mine");if(!card)return;const m=mine.find(x=>x.id===card.dataset.id);
   if(e.target.closest(".star")){m.good=!m.good;if(m.good)m.bad=false;save();renderMine()}
