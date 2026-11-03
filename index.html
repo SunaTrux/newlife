@@ -59,6 +59,7 @@ h2{font-size:15px;margin:0 0 10px}
 .why span.w{background:#fde4e0;color:#c0473a;font-weight:700}
 .why span.w.later{background:#f3eefe;color:#7a5fc0}
 .why span.sp{background:#e7f1ec;color:#3f7a5a;font-weight:700}
+.why span.ret{background:#ecebf3;color:#5c5a78;font-weight:700}
 .why span.p{background:#eaf2fb;color:#4a7bb0}
 .add{flex:none;border:1.5px solid var(--main);background:#fff;color:var(--main);border-radius:10px;padding:6px 10px;font:inherit;font-size:12px;font-weight:700}
 .add.done{border-color:var(--leaf);color:var(--leaf)}
@@ -173,7 +174,7 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
   <div class="card" style="padding:10px">
     <div class="search"><span class="search-ic" aria-hidden="true">🔍</span><input type="search" id="q" placeholder="アイテムを検索（例：レンジ、防災、エコ）" aria-label="アイテムを検索"></div>
     <div class="chips" id="allFilter" style="margin-top:8px">
-      <button class="chip on" data-v="">すべて</button><button class="chip" data-v="eco">♻️ エコ</button><button class="chip" data-v="cheap">💴 安価</button><button class="chip" data-v="1">ひとり向け</button><button class="chip" data-v="2">ふたり向け</button><button class="chip" data-v="on">🔌 家電</button><button class="chip" data-v="off">🍃 電気なし</button><button class="chip" data-v="sp">📌 指定</button>
+      <button class="chip on" data-v="">すべて</button><button class="chip" data-v="eco">♻️ エコ</button><button class="chip" data-v="cheap">💴 安価</button><button class="chip" data-v="1">ひとり向け</button><button class="chip" data-v="2">ふたり向け</button><button class="chip" data-v="on">🔌 家電</button><button class="chip" data-v="off">🍃 電気なし</button><button class="chip" data-v="sp">📌 指定</button><button class="chip" data-v="ret">🌙 引退したもの</button>
     </div>
     <div class="chips" id="whenFilter" style="margin-top:6px">
       <button class="chip on" data-v="">いつでも</button><button class="chip" data-v="now">🚨 入居日から</button><button class="chip" data-v="later">✨ 余裕があれば</button>
@@ -266,11 +267,12 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
 <script>
 // ===== バージョン =====
 const SHARE_URL="https://sunatrux.github.io/newlife/";
-const APP_VERSION = '1.18.1';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
+const APP_VERSION = '1.19.0';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
 const APP_RELEASE_DATE = '2026-11-03';
 const VERSION=APP_VERSION;
 const CHANGELOG_URL="https://github.com/sunatrux/newlife/blob/main/CHANGELOG.md";
 const HISTORY=[
+ {v:"1.19.0",d:"2026-11-03",c:["おすすめから外したアイテムを「引退」として残すように。一覧の「🌙 引退したもの」で見られます（マイリストにも入れられます）","毎月10日・20日に、おすすめアイテムの入れ替えを検討するように（追加は3品まで、引退は1品まで）"]},
  {v:"1.18.1",d:"2026-11-03",c:["ロボット掃除機・レンチン目玉焼きクッカーのデメリットを変更"]},
  {v:"1.18.0",d:"2026-11-03",c:["アイテムの紹介の最後に「デメ」を追加。押すとデメリットが開きます","おすすめと一覧で一番下までスクロールしたら「↑ 先頭に戻る」ボタンを出すように"]},
  {v:"1.17.0",d:"2026-11-03",c:["商品を指定しているアイテムに「📌 指定」の目印を付け、一覧で絞り込めるように","折りたためる洗濯かごを追加","サーモグラスを真空断熱タンブラーに","クッション付きフラフープの説明を変更"]},
@@ -459,7 +461,7 @@ function recommend(){
   const ppl=+state.people, ps=state.persons.slice(0,ppl);
   const els=ps.map(p=>zOf(p.zodiac)).map(z=>z?z[2]:null);
   const genders=ps.map(p=>p.gender);
-  return ITEMS.filter(it=>it.p.includes(ppl)&&powerOk(it)).map(it=>{
+  return ITEMS.filter(it=>!it.ret&&it.p.includes(ppl)&&powerOk(it)).map(it=>{
     let s=1; const why=[];
     // 性格（人ごと）
     it.t.forEach(t=>{
@@ -522,7 +524,7 @@ const SVG_ICONS={
  power:`<svg viewBox="0 0 36 36" width="34" height="34" aria-hidden="true"><path d="M11 9V6.5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2V9" fill="none" stroke="#5b5f66" stroke-width="2.4" stroke-linecap="round"/><rect x="3" y="9" width="30" height="23" rx="4" fill="#f2a23a"/><rect x="3" y="9" width="30" height="5" rx="2" fill="#5b5f66"/><rect x="6.5" y="17" width="11" height="8" rx="1.5" fill="#2f3439"/><text x="12" y="23.4" font-size="5.5" font-family="sans-serif" font-weight="700" fill="#7fe3a0" text-anchor="middle">88%</text><circle cx="23" cy="21" r="2.2" fill="#2f3439"/><circle cx="29" cy="21" r="2.2" fill="#2f3439"/><rect x="21" y="26.2" width="3.4" height="2" rx=".6" fill="#2f3439"/><rect x="27.3" y="26.2" width="3.4" height="2" rx=".6" fill="#2f3439"/></svg>`
 };
 const icon=i=>i.startsWith("svg:")?SVG_ICONS[i.slice(4)]:i;
-const itemHtml=it=>`<div class="card item"><div class="ic">${icon(it.i)}</div><div class="bd"><div class="nm">${esc(it.n)}</div><div class="ds">${esc(state.people==="2"&&it.d2?it.d2:it.d)}${it.l?` <a class="lnk" href="${it.l.u}" target="_blank" rel="noopener">${esc(it.l.t)} ↗</a>`:""}${it.dm?` <button class="deme" aria-expanded="false">デメ<span><svg viewBox="0 0 10 6" width="9" height="6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>`:""}</div>${it.dm?`<div class="dm-body" hidden>${esc(it.dm)}</div>`:""}<div class="why"><span class="w ${it.w}">${WHEN[it.w]}</span>${it.sp?`<span class="sp">📌 指定</span>`:""}${it.why.map(w=>`<span class="${w.c}">${esc(w.t)}</span>`).join("")}</div></div><button class="add ${inList(it.n)?"done":""}" data-n="${esc(it.n)}">${inList(it.n)?"追加済み":"＋リスト"}</button></div>`;
+const itemHtml=it=>`<div class="card item"><div class="ic">${icon(it.i)}</div><div class="bd"><div class="nm">${esc(it.n)}</div><div class="ds">${esc(state.people==="2"&&it.d2?it.d2:it.d)}${it.l?` <a class="lnk" href="${it.l.u}" target="_blank" rel="noopener">${esc(it.l.t)} ↗</a>`:""}${it.dm?` <button class="deme" aria-expanded="false">デメ<span><svg viewBox="0 0 10 6" width="9" height="6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>`:""}</div>${it.dm?`<div class="dm-body" hidden>${esc(it.dm)}</div>`:""}<div class="why">${it.ret?`<span class="ret">🌙 ${esc(it.ret)} 引退</span>`:""}<span class="w ${it.w}">${WHEN[it.w]}</span>${it.sp?`<span class="sp">📌 指定</span>`:""}${it.why.map(w=>`<span class="${w.c}">${esc(w.t)}</span>`).join("")}</div></div><button class="add ${inList(it.n)?"done":""}" data-n="${esc(it.n)}">${inList(it.n)?"追加済み":"＋リスト"}</button></div>`;
 const FIRST=12,STEP=10;
 let allList=[],shown=0;
 function showMore(){
@@ -550,6 +552,9 @@ let allF="",whenF="";
 function renderAll(){
   const q=document.getElementById("q").value.trim().toLowerCase();
   const list=ITEMS.filter(it=>{
+    // 引退したアイテムは「🌙 引退したもの」を選んだときだけ出す
+    if(allF==="ret")return !!it.ret&&(!q||[it.n,it.d,it.dm||""].join(" ").toLowerCase().includes(q));
+    if(it.ret)return false;
     if(allF==="eco"||allF==="cheap"){if(!(it.c||[]).includes(allF))return false}
     else if(allF==="on"||allF==="off"){if(allF==="on"?!it.el:it.el)return false}
     else if(allF==="sp"){if(!it.sp)return false}
@@ -559,7 +564,8 @@ function renderAll(){
     const hay=[it.n,it.d,it.d2||"",...it.t.map(t=>PERSONA[t]),...(it.c||[]).map(c=>CATS[c]),WHEN[it.w],it.el?"家電 電気":"電気なし",it.sp?"指定":""].join(" ").toLowerCase();
     return q.split(/\s+/).every(w=>hay.includes(w));
   }).map(it=>({...it,why:[...(it.c||[]).map(c=>({c:"k",t:CATS[c]})),...(it.p.length===1?[{c:"p",t:it.p[0]===2?"ふたり暮らし向け":"ひとり暮らし向け"}]:[])]}));
-  document.getElementById("allCnt").textContent=`${list.length}件 / 全${ITEMS.length}件`;
+  const activeN=ITEMS.filter(it=>!it.ret).length,retN=ITEMS.length-activeN;
+  document.getElementById("allCnt").textContent=allF==="ret"?`引退したもの ${list.length}件（おすすめには出ません。マイリストには入れられます）`:`${list.length}件 / 全${activeN}件`;
   document.getElementById("allItems").innerHTML=list.length?list.map(itemHtml).join(""):`<div class="empty">見つかりませんでした</div>`;
 }
 document.getElementById("q").addEventListener("input",renderAll);
