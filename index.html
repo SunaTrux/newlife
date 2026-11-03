@@ -68,7 +68,7 @@ textarea{min-height:140px;font-family:ui-monospace,Menlo,monospace;font-size:16p
 .row{display:flex;gap:8px}.row>*{flex:1}
 .mine .top{display:flex;align-items:center;gap:8px}
 .mine .nm{flex:1;font-weight:700;font-size:15px;word-break:break-all}
-/* ⭐️と✖はどちらか一方（もう一度押すと外れる） */
+/* ⭐️と❌はどちらか一方（もう一度押すと外れる） */
 .rate{display:inline-flex;margin-top:8px;border:1.5px solid var(--line);border-radius:999px;overflow:hidden;background:#fff}
 .rate button{border:none;background:none;font:inherit;font-size:12.5px;font-weight:700;color:#b3a89c;padding:6px 12px;filter:grayscale(1);opacity:.75}
 .rate button+button{border-left:1.5px solid var(--line)}
@@ -158,7 +158,7 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
 
 <!-- おすすめ -->
 <section id="find" class="on">
-  <p class="tab-hint">時々、自動更新されるおすすめ。気になるものがあればマイリストに追加しておこう。</p>
+  <p class="tab-hint">時々、自動更新されるおすすめ。気になるものを見つけたらマイリストに追加できるよ。</p>
   <div class="card">
     <div class="lbl">人数</div>
     <div class="chips seg" id="peopleChips">
@@ -175,7 +175,7 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
 
 <!-- アイテム一覧 -->
 <section id="all">
-  <p class="tab-hint">欲しいものを絞り込んで探してみよう。見つけたらマイリストへ追加しよう。</p>
+  <p class="tab-hint">グッズを絞り込んで探してみよう。気になるものはマイリストへ追加しよう。</p>
   <div class="card" style="padding:10px">
     <div class="search"><span class="search-ic" aria-hidden="true">🔍</span><input type="search" id="q" placeholder="アイテムを検索（例：レンジ、防災、エコ）" aria-label="アイテムを検索"></div>
     <div class="chips" id="allFilter" style="margin-top:8px">
@@ -191,7 +191,7 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
 
 <!-- マイリスト -->
 <section id="list">
-  <p class="tab-hint">自分だけのリスト。本当にあって良かったものは⭐️をつけよう。メモを追加したり、友達からのおすすめも取り込めます。</p>
+  <p class="tab-hint">自分だけのリスト。あって良かったものは⭐️、失敗は❌。メモを追加したり、友達からのおすすめも取り込めます。</p>
   <div class="card">
     <h2>アイテムを追加</h2>
     <input type="text" id="newName" placeholder="例）ロボット掃除機">
@@ -201,7 +201,7 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
   <div class="chips" id="filter" style="margin-bottom:10px">
     <button class="chip on" data-f="all">すべて</button>
     <button class="chip" data-f="good">⭐️ あって良かった</button>
-    <button class="chip" data-f="bad">✖ 失敗だった</button>
+    <button class="chip" data-f="bad">❌ 失敗だった</button>
     <button class="chip" data-f="friend">友だちから</button>
     <button class="chip" data-f="now">🚨 入居日から</button>
   </div>
@@ -211,7 +211,7 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
 
 <!-- 共有 -->
 <section id="share">
-  <p class="tab-hint">本当に欲しいもの、使ってみたけどイマイチだったものを、誰かに共有したり、共有してもらったり。</p>
+  <p class="tab-hint">良かったもの、失敗したものを皆んなに共有したり、してもらったり。</p>
   <div class="card">
     <h2>📤 友だちに送る</h2>
     <div class="lbl">あなたの名前（任意）</div>
@@ -219,7 +219,7 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
     <div class="lbl">送るもの</div>
     <div class="chips" id="expMode">
       <button class="chip on" data-m="good">⭐️ 良かったもの</button>
-      <button class="chip" data-m="bad">✖ 失敗したもの</button>
+      <button class="chip" data-m="bad">❌ 失敗したもの</button>
       <button class="chip" data-m="all">📋 マイリストすべて</button>
     </div>
     <label class="chk"><input type="checkbox" id="withLink"> このアプリのリンクも付ける</label>
@@ -235,9 +235,9 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
       <code># わたしの新生活リスト</code><br>
       <code>- ★ ✨ ロボット掃除機 : 床がいつもきれい</code><br>
       <code>- タジン鍋 : 野菜を入れてチンするだけ</code><br>
-      <code>- ✖ 大きいバスタオル</code><br>
+      <code>- ❌ 大きいバスタオル</code><br>
       <code>&nbsp;&nbsp;- 失敗：場所を取って乾かない</code><br>
-      ★ は「あって良かった」、✖ は失敗、🚨✨ は買う時期、<code>:</code> のあとはメモです。</p>
+      ★ は「あって良かった」、❌ は失敗、🚨✨ は買う時期、<code>:</code> のあとはメモです。</p>
   </div>
 </section>
 
@@ -275,11 +275,12 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
 <script>
 // ===== バージョン =====
 const SHARE_URL="https://sunatrux.github.io/newlife/";
-const APP_VERSION = '1.22.0';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
+const APP_VERSION = '1.22.1';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
 const APP_RELEASE_DATE = '2026-11-03';
 const VERSION=APP_VERSION;
 const CHANGELOG_URL="https://github.com/sunatrux/newlife/blob/main/CHANGELOG.md";
 const HISTORY=[
+ {v:"1.22.1",d:"2026-11-03",c:["各タブのヒント文を変更","失敗の印を ✖ から ❌ に"]},
  {v:"1.22.0",d:"2026-11-03",c:["マイリストの⭐️と失敗を、どちらか一方を選ぶ切り替えボタンに","友だちに送るものを「⭐️ 良かったもの／✖ 失敗したもの／📋 マイリストすべて」から選べるように","マイリストのヒント文を変更"]},
  {v:"1.21.1",d:"2026-11-03",c:["セリア 洗面鏡ナナメスタンドの時期を「余裕があれば」に変更"]},
  {v:"1.21.0",d:"2026-11-03",c:["おすすめ・一覧・マイリスト・共有の各タブの上に、使い方のヒント文を追加"]},
@@ -613,14 +614,14 @@ document.getElementById("filter").addEventListener("click",e=>{
 function renderMine(){
   const list=mine.filter(m=>filter==="all"||(filter==="good"&&m.good)||(filter==="bad"&&(m.bad||m.fbad))||(filter==="friend"&&m.from)||(filter==="now"&&m.w==="now"));
   const goods=mine.filter(m=>m.good).length,bads=mine.filter(m=>m.bad).length;
-  document.getElementById("cnt").textContent=mine.length?`${mine.length}アイテム（⭐️ あって良かった ${goods}・✖ 失敗 ${bads}）`:"";
+  document.getElementById("cnt").textContent=mine.length?`${mine.length}アイテム（⭐️ あって良かった ${goods}・❌ 失敗 ${bads}）`:"";
   const el=document.getElementById("mine");
-  if(!list.length){el.innerHTML=`<div class="empty">${mine.length?"この条件のアイテムはありません":"まだアイテムがありません。<br>おすすめから追加するか、上で自分で追加してね。<br>使ってみて良かったら「⭐️ あって良かった」、イマイチなら「✖ 失敗だった」を選ぼう。"}</div>`;return}
+  if(!list.length){el.innerHTML=`<div class="empty">${mine.length?"この条件のアイテムはありません":"まだアイテムがありません。<br>おすすめから追加するか、上で自分で追加してね。<br>使ってみて良かったら「⭐️ あって良かった」、イマイチなら「❌ 失敗だった」を選ぼう。"}</div>`;return}
   el.innerHTML=list.map(m=>`<div class="card mine" data-id="${m.id}">
     <div class="top">
     <div class="nm">${esc(m.name)}${m.from?`<span class="from">from ${esc(m.from)}${m.fgood?" ★":""}${m.fbad?" 失敗":""}</span>`:""}</div>
     <button class="del" aria-label="削除">✕</button></div>
-    <div class="rate" role="radiogroup" aria-label="使ってみてどうだった？"><button class="star ${m.good?"on":""}" role="radio" aria-checked="${!!m.good}">⭐️ あって良かった</button><button class="bad ${m.bad?"on":""}" role="radio" aria-checked="${!!m.bad}">✖ 失敗だった</button></div>
+    <div class="rate" role="radiogroup" aria-label="使ってみてどうだった？"><button class="star ${m.good?"on":""}" role="radio" aria-checked="${!!m.good}">⭐️ あって良かった</button><button class="bad ${m.bad?"on":""}" role="radio" aria-checked="${!!m.bad}">❌ 失敗だった</button></div>
     <div class="when" >${Object.keys(WHEN).map(k=>`<button class="wbtn ${m.w===k?"on "+k:""}" data-w="${k}">${WHEN[k]}</button>`).join("")}</div>
     <textarea class="memo" rows="1" placeholder="メモ（どこで買った・良かった点など）">${esc(m.memo)}</textarea>
     ${m.bad?`<textarea class="memo ep" rows="2" placeholder="失敗エピソード（何がダメだった？次はどうする？）">${esc(m.ep||"")}</textarea>`:""}</div>`).join("");
@@ -662,7 +663,7 @@ function renderExport(){
   const nm=myName.value.trim();
   const flat=t=>t.replace(/\n/g," ");
   let md=`# ${nm?nm+"の":""}${expMode==="good"?"あって良かった":expMode==="bad"?"失敗した":""}新生活グッズ\n\n`;
-  const line=(m,withW)=>`- ${m.good?"★ ":""}${m.bad?"✖ ":""}${withW&&m.w?WHEN_ICON[m.w]+" ":""}${flat(m.name)}${m.memo?" : "+flat(m.memo):""}${m.bad&&m.ep?"\n  - 失敗："+flat(m.ep):""}`;
+  const line=(m,withW)=>`- ${m.good?"★ ":""}${m.bad?"❌ ":""}${withW&&m.w?WHEN_ICON[m.w]+" ":""}${flat(m.name)}${m.memo?" : "+flat(m.memo):""}${m.bad&&m.ep?"\n  - 失敗："+flat(m.ep):""}`;
   if(!list.length)md+=`（まだ${expMode==="bad"?"失敗":"★"}のアイテムがありません）`;
   else if(expMode==="bad")md+=list.map(m=>line(m,true)).join("\n");
   else{
