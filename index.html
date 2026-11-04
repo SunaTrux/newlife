@@ -985,8 +985,8 @@ document.getElementById("verClose").onclick=()=>vm.classList.remove("on");
 vm.onclick=e=>{if(e.target===vm)vm.classList.remove("on")};
 document.addEventListener("keydown",e=>{   // Escで小窓を閉じる（上に重なっているものから）
   if(e.key!=="Escape")return;
-  const open=[...document.querySelectorAll(".modal.on")];
-  if(open.length){const m=open[open.length-1];m.classList.remove("on");if(m.id==="setModal")document.documentElement.style.overflow=""}
+  const m=["verModal","setModal"].map(id=>document.getElementById(id)).find(x=>x.classList.contains("on"));   // 前に出ている順
+  if(m){m.classList.remove("on");if(m.id==="setModal")document.documentElement.style.overflow=""}
 });
 
 // ===== 設定 =====
