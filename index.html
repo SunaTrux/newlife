@@ -11,9 +11,17 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="新生活グッズ">
 <meta name="theme-color" content="#fbf7f0">
+<meta name="color-scheme" content="light dark">
+<script>
+/* アプリ定型03：表示の前にテーマを決める（ちらつき防止） */
+(function(){var t="auto";try{t=JSON.parse(localStorage.getItem("ssg_theme"))||"auto"}catch(e){}
+var d=t==="dark"||(t!=="light"&&window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches);
+document.documentElement.setAttribute("data-theme",d?"dark":"light")})();
+</script>
 <style>
 :root{
-  --bg:#fbf7f0; --card:#fff; --ink:#3a3330; --sub:#8a7f78; --line:#ece4d8;
+  color-scheme:light;
+  --bg:#fbf7f0; --card:#fff; --soft:#f1e9dd; --ink:#3a3330; --sub:#8a7f78; --line:#ece4d8;
   --main:#e8836b; --main-d:#c9644d; --leaf:#7fb08a; --sky:#7aa7d6; --star:#f2b632;
   --r:14px;
 }
@@ -27,15 +35,15 @@ html,body{margin:0;background:var(--bg);color:var(--ink);
 header{padding:max(18px,env(safe-area-inset-top)) 16px 8px;max-width:640px;margin:0 auto}
 header .ttl{display:flex;align-items:center;gap:10px}
 header .ttl h1{flex:1}
-.gear{flex:none;width:36px;height:36px;border:none;border-radius:50%;background:#f1e9dd;color:var(--sub);display:flex;align-items:center;justify-content:center;padding:0}
+.gear{flex:none;width:36px;height:36px;border:none;border-radius:50%;background:var(--soft);color:var(--sub);display:flex;align-items:center;justify-content:center;padding:0}
 .gear:active{background:#e8dccb}
 header h1{margin:0;font-size:22px;letter-spacing:.04em}
 header h1 span{color:var(--main)}
 header p{margin:6px 0 0;font-size:12px;color:var(--sub)}
 nav{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:2px;padding:10px max(10px,calc((100% - 640px) / 2 + 10px));background:var(--bg);border-bottom:1px solid var(--line)}
-nav .grp{flex:2.1;display:flex;gap:3px;background:#f1e9dd;border-radius:999px;padding:3px}
+nav .grp{flex:2.1;display:flex;gap:3px;background:var(--soft);border-radius:999px;padding:3px}
 nav .arr{flex:none;width:12px;text-align:center;color:#c9b9a6;font-size:20px;font-weight:700;line-height:1;margin-top:-2px}
-nav button{flex:1;white-space:nowrap;border:none;background:#f1e9dd;color:var(--sub);padding:10px 4px;border-radius:999px;font:inherit;font-size:13.5px;font-weight:700}
+nav button{flex:1;white-space:nowrap;border:none;background:var(--soft);color:var(--sub);padding:10px 4px;border-radius:999px;font:inherit;font-size:13.5px;font-weight:700}
 nav .grp button{padding:7px 2px}
 nav button.solo{flex:1.25}
 nav .badge.bump{animation:bump .5s ease}
@@ -49,11 +57,11 @@ h2{font-size:15px;margin:0 0 10px}
 .lbl{font-size:12px;color:var(--sub);margin:12px 0 6px;font-weight:700}
 .lbl:first-child{margin-top:0}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
-.chip{border:1.5px solid var(--line);background:#fff;color:var(--ink);border-radius:999px;padding:7px 12px;font:inherit;font-size:13px}
+.chip{border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:7px 12px;font:inherit;font-size:13px}
 .chip.on{border-color:var(--main);background:#fdeee9;color:var(--main-d);font-weight:700}
 .btn{display:block;width:100%;border:none;border-radius:12px;padding:13px;font:inherit;font-size:15px;font-weight:700;background:var(--main);color:#fff;margin-top:14px}
 .btn:active{background:var(--main-d)}
-.btn.sub{background:#f1e9dd;color:var(--ink)}
+.btn.sub{background:var(--soft);color:var(--ink)}
 .btn.sm{display:inline-block;width:auto;padding:8px 14px;font-size:13px;margin-top:8px}
 .horo{background:linear-gradient(135deg,#f3eefe,#fdf0ea);border:none;font-size:13px;line-height:1.7}
 .horo b{color:#7a5fc0}
@@ -71,15 +79,15 @@ h2{font-size:15px;margin:0 0 10px}
 .why span.sp{background:#e7f1ec;color:#3f7a5a;font-weight:700}
 .why span.ret{background:#ecebf3;color:#5c5a78;font-weight:700}
 .why span.p{background:#eaf2fb;color:#4a7bb0}
-.add{flex:none;border:1.5px solid var(--main);background:#fff;color:var(--main);border-radius:10px;padding:6px 10px;font:inherit;font-size:12px;font-weight:700}
+.add{flex:none;border:1.5px solid var(--main);background:var(--card);color:var(--main);border-radius:10px;padding:6px 10px;font:inherit;font-size:12px;font-weight:700}
 .add.done{border-color:var(--leaf);color:var(--leaf)}
-input[type=text],input[type=search],textarea{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:10px;font:inherit;font-size:16px;background:#fff;color:var(--ink)}
+input[type=text],input[type=search],textarea{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:10px;font:inherit;font-size:16px;background:var(--card);color:var(--ink)}
 textarea{min-height:140px;font-family:ui-monospace,Menlo,monospace;font-size:16px;line-height:1.6}
 .row{display:flex;gap:8px}.row>*{flex:1}
 .mine .top{display:flex;align-items:center;gap:8px}
 .mine .nm{flex:1;font-weight:700;font-size:15px;word-break:break-all}
 /* ⭐️と❌はどちらか一方（もう一度押すと外れる） */
-.rate{display:inline-flex;margin-top:8px;border:1.5px solid var(--line);border-radius:999px;overflow:hidden;background:#fff}
+.rate{display:inline-flex;margin-top:8px;border:1.5px solid var(--line);border-radius:999px;overflow:hidden;background:var(--card)}
 .rate button{border:none;background:none;font:inherit;font-size:12.5px;font-weight:700;color:#b3a89c;padding:6px 12px;filter:grayscale(1);opacity:.75}
 .rate button+button{border-left:1.5px solid var(--line)}
 .rate .star.on{background:#fff4d6;color:#a87a12;filter:none;opacity:1}
@@ -88,7 +96,7 @@ textarea{min-height:140px;font-family:ui-monospace,Menlo,monospace;font-size:16p
 .del{border:none;background:none;color:#c8bdb2;font-size:18px;padding:0 4px}
 .mine .memo{margin-top:8px;font-size:16px;min-height:auto;font-family:inherit;padding:8px}
 .when{display:flex;gap:4px;margin-top:8px;flex-wrap:wrap}
-.wbtn{border:1px solid var(--line);background:#fff;color:var(--sub);border-radius:999px;padding:3px 9px;font:inherit;font-size:11px}
+.wbtn{border:1px solid var(--line);background:var(--card);color:var(--sub);border-radius:999px;padding:3px 9px;font:inherit;font-size:11px}
 .wbtn.on.now{background:#fde4e0;color:#c0473a;border-color:#f3b9b0;font-weight:700}
 .wbtn.on.later{background:#f3eefe;color:#7a5fc0;border-color:#d3c6f1;font-weight:700}
 .from{font-size:11px;color:var(--sky);margin-left:2px}
@@ -103,12 +111,12 @@ textarea{min-height:140px;font-family:ui-monospace,Menlo,monospace;font-size:16p
 .hv{margin-bottom:14px}.hv b{font-size:14px}.hv small{color:var(--sub);margin-left:6px}
 .hv ul{margin:4px 0 0;padding-left:20px;font-size:13px;line-height:1.7}
 .lnk{color:var(--sky);font-weight:700;text-decoration:none;white-space:nowrap}
-.install-bar{display:flex;align-items:center;gap:4px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:6px 6px 6px 8px;margin:10px 12px 0;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.install-bar{display:flex;align-items:center;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:6px 6px 6px 8px;margin:10px 12px 0;box-shadow:0 2px 8px rgba(0,0,0,.05)}
 .install-bar-main{flex:1;display:flex;align-items:center;gap:10px;background:none;border:none;padding:2px;color:var(--ink);font:inherit;font-size:14px;font-weight:700;text-align:left}
 .install-bar-ic{width:36px;height:36px;border-radius:8px;flex:none}
 .install-bar-close{width:36px;height:36px;border:none;background:none;color:var(--sub);font-size:22px;flex:none}
 #installBar .install-guide{margin:10px 12px 0}
-.install-guide{background:#fff;border:1.5px solid var(--main);border-radius:12px;padding:12px 14px;margin-top:10px;font-size:13px}
+.install-guide{background:var(--card);border:1.5px solid var(--main);border-radius:12px;padding:12px 14px;margin-top:10px;font-size:13px}
 .install-guide-t{font-weight:700;color:var(--main-d);margin-bottom:6px}
 .install-guide ol{margin:0 0 8px;padding-left:20px;line-height:1.7}
 .install-guide-note{margin:0 0 6px;color:var(--sub);font-size:12px;line-height:1.6}
@@ -116,7 +124,7 @@ textarea{min-height:140px;font-family:ui-monospace,Menlo,monospace;font-size:16p
 .ok-msg{margin:0;color:#4e8a5c;font-size:13px;font-weight:700}
 .newver-bar{display:flex;align-items:center;gap:10px;justify-content:space-between;background:#3a3330;color:#fff;border-radius:12px;padding:8px 8px 8px 14px;margin:10px 12px 0;font-size:13px;font-weight:700}
 .newver-bar .btn{width:auto;margin:0;padding:8px 14px;font-size:13px}
-.update-notice{position:relative;background:#fff;border:1.5px solid var(--leaf);border-radius:12px;padding:12px 40px 12px 14px;margin:4px 12px 10px;font-size:13px;max-width:616px}
+.update-notice{position:relative;background:var(--card);border:1.5px solid var(--leaf);border-radius:12px;padding:12px 40px 12px 14px;margin:4px 12px 10px;font-size:13px;max-width:616px}
 .update-notice .t{font-weight:700;color:#4e8a5c;margin-bottom:4px}
 .update-notice ul{margin:0 0 6px;padding-left:20px;line-height:1.7}
 .update-notice .x{position:absolute;top:4px;right:4px;width:36px;height:36px;border:none;background:none;color:var(--sub);font-size:20px}
@@ -128,17 +136,69 @@ textarea{min-height:140px;font-family:ui-monospace,Menlo,monospace;font-size:16p
 .deme span{display:inline-block;margin-left:3px;vertical-align:1px;transition:transform .2s;text-decoration:none}
 .deme[aria-expanded="true"] span{transform:rotate(180deg)}
 .dm-body{margin-top:6px;padding:8px 10px;border-radius:8px;background:#fbf3e6;border-left:3px solid #e8b56b;font-size:12.5px;line-height:1.6;color:#6b5a45}
-.totop{position:fixed;right:calc(16px + env(safe-area-inset-right));bottom:calc(22px + env(safe-area-inset-bottom));z-index:15;border:none;border-radius:999px;background:var(--ink);color:#fff;font:inherit;font-size:13px;font-weight:700;padding:10px 16px;box-shadow:0 4px 14px rgba(0,0,0,.18);opacity:0;transform:translateY(12px);pointer-events:none;transition:.2s}
+.totop{position:fixed;right:calc(16px + env(safe-area-inset-right));bottom:calc(22px + env(safe-area-inset-bottom));z-index:15;border:none;border-radius:999px;background:var(--ink);color:var(--bg);font:inherit;font-size:13px;font-weight:700;padding:10px 16px;box-shadow:0 4px 14px rgba(0,0,0,.18);opacity:0;transform:translateY(12px);pointer-events:none;transition:.2s}
 .totop.on{opacity:.92;transform:none;pointer-events:auto}
 /* アプリ定型12：PCのときだけ「スマホで開く」を出す */
 .pc-only{display:none}
 @media (min-width:760px) and (hover:hover) and (pointer:fine){.pc-only{display:block}}
-.phone-open{display:none;position:fixed;left:24px;bottom:24px;z-index:12;width:188px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 14px 10px;box-shadow:0 6px 20px rgba(0,0,0,.08);text-align:center}
+.phone-open{display:none;position:fixed;left:24px;bottom:24px;z-index:12;width:188px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 14px 10px;box-shadow:0 6px 20px rgba(0,0,0,.08);text-align:center}
 @media (min-width:1100px) and (hover:hover) and (pointer:fine){.phone-open:not([hidden]){display:block}}
 .phone-open .po-t{font-weight:700;font-size:14px;margin-bottom:8px}
 .phone-open p{margin:6px 0 0;font-size:11.5px;line-height:1.6;color:var(--sub)}
 .phone-open .po-x{position:absolute;top:2px;right:4px;width:30px;height:30px;border:none;background:none;color:var(--sub);font-size:18px}
 .po-code svg{display:block;width:100%;height:auto}
+/* ===== アプリ定型03：ダークモード（色はすべて自分で指定して、Braveの強制ダークでも崩れないように） ===== */
+html[data-theme=dark]{color-scheme:dark;
+  --bg:#1e1a18; --card:#2a2422; --soft:#37302c; --ink:#efe7df; --sub:#b5a99f; --line:#40372f;
+  --main:#ec8c74; --main-d:#f4a48f; --leaf:#8cc29b; --sky:#8fb9e6; --star:#f2b632}
+html[data-theme=dark] .gear:active{background:#433a35}
+html[data-theme=dark] nav .arr{color:#6d6158}
+html[data-theme=dark] nav .badge{background:var(--bg)}
+html[data-theme=dark] .chip.on{background:rgba(236,140,116,.18);color:var(--main-d)}
+html[data-theme=dark] .horo{background:linear-gradient(135deg,#2f2a40,#3b2b25)}
+html[data-theme=dark] .horo b{color:#c4b2f0}
+html[data-theme=dark] .why span{background:rgba(140,194,155,.16);color:#a8d7b4}
+html[data-theme=dark] .why span.z,html[data-theme=dark] .why span.w.later{background:rgba(160,135,230,.18);color:#c9b8f5}
+html[data-theme=dark] .why span.k{background:rgba(242,182,50,.16);color:#f0cf7a}
+html[data-theme=dark] .why span.w{background:rgba(236,110,90,.2);color:#ffab9b}
+html[data-theme=dark] .why span.sp{background:rgba(110,180,140,.18);color:#9fd8b5}
+html[data-theme=dark] .why span.ret{background:rgba(160,158,190,.18);color:#c8c6e0}
+html[data-theme=dark] .why span.p{background:rgba(120,165,220,.18);color:#a9c9ee}
+html[data-theme=dark] .rate button{color:#857a71}
+html[data-theme=dark] .rate .star.on{background:rgba(242,182,50,.2);color:#f0cf7a}
+html[data-theme=dark] .rate .bad.on{background:#3a3d42;color:#d5dbe2}
+html[data-theme=dark] .mine .ep{background:#24211f;border-color:#4a4440}
+html[data-theme=dark] .del{color:#7d7168}
+html[data-theme=dark] .wbtn.on.now{background:rgba(236,110,90,.2);color:#ffab9b;border-color:#7a4238}
+html[data-theme=dark] .wbtn.on.later{background:rgba(160,135,230,.18);color:#c9b8f5;border-color:#56487e}
+html[data-theme=dark] .dm-body{background:#33291f;border-left-color:#a37a3c;color:#e6cfaa}
+html[data-theme=dark] .deme,html[data-theme=dark] .install-guide-note.warn{color:#e3a866}
+html[data-theme=dark] .ok-msg,html[data-theme=dark] .update-msg.ok,html[data-theme=dark] .update-notice .t{color:#9fd8b5}
+html[data-theme=dark] .update-msg.ng{color:#ffab9b}
+html[data-theme=dark] .newver-bar{background:#4a3f39}
+html[data-theme=dark] .toast{background:#4a3f39;box-shadow:0 4px 14px rgba(0,0,0,.4)}
+html[data-theme=dark] .modal{background:rgba(0,0,0,.6)}
+html[data-theme=dark] code{background:#37302c}
+html[data-theme=dark] input::placeholder,html[data-theme=dark] textarea::placeholder{color:#7d7168}
+/* アプリ定型13：マウスで押せるところが分かる・キーボードで操作できる */
+@media (hover:hover) and (pointer:fine){
+  button,a,.chip,summary{cursor:pointer}
+  .chip:hover,.wbtn:hover{border-color:var(--main)}
+  .btn:hover{filter:brightness(1.06)}
+  .btn.sub:hover,nav button:not(.on):hover,.gear:hover{filter:brightness(.96)}
+  html[data-theme=dark] .btn.sub:hover,html[data-theme=dark] nav button:not(.on):hover,html[data-theme=dark] .gear:hover{filter:brightness(1.15)}
+  .add:hover{background:rgba(232,131,107,.1)}
+  .linkbtn:hover,.deme:hover,.lnk:hover{opacity:.8}
+}
+:focus-visible{outline:2.5px solid var(--sky);outline-offset:2px}
+/* アプリ定型14：スマホ横向き（高さが狭い）では、上の固定をやめて画面を広く使う */
+@media (orientation:landscape) and (max-height:500px){
+  nav{position:static}
+  header{padding-top:max(8px,env(safe-area-inset-top))}
+  header h1{font-size:18px}
+  .totop{padding:7px 12px;font-size:12px}
+  .modal .sheet{max-height:92vh}
+}
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));width:max-content;max-width:calc(100% - 24px);transform:translateX(-50%) translateY(20px);opacity:0;background:#3a3330;color:#fff;padding:10px 16px;border-radius:999px;font-size:13px;transition:.25s;pointer-events:none;z-index:20;display:flex;align-items:center;gap:10px;white-space:normal}
 .toast .ta{flex:none;border:none;background:#fff;color:var(--ink);border-radius:999px;padding:5px 12px;font:inherit;font-size:12.5px;font-weight:700}
 .toast.on.act{pointer-events:auto}
@@ -157,11 +217,24 @@ textarea{min-height:140px;font-family:ui-monospace,Menlo,monospace;font-size:16p
 .tab-hint{margin:2px 4px 12px;font-size:13px;line-height:1.7;color:var(--sub)}
 #mineNext{margin-top:4px}
 #mineNext .next{margin-top:6px}
+.card.danger{border-color:#f0c4b8}
+html[data-theme=dark] .card.danger{border-color:#6b3a30}
+.btn.danger-btn{background:var(--card);color:#c0473a;border:1.5px solid #e9a99a;margin-top:6px}
+html[data-theme=dark] .btn.danger-btn{color:#ffab9b;border-color:#8a4a3e}
+.save-warn{background:#fff1e8;border:1.5px solid #f0b48f;color:#8a4a20;border-radius:12px;padding:10px 12px;margin:10px 12px 0;font-size:13px;line-height:1.6}
+html[data-theme=dark] .save-warn{background:#3a2a20;border-color:#8a5a3a;color:#f3c9a6}
+.qa{border-top:1px solid var(--line);padding:8px 0}
+.qa:first-of-type{border-top:none}
+.qa summary{font-size:13.5px;font-weight:700;list-style:none}
+.qa summary::-webkit-details-marker{display:none}
+.qa summary::before{content:"Q. ";color:var(--main)}
+.qa p{margin:6px 0 2px;font-size:13px;line-height:1.7;color:var(--sub)}
 .hint{font-size:12px;color:var(--sub);line-height:1.7;margin:6px 0 0}
 code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
 </style>
 </head>
 <body>
+<div id="saveWarn"></div>
 <div id="newverBar"></div>
 <div id="installBar"></div>
 <header>
@@ -281,6 +354,10 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
 <div class="modal" id="setModal"><div class="sheet">
   <h2>設定</h2>
   <div class="card">
+    <div class="lbl">表示</div>
+    <div class="chips" id="themeChips"><button class="chip" data-t="auto">自動（端末に合わせる）</button><button class="chip" data-t="light">☀️ ライト</button><button class="chip" data-t="dark">🌙 ダーク</button></div>
+  </div>
+  <div class="card">
     <div class="lbl">ホーム画面に追加（おすすめ）</div>
     <div id="installSet"></div>
   </div>
@@ -299,11 +376,26 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
     </div>
   </div>
   <div class="card">
-    <div class="lbl">データ管理（バックアップと復元）</div>
-    <p class="hint" style="margin-top:0">マイリストなどのデータは、この端末のブラウザの中にだけ保存されています。ブラウザのデータ消去や機種変更で消えてしまうので、ときどきバックアップしておくと安心です。</p>
+    <div class="lbl">データ（バックアップ・復元）</div>
+    <p class="hint" style="margin-top:0">マイリストなどのデータは、この端末の中にだけ保存されています。今の保存場所：<b id="placeNow"></b></p>
+    <p class="hint">Safari・ほかのブラウザ・ホーム画面のアプリは、それぞれ別のデータで、自動ではつながりません。移したいときは「今の場所でバックアップ → 移したい場所で復元」してください。ブラウザのデータ消去や機種変更でも消えてしまうので、ときどきバックアップしておくと安心です。</p>
     <div class="row"><button class="btn" id="bkSave">バックアップ</button><button class="btn sub" id="bkLoad">復元する</button></div>
+    <button class="linkbtn" id="bkText" style="margin-top:6px">保存できないときは：中身をテキストで表示</button>
     <input type="file" id="bkFile" accept="application/json,.json" hidden>
     <div id="bkConfirm"></div>
+    <div id="undoBox"></div>
+  </div>
+  <div class="card danger">
+    <div class="lbl">データ初期化</div>
+    <p class="hint" style="margin-top:0">マイリスト・おすすめの条件・名前・送るときの設定を、すべて消して最初の状態に戻します。</p>
+    <button class="btn danger-btn" id="initBtn">全データを初期化</button>
+    <div id="initConfirm"></div>
+  </div>
+  <div class="card">
+    <div class="lbl">よくある質問</div>
+    <details class="qa"><summary>別の端末（スマホ・パソコン）にデータを移したい</summary><p>今の端末で 設定 →「バックアップ」でファイルを保存して、移したい端末にそのファイルを送り、そちらで「復元する」を押してください。同じスマホでも、ブラウザとホーム画面のアプリは別のデータなので、同じ手順で移せます。</p></details>
+    <details class="qa"><summary>間違えて全データを初期化してしまった</summary><p>設定 →「データ（バックアップ・復元）」に出る「↩ 初期化前に戻す」を押すと、初期化の直前に戻せます。戻せるのは直前の1回だけです。</p></details>
+    <details class="qa"><summary>友だちのリストを取り込んだら、思っていたのと違った</summary><p>設定 →「データ（バックアップ・復元）」の「↩ 取り込み前に戻す」で、取り込む前に戻せます。</p></details>
   </div>
   <div class="card">
     <div class="lbl">アプリの更新</div>
@@ -338,11 +430,12 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 <script>
 // ===== バージョン =====
 const SHARE_URL="https://sunatrux.github.io/newlife/";
-const APP_VERSION = '1.30.0';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
-const APP_RELEASE_DATE = '2026-11-03';
+const APP_VERSION = '1.31.0';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
+const APP_RELEASE_DATE = '2026-11-04';
 const VERSION=APP_VERSION;
 const CHANGELOG_URL="https://github.com/sunatrux/newlife/blob/main/CHANGELOG.md";
 const HISTORY=[
+ {v:"1.31.0",d:"2026-11-04",c:["設定に「表示」を追加。自動（端末に合わせる）／ライト／ダークを選べます","データまわりを強化：今の保存場所の表示、全データの初期化、「復元前・取り込み前・初期化前に戻す」、よくある質問","バックアップのファイル名に場所・日時・バージョンを入れ、復元前に中身を確認できるように","保存できなかったときに警告を出すように","パソコンではマウスを乗せると反応し、Escで設定などを閉じられるように。スマホを横にしたときも画面を広く使えるように","ホーム画面に追加の案内は、2回目に開いたときから出して、×で閉じると30日出さないように"]},
  {v:"1.30.0",d:"2026-11-03",c:["友だちに送るとき、時期を「両方／🚨 入居日から／✨ 余裕があれば」から選べるように"]},
  {v:"1.29.0",d:"2026-11-03",c:["友だちに送るとき、時期（入居日から・余裕があれば）・メモ・失敗談も、入れるかどうかを選べるように"]},
  {v:"1.28.1",d:"2026-11-03",c:["友だちに送る文の最後の案内を「マイリストに追加できます」に"]},
@@ -474,8 +567,12 @@ const ITEMS=[
 
 // ===== 保存（使えない環境でも動く） =====
 const store={
-  get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},
-  set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+  get(k,d){let v=null;try{v=localStorage.getItem(k)}catch(e){return d}
+    if(!v)return d;
+    try{return JSON.parse(v)}catch(e){   // 読めなかった保存データは消さずに別名で残す（アプリ定型06）
+      try{localStorage.setItem(k+"_broken_"+Date.now(),v)}catch(_){}
+      return d}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){saveFailed();return false}}
 };
 let hadSavedData=false;try{hadSavedData=!!(localStorage.getItem("ssg_list")||localStorage.getItem("ssg_q2"))}catch(e){}
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
@@ -508,6 +605,16 @@ const CATS={eco:"♻️ エコ",cheap:"💴 安価"};
 const WHEN={now:"🚨 入居日から",later:"✨ 余裕があれば"};
 const WHEN_ICON={now:"🚨",later:"✨"};
 const save=()=>store.set("ssg_list",mine);
+// 保存できなかったとき（容量いっぱい・プライベートブラウズなど）は画面に出して、バックアップを勧める
+var saveWarned=false;
+function saveFailed(){
+  if(saveWarned)return;saveWarned=true;
+  const el=document.getElementById("saveWarn");
+  if(el)el.innerHTML=`<div class="save-warn">⚠️ データを保存できませんでした（ブラウザの容量がいっぱい、またはプライベートブラウズの可能性があります）。このまま閉じると、変更が消えることがあります。設定 →「バックアップ」で書き出しておいてください。</div>`;
+}
+// アプリ定型08：保存データの形式番号（今は形式1。将来変えるときはここで古いデータを変換する）
+const DATA_FORMAT=1;
+if(!store.get("ssg_format",0))store.set("ssg_format",DATA_FORMAT);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
 
@@ -846,6 +953,7 @@ document.getElementById("impBtn").onclick=()=>{
   if(!r.items.length){toast("アイテムが見つかりませんでした");return}
   if(mine.length+r.items.length>LIM.items){toast(`マイリストは${LIM.items}件までです`);return}
   const items=r.items.map(it=>({...it,name:str(it.name,LIM.name),memo:str(it.memo,LIM.memo),ep:str(it.ep,LIM.memo)}));
+  saveUndo("取り込み前に戻す");
   let add=0;
   items.forEach(it=>{
     const ex=mine.find(m=>m.name===it.name);
@@ -863,10 +971,28 @@ const vm=document.getElementById("verModal");
 document.getElementById("verBtn").onclick=()=>vm.classList.add("on");
 document.getElementById("verClose").onclick=()=>vm.classList.remove("on");
 vm.onclick=e=>{if(e.target===vm)vm.classList.remove("on")};
+document.addEventListener("keydown",e=>{   // Escで小窓を閉じる（上に重なっているものから）
+  if(e.key!=="Escape")return;
+  const open=[...document.querySelectorAll(".modal.on")];
+  if(open.length)open[open.length-1].classList.remove("on");
+});
 
 // ===== 設定 =====
 const sm=document.getElementById("setModal");
 document.getElementById("setVer").textContent=`${APP_VERSION}（${APP_RELEASE_DATE}）`;
+// ===== ライト／ダーク（アプリ定型03） =====
+const themeMq=window.matchMedia?matchMedia("(prefers-color-scheme: dark)"):null;
+function applyTheme(){
+  const t=store.get("ssg_theme","auto");
+  const dark=t==="dark"||(t==="auto"&&themeMq&&themeMq.matches);
+  document.documentElement.setAttribute("data-theme",dark?"dark":"light");
+  const m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute("content",dark?"#1e1a18":"#fbf7f0");
+  document.querySelectorAll("#themeChips .chip").forEach(c=>c.classList.toggle("on",c.dataset.t===t));
+}
+function setTheme(t){store.set("ssg_theme",t);applyTheme()}
+document.getElementById("themeChips").addEventListener("click",e=>{const c=e.target.closest(".chip");if(c)setTheme(c.dataset.t)});
+if(themeMq){try{themeMq.addEventListener("change",applyTheme)}catch(e){try{themeMq.addListener(applyTheme)}catch(_){}}}
+applyTheme();
 // ===== 作者に感想を送る（アプリ定型09。共通のTallyフォームで、?app= でアプリが選ばれる） =====
 const FEEDBACK_URL="https://tally.so/r/9qL0A4";
 const FEEDBACK_APP_NAME="新生活おすすめグッズ";
@@ -896,7 +1022,7 @@ function feedbackDeviceInfo(){
 }
 const feedbackUrl=()=>FEEDBACK_URL+"?app="+encodeURIComponent(FEEDBACK_APP_NAME)+"&version="+encodeURIComponent(APP_VERSION)+"&device="+encodeURIComponent(feedbackDeviceInfo());
 function renderFeedback(){document.getElementById("fbInfo").textContent="v"+APP_VERSION+" / "+feedbackDeviceInfo();document.getElementById("fbLink").href=feedbackUrl()}
-document.getElementById("gearBtn").onclick=()=>{renderInstall();renderUpdBox();renderFeedback();sm.classList.add("on")};
+document.getElementById("gearBtn").onclick=()=>{renderInstall();renderUpdBox();renderFeedback();renderUndo();document.getElementById("placeNow").textContent=placeJa();sm.classList.add("on")};
 document.getElementById("setClose").onclick=()=>sm.classList.remove("on");
 sm.onclick=e=>{if(e.target===sm)sm.classList.remove("on")};
 document.getElementById("histBtn").onclick=()=>vm.classList.add("on");
@@ -920,6 +1046,7 @@ renderRec();
 const IS_HOSTED=location.protocol==="https:"&&/github\.io$/.test(location.hostname);
 if(IS_HOSTED&&"serviceWorker" in navigator){try{navigator.serviceWorker.register("sw.js").catch(()=>{})}catch(e){}}
 const INSTALL_DISMISS_KEY="ssg-install-dismiss-v1";
+const LAUNCHES=(+store.get("ssg_launches",0)||0)+1;store.set("ssg_launches",LAUNCHES);   // 起動回数（初回は中身を見てもらう）
 const INSTALL_TEST=/[?&]installtest=1/.test(location.search);
 let deferredInstall=null,installGuide=null;
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredInstall=e;renderInstall()});
@@ -939,8 +1066,10 @@ function installBarVisible(){
   if(!(IS_HOSTED||INSTALL_TEST)||isStandalone())return false;
   try{if(window.top!==window.self)return false}catch(e){return false}
   if(installPlatform()==="pc"&&!deferredInstall)return false;   // PCは、ブラウザがインストールに対応しているときだけ
+  if(LAUNCHES<2&&!INSTALL_TEST)return false;   // 初回は出さない
+  if(document.querySelector("#updNotice .update-notice"))return false;   // アップデートのお知らせと同時に出さない
   const t=+store.get(INSTALL_DISMISS_KEY,0)||0;
-  return !t||(Date.now()-t)>14*24*3600*1000;   // ×で閉じたら2週間は出さない
+  return !t||(Date.now()-t)>30*24*3600*1000;   // ×で閉じたら30日は出さない
 }
 function startInstall(where){
   if(deferredInstall){
@@ -988,10 +1117,11 @@ function renderNotice(){
   const h=HISTORY.find(x=>x.v===APP_VERSION);
   if(seenVersion===APP_VERSION||!h){el.innerHTML="";return}
   el.innerHTML=`<div class="update-notice"><button class="x" id="noticeClose" aria-label="閉じる">×</button><div class="t">v${APP_VERSION} にアップデートしました</div><ul>${h.c.map(n=>`<li>${esc(n)}</li>`).join("")}</ul><button class="linkbtn" id="noticeHist" style="padding:0">すべての更新履歴を見る</button></div>`;
-  document.getElementById("noticeClose").onclick=()=>{seenVersion=APP_VERSION;store.set(SEEN_VERSION_KEY,APP_VERSION);renderNotice()};
+  document.getElementById("noticeClose").onclick=()=>{seenVersion=APP_VERSION;store.set(SEEN_VERSION_KEY,APP_VERSION);renderNotice();renderInstall()};
   document.getElementById("noticeHist").onclick=()=>vm.classList.add("on");
 }
 renderNotice();
+renderInstall();
 
 // ===== スマホで開く（アプリ定型12：PCで見たときだけ、アプリのURLを2次元コードで表示） =====
 function qrSvg(text){
@@ -1013,55 +1143,109 @@ function qrSvg(text){
   document.getElementById("poClose").onclick=()=>{po.hidden=true;store.set(KEY,true);toast("設定 →「スマホで開く」からいつでも見られます")};
 })();
 
-// ===== 全データのバックアップと復元（アプリ定型06） =====
-const DATA_FORMAT=1;   // データ形式の番号（将来形式を変えるときに古いデータを変換する目印）
-function backupData(){
-  return {app:"newlife",format:DATA_FORMAT,version:APP_VERSION,savedAt:new Date().toISOString(),
-    data:{list:mine,query:state,name:store.get("ssg_name",""),withLink:withLink.checked,withUrl}};
+// ===== 全データのバックアップ・初期化・復元（アプリ定型06） =====
+// 今の保存場所（例：iPhoneのSafari／iPhoneのホーム画面のアプリ）
+function devBrowser(){
+  const ua=navigator.userAgent||"";let dev="",br="ブラウザ";
+  if(/iPhone/.test(ua))dev="iPhone";else if(/iPad/.test(ua)||(/Macintosh/.test(ua)&&navigator.maxTouchPoints>1))dev="iPad";
+  else if(/Android/.test(ua))dev="Android";else if(/Macintosh/.test(ua))dev="Mac";else if(/Windows/.test(ua))dev="Windows";else dev="この端末";
+  if(navigator.brave&&navigator.brave.isBrave)br="Brave";
+  else if(/EdgA?\//.test(ua))br="Edge";else if(/CriOS|Chrome\//.test(ua))br="Chrome";else if(/FxiOS|Firefox\//.test(ua))br="Firefox";else if(/Safari\//.test(ua))br="Safari";
+  return {dev,br,app:isStandalone()};
 }
-document.getElementById("bkSave").onclick=async()=>{
+const placeJa=()=>{const d=devBrowser();return d.app?`${d.dev}のホーム画面のアプリ`:`${d.dev}の${d.br}`};
+const placeEn=()=>{const d=devBrowser();return (d.dev==="この端末"?"Device":d.dev)+"-"+(d.app?"HomeApp":d.br==="ブラウザ"?"Browser":d.br)};
+function snapshot(){return {list:mine,query:state,name:store.get("ssg_name",""),withLink:withLink.checked,withUrl,expOpt,expWhen,theme:store.get("ssg_theme","auto")}}
+function backupData(){return {app:"newlife",format:DATA_FORMAT,version:APP_VERSION,savedAt:new Date().toISOString(),place:placeJa(),data:snapshot()}}
+const pad=n=>String(n).padStart(2,"0");
+const stamp=d=>`${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}`;
+const jaTime=d=>`${d.getMonth()+1}月${d.getDate()}日 ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+// データを丸ごと入れ替える（復元・戻す・初期化で共通）
+function applyData(dt){
+  dt=dt&&typeof dt==="object"?dt:{};
+  mine=cleanMine(dt.list);save();
+  const q=dt.query;
+  const pick=p=>({gender:["f","m","any"].includes(p&&p.gender)?p.gender:"any",age:AGES_OK.includes(p&&p.age)?p.age:"20",
+    zodiac:ZODIAC.some(z=>z[0]===(p&&p.zodiac))?p.zodiac:"",persona:Array.isArray(p&&p.persona)?p.persona.filter(x=>PERSONA[x]):[]});
+  const ok=q&&typeof q==="object"&&Array.isArray(q.persons);
+  state={people:ok&&q.people==="2"?"2":"1",persons:[pick(ok&&q.persons[0]),pick(ok&&q.persons[1])],
+    focus:ok&&Array.isArray(q.focus)?q.focus.filter(x=>x==="eco"||x==="cheap"):[],power:ok&&["on","off"].includes(q.power)?q.power:""};
+  saveQ();
+  store.set("ssg_name",str(dt.name,40));myName.value=store.get("ssg_name","");
+  withLink.checked=typeof dt.withLink==="boolean"?dt.withLink:true;store.set("ssg_withlink",withLink.checked);
+  withUrl=typeof dt.withUrl==="boolean"?dt.withUrl:true;store.set("ssg_withurl",withUrl);
+  const eo=dt.expOpt&&typeof dt.expOpt==="object"?dt.expOpt:{};expOpt.memo=eo.memo!==false;expOpt.ep=eo.ep!==false;store.set("ssg_expopts",expOpt);
+  expWhen=dt.expWhen==="now"||dt.expWhen==="later"?dt.expWhen:"";store.set("ssg_expwhen",expWhen);
+  if(["auto","light","dark"].includes(dt.theme))setTheme(dt.theme);
+  updateBadge();renderPersons();syncFocus();syncPower();syncOpts();syncWhen();renderMine();renderExport();
+}
+// 直前の操作を戻す（復元・取り込み・初期化の前の状態を、直前1回分だけ保存）
+const UNDO_KEY="ssg_undo";
+function saveUndo(label){store.set(UNDO_KEY,{label,at:Date.now(),data:snapshot()});renderUndo()}
+function renderUndo(){
+  const u=store.get(UNDO_KEY,null),box=document.getElementById("undoBox");
+  if(!u||!u.data||!u.label){box.innerHTML="";return}
+  box.innerHTML=`<button class="btn sub" id="undoBtn" style="margin-top:10px">↩ ${esc(u.label)}（${esc(jaTime(new Date(u.at)))}）</button><p class="hint" style="font-size:11px">戻せるのは直前の1回だけです。戻したあとは取り消せません。</p><div id="undoConfirm"></div>`;
+  document.getElementById("undoBtn").onclick=()=>{
+    document.getElementById("undoConfirm").innerHTML=`<div class="install-guide"><div class="install-guide-t">${esc(u.label)}</div><p class="install-guide-note">${esc(jaTime(new Date(u.at)))}より前の状態に戻します。そのあとの変更は消えます。</p><div class="row"><button class="btn sub" id="undoNo">キャンセル</button><button class="btn" id="undoOk">戻す</button></div></div>`;
+    document.getElementById("undoNo").onclick=()=>renderUndo();
+    document.getElementById("undoOk").onclick=()=>{applyData(u.data);store.set(UNDO_KEY,null);renderUndo();toast("元に戻しました")};
+  };
+}
+// バックアップ
+async function doBackup(){
   const json=JSON.stringify(backupData(),null,1);
-  const d=new Date(),fname=`newlife-backup-${d.getFullYear()}${String(d.getMonth()+1).padStart(2,"0")}${String(d.getDate()).padStart(2,"0")}.json`;
+  const fname=`newlife-backup_${placeEn()}_${stamp(new Date())}_v${APP_VERSION}.json`;   // ファイル名は英数字だけ
   const blob=new Blob([json],{type:"application/json"});
   try{   // スマホは共有メニューから「ファイルに保存」できる
     const file=new File([blob],fname,{type:"application/json"});
-    if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:fname});toast("バックアップを書き出しました");return}
+    if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:fname});toast(`バックアップを保存しました（ファイル名：${fname}）`);return}
   }catch(e){if(e&&e.name==="AbortError")return}
-  try{const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=fname;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),2000);toast("バックアップを保存しました")}
-  catch(e){toast("保存できませんでした")}
-};
+  try{const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=fname;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),2000);toast(`バックアップを保存しました（ファイル名：${fname}）`)}
+  catch(e){showBackupText()}
+}
+document.getElementById("bkSave").onclick=doBackup;
+// ダウンロードできない環境の代わり：中身をテキストで表示してコピー
+function showBackupText(){
+  bkConfirm.innerHTML=`<div class="install-guide"><div class="install-guide-t">バックアップの中身</div><p class="install-guide-note">下の文字を全部コピーして、メモアプリなどに貼って残してください。復元するときは、この文字を .json のファイルにして「復元する」で選びます。</p><textarea readonly id="bkTa" style="min-height:120px;font-size:12px">${esc(JSON.stringify(backupData()))}</textarea><div class="row"><button class="btn" id="bkTaCopy">コピーする</button><button class="btn sub" id="bkTaClose">閉じる</button></div></div>`;
+  document.getElementById("bkTaCopy").onclick=()=>{const t=document.getElementById("bkTa");copyText(t.value,"コピーしました",t)};
+  document.getElementById("bkTaClose").onclick=()=>{bkConfirm.innerHTML=""};
+}
+document.getElementById("bkText").onclick=showBackupText;
+// 復元
 const bkFile=document.getElementById("bkFile"),bkConfirm=document.getElementById("bkConfirm");
 document.getElementById("bkLoad").onclick=()=>{bkFile.value="";bkFile.click()};
 bkFile.onchange=()=>{
   const f=bkFile.files[0];if(!f)return;
-  if(f.size>2*1024*1024){toast("ファイルが大きすぎます（2MBまで）");return}
+  if(f.size>5*1024*1024){toast("ファイルが大きすぎます（5MBまで）");return}
+  if(/\.csv$/i.test(f.name)){toast("CSVのファイルは読み込めません。このアプリでバックアップした .json のファイルを選んでください");return}
   const rd=new FileReader();
   rd.onload=()=>{
-    let o;try{o=JSON.parse(rd.result)}catch(e){toast("バックアップのファイルではないようです");return}
-    if(!o||typeof o!=="object"||o.app!=="newlife"||typeof o.data!=="object"||!o.data){toast("このアプリのバックアップではないようです");return}
-    if(+o.format>DATA_FORMAT){toast("新しいバージョンのバックアップです。アプリを更新してから復元してください");return}
-    const list=cleanMine(o.data.list);
-    const when=str(o.savedAt,30).slice(0,10);
-    bkConfirm.innerHTML=`<div class="install-guide"><div class="install-guide-t">今のデータを上書きします</div><p class="install-guide-note">バックアップ（${esc(when)}・マイリスト${list.length}件）で、今のマイリスト${mine.length}件と設定を置きかえます。元に戻せません。</p><div class="row"><button class="btn" id="bkOk">上書きして復元</button><button class="btn sub" id="bkNo">やめる</button></div></div>`;
+    let o;try{o=JSON.parse(rd.result)}catch(e){toast("バックアップのファイルではないようです（中身が壊れているか、形式が違います）");return}
+    if(!o||typeof o!=="object"||o.app!=="newlife"||typeof o.data!=="object"||!o.data){toast("このアプリのバックアップファイルではないようです");return}
+    if(+o.format>DATA_FORMAT){toast("新しい版のアプリで作られたバックアップです。アプリを最新にしてから復元してください");return}
+    const list=cleanMine(o.data.list),d=new Date(str(o.savedAt,40));
+    const when=isNaN(d)?"日時不明":jaTime(d)+(d.getFullYear()!==new Date().getFullYear()?`（${d.getFullYear()}年）`:"");
+    bkConfirm.innerHTML=`<div class="install-guide"><div class="install-guide-t">このバックアップで復元しますか？</div>
+      <p class="install-guide-note">ファイル：${esc(f.name)}<br>書き出し元：${esc(str(o.place,40)||"不明")}・${esc(when)}・v${esc(str(o.version,20))}<br>バックアップのマイリスト：${list.length}件 ／ 今のマイリスト：${mine.length}件</p>
+      <p class="install-guide-note warn">⚠ 今のデータは、すべてバックアップの内容に置き換わります。</p>
+      <div class="row"><button class="btn sub" id="bkNo">キャンセル</button><button class="btn" id="bkOk">復元する</button></div></div>`;
     document.getElementById("bkNo").onclick=()=>{bkConfirm.innerHTML=""};
-    document.getElementById("bkOk").onclick=()=>{
-      mine=list;save();
-      const q=o.data.query;
-      if(q&&typeof q==="object"&&Array.isArray(q.persons)){
-        const pick=p=>({gender:["f","m","any"].includes(p&&p.gender)?p.gender:"any",age:AGES_OK.includes(p&&p.age)?p.age:"20",
-          zodiac:ZODIAC.some(z=>z[0]===(p&&p.zodiac))?p.zodiac:"",persona:Array.isArray(p&&p.persona)?p.persona.filter(x=>PERSONA[x]):[]});
-        state={people:q.people==="2"?"2":"1",persons:[pick(q.persons[0]),pick(q.persons[1])],
-          focus:Array.isArray(q.focus)?q.focus.filter(x=>x==="eco"||x==="cheap"):[],power:["on","off"].includes(q.power)?q.power:""};
-        saveQ();
-      }
-      store.set("ssg_name",str(o.data.name,40));myName.value=store.get("ssg_name","");
-      if(typeof o.data.withLink==="boolean"){withLink.checked=o.data.withLink;store.set("ssg_withlink",withLink.checked)}
-      if(typeof o.data.withUrl==="boolean"){withUrl=o.data.withUrl;store.set("ssg_withurl",withUrl)}
-      bkConfirm.innerHTML="";updateBadge();renderPersons();syncFocus();syncPower();syncOpts();renderMine();renderExport();
-      toast(`復元しました（マイリスト${mine.length}件）`);
-    };
+    document.getElementById("bkOk").onclick=()=>{saveUndo("復元前に戻す");applyData(o.data);bkConfirm.innerHTML="";toast(`復元しました（マイリスト${mine.length}件）`)};
   };
   rd.readAsText(f);
+};
+// 全データの初期化
+const initConfirm=document.getElementById("initConfirm");
+document.getElementById("initBtn").onclick=()=>{
+  initConfirm.innerHTML=`<div class="install-guide" style="border-color:#e9a99a"><div class="install-guide-t" style="color:#c0473a">本当に全データを初期化しますか？</div>
+    <p class="install-guide-note">消えるもの：マイリスト（${mine.length}件、メモ・⭐️・❌・失敗談を含む）、おすすめの条件、送るときの名前と設定。</p>
+    <p class="install-guide-note">初期化の直前の状態は1回分だけ取っておくので、「↩ 初期化前に戻す」で戻せます。</p>
+    <button class="btn sub" id="initBk" style="margin-top:4px">先にバックアップを保存する</button>
+    <div class="row"><button class="btn sub" id="initNo">キャンセル</button><button class="btn danger-btn" id="initOk" style="margin-top:14px">初期化する</button></div></div>`;
+  document.getElementById("initBk").onclick=doBackup;
+  document.getElementById("initNo").onclick=()=>{initConfirm.innerHTML=""};
+  document.getElementById("initOk").onclick=()=>{saveUndo("初期化前に戻す");applyData({});initConfirm.innerHTML="";toast("初期化しました。設定 →「データ」の「初期化前に戻す」で元に戻せます")};
 };
 
 // ===== 先頭に戻る（おすすめ・一覧で、いちばん下まで来たら出す） =====
