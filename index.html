@@ -14,7 +14,7 @@
 <meta name="color-scheme" content="light dark">
 <script>
 /* アプリ定型03：表示の前にテーマを決める（ちらつき防止） */
-(function(){var t="auto";try{t=JSON.parse(localStorage.getItem("ssg_theme"))||"auto"}catch(e){}
+(function(){var t="light";try{t=JSON.parse(localStorage.getItem("ssg_theme"))||"light"}catch(e){}
 var d=t==="dark"||(t!=="light"&&window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches);
 document.documentElement.setAttribute("data-theme",d?"dark":"light")})();
 </script>
@@ -106,6 +106,7 @@ textarea{min-height:140px;font-family:ui-monospace,Menlo,monospace;font-size:16p
 .ver button{border:none;background:none;color:var(--sub);font:inherit;font-size:12px;text-decoration:underline;text-underline-offset:3px}
 .modal{display:none;position:fixed;inset:0;background:rgba(58,51,48,.45);z-index:30;align-items:flex-end;justify-content:center}
 .modal.on{display:flex}
+#verModal{z-index:40}   /* 設定の上から更新履歴を開いても前に出す */
 @media (min-width:760px){.modal{align-items:center;padding:24px}.modal .sheet{border-radius:18px;max-height:88vh}}
 .modal .sheet{background:var(--bg);width:100%;max-width:640px;max-height:80vh;overflow:auto;border-radius:18px 18px 0 0;padding:18px calc(16px + env(safe-area-inset-right)) calc(24px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left))}
 .hv{margin-bottom:14px}.hv b{font-size:14px}.hv small{color:var(--sub);margin-left:6px}
@@ -229,6 +230,14 @@ html[data-theme=dark] .save-warn{background:#3a2a20;border-color:#8a5a3a;color:#
 .qa summary::-webkit-details-marker{display:none}
 .qa summary::before{content:"Q. ";color:var(--main)}
 .qa p{margin:6px 0 2px;font-size:13px;line-height:1.7;color:var(--sub)}
+/* 設定は全画面。上の帯は固定で、右上の✕でいつでも閉じられる */
+.modal.full{padding:0;align-items:stretch;justify-content:stretch}
+.modal.full .sheet{max-width:none;width:100%;height:100%;max-height:none;border-radius:0;padding:0;display:flex;flex-direction:column;overflow:hidden}
+.full-head{flex:none;display:flex;align-items:center;gap:10px;padding:max(10px,env(safe-area-inset-top)) max(12px,calc((100% - 640px) / 2 + 12px)) 10px;padding-left:max(16px,calc((100% - 640px) / 2 + 16px),env(safe-area-inset-left));background:var(--bg);border-bottom:1px solid var(--line)}
+.full-head h2{flex:1;margin:0;font-size:17px}
+.full-x{flex:none;width:40px;height:40px;border:none;border-radius:50%;background:var(--soft);color:var(--ink);font:inherit;font-size:18px;font-weight:700;line-height:1}
+.full-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:14px max(12px,calc((100% - 640px) / 2 + 12px),env(safe-area-inset-right)) calc(28px + env(safe-area-inset-bottom)) max(12px,calc((100% - 640px) / 2 + 12px),env(safe-area-inset-left))}
+@media (min-width:760px){.modal.full{padding:0}.modal.full .sheet{border-radius:0;max-height:none}}
 .hint{font-size:12px;color:var(--sub);line-height:1.7;margin:6px 0 0}
 code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
 </style>
@@ -351,11 +360,12 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
   <h2>更新履歴</h2><div id="hist"></div>
   <button class="btn sub" id="verClose">閉じる</button>
 </div></div>
-<div class="modal" id="setModal"><div class="sheet">
-  <h2>設定</h2>
+<div class="modal full" id="setModal" role="dialog" aria-modal="true" aria-labelledby="setTitle"><div class="sheet">
+  <div class="full-head"><h2 id="setTitle">設定</h2><button class="full-x" id="setX" aria-label="設定を閉じる">✕</button></div>
+  <div class="full-body">
   <div class="card">
     <div class="lbl">表示</div>
-    <div class="chips" id="themeChips"><button class="chip" data-t="auto">自動（端末に合わせる）</button><button class="chip" data-t="light">☀️ ライト</button><button class="chip" data-t="dark">🌙 ダーク</button></div>
+    <div class="chips" id="themeChips"><button class="chip" data-t="light">☀️ ライト</button><button class="chip" data-t="dark">🌙 ダーク</button><button class="chip" data-t="auto">自動（端末に合わせる）</button></div>
   </div>
   <div class="card">
     <div class="lbl">ホーム画面に追加（おすすめ）</div>
@@ -411,6 +421,7 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
   <p class="hint" style="text-align:center;margin:4px 0 14px">入力したデータはこの端末の中だけに保存され、サーバーには送られません。</p>
   <div class="app-version">バージョン <span id="setVer"></span><br><button class="linkbtn" id="histBtn">更新履歴</button></div>
   <button class="btn sub" id="setClose">閉じる</button>
+  </div>
 </div></div>
 <aside class="phone-open" id="phoneOpen" hidden>
   <button class="po-x" id="poClose" aria-label="閉じる">×</button>
@@ -430,11 +441,12 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 <script>
 // ===== バージョン =====
 const SHARE_URL="https://sunatrux.github.io/newlife/";
-const APP_VERSION = '1.31.0';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
+const APP_VERSION = '1.32.0';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
 const APP_RELEASE_DATE = '2026-11-04';
 const VERSION=APP_VERSION;
 const CHANGELOG_URL="https://github.com/sunatrux/newlife/blob/main/CHANGELOG.md";
 const HISTORY=[
+ {v:"1.32.0",d:"2026-11-04",c:["表示の初期値をライトモードに","設定を全画面で開くように。上の帯は固定で、右上の ✕ からいつでも閉じられます"]},
  {v:"1.31.0",d:"2026-11-04",c:["設定に「表示」を追加。自動（端末に合わせる）／ライト／ダークを選べます","データまわりを強化：今の保存場所の表示、全データの初期化、「復元前・取り込み前・初期化前に戻す」、よくある質問","バックアップのファイル名に場所・日時・バージョンを入れ、復元前に中身を確認できるように","保存できなかったときに警告を出すように","パソコンではマウスを乗せると反応し、Escで設定などを閉じられるように。スマホを横にしたときも画面を広く使えるように","ホーム画面に追加の案内は、2回目に開いたときから出して、×で閉じると30日出さないように"]},
  {v:"1.30.0",d:"2026-11-03",c:["友だちに送るとき、時期を「両方／🚨 入居日から／✨ 余裕があれば」から選べるように"]},
  {v:"1.29.0",d:"2026-11-03",c:["友だちに送るとき、時期（入居日から・余裕があれば）・メモ・失敗談も、入れるかどうかを選べるように"]},
@@ -974,7 +986,7 @@ vm.onclick=e=>{if(e.target===vm)vm.classList.remove("on")};
 document.addEventListener("keydown",e=>{   // Escで小窓を閉じる（上に重なっているものから）
   if(e.key!=="Escape")return;
   const open=[...document.querySelectorAll(".modal.on")];
-  if(open.length)open[open.length-1].classList.remove("on");
+  if(open.length){const m=open[open.length-1];m.classList.remove("on");if(m.id==="setModal")document.documentElement.style.overflow=""}
 });
 
 // ===== 設定 =====
@@ -983,7 +995,7 @@ document.getElementById("setVer").textContent=`${APP_VERSION}（${APP_RELEASE_DA
 // ===== ライト／ダーク（アプリ定型03） =====
 const themeMq=window.matchMedia?matchMedia("(prefers-color-scheme: dark)"):null;
 function applyTheme(){
-  const t=store.get("ssg_theme","auto");
+  const t=store.get("ssg_theme","light");
   const dark=t==="dark"||(t==="auto"&&themeMq&&themeMq.matches);
   document.documentElement.setAttribute("data-theme",dark?"dark":"light");
   const m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute("content",dark?"#1e1a18":"#fbf7f0");
@@ -1022,9 +1034,11 @@ function feedbackDeviceInfo(){
 }
 const feedbackUrl=()=>FEEDBACK_URL+"?app="+encodeURIComponent(FEEDBACK_APP_NAME)+"&version="+encodeURIComponent(APP_VERSION)+"&device="+encodeURIComponent(feedbackDeviceInfo());
 function renderFeedback(){document.getElementById("fbInfo").textContent="v"+APP_VERSION+" / "+feedbackDeviceInfo();document.getElementById("fbLink").href=feedbackUrl()}
-document.getElementById("gearBtn").onclick=()=>{renderInstall();renderUpdBox();renderFeedback();renderUndo();document.getElementById("placeNow").textContent=placeJa();sm.classList.add("on")};
-document.getElementById("setClose").onclick=()=>sm.classList.remove("on");
-sm.onclick=e=>{if(e.target===sm)sm.classList.remove("on")};
+document.getElementById("gearBtn").onclick=()=>{renderInstall();renderUpdBox();renderFeedback();renderUndo();document.getElementById("placeNow").textContent=placeJa();sm.classList.add("on");document.documentElement.style.overflow="hidden";sm.querySelector(".full-body").scrollTop=0};
+const closeSet=()=>{sm.classList.remove("on");document.documentElement.style.overflow=""};
+document.getElementById("setClose").onclick=closeSet;
+document.getElementById("setX").onclick=closeSet;
+
 document.getElementById("histBtn").onclick=()=>vm.classList.add("on");
 
 // ===== 友達に勧める（文章は送る前に書きかえOK。書きかえた文章は開いている間だけ覚えておく） =====
@@ -1155,7 +1169,7 @@ function devBrowser(){
 }
 const placeJa=()=>{const d=devBrowser();return d.app?`${d.dev}のホーム画面のアプリ`:`${d.dev}の${d.br}`};
 const placeEn=()=>{const d=devBrowser();return (d.dev==="この端末"?"Device":d.dev)+"-"+(d.app?"HomeApp":d.br==="ブラウザ"?"Browser":d.br)};
-function snapshot(){return {list:mine,query:state,name:store.get("ssg_name",""),withLink:withLink.checked,withUrl,expOpt,expWhen,theme:store.get("ssg_theme","auto")}}
+function snapshot(){return {list:mine,query:state,name:store.get("ssg_name",""),withLink:withLink.checked,withUrl,expOpt,expWhen,theme:store.get("ssg_theme","light")}}
 function backupData(){return {app:"newlife",format:DATA_FORMAT,version:APP_VERSION,savedAt:new Date().toISOString(),place:placeJa(),data:snapshot()}}
 const pad=n=>String(n).padStart(2,"0");
 const stamp=d=>`${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}`;
