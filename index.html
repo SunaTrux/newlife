@@ -467,11 +467,12 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 <script>
 // ===== バージョン =====
 const SHARE_URL="https://sunatrux.github.io/newlife/";
-const APP_VERSION = '1.33.2';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
+const APP_VERSION = '1.34.0';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
 const APP_RELEASE_DATE = '2026-11-07';
 const VERSION=APP_VERSION;
 const CHANGELOG_URL="https://github.com/sunatrux/newlife/blob/main/CHANGELOG.md";
 const HISTORY=[
+ {v:"1.34.0",d:"2026-11-07",c:["年代を「20〜30代／40〜50代／60代〜」の3つに"]},
  {v:"1.33.2",d:"2026-11-07",c:["設定の「作者へお手紙を送る💌」の見出しとボタンの文字を変更"]},
  {v:"1.33.1",d:"2026-11-06",c:["遮光・防音カーテンのアイコンを、カーテンらしい絵に変更"]},
  {v:"1.33.0",d:"2026-11-06",c:["共有に「🔗 リンクで送る」を追加。受け取った人はリンクを押すだけで、確認のあとマイリストに追加できます","LINEなどで送ったとき、アプリ名と絵の付いたカードが出るように","設定の「友達に勧める」に、パソコンのときはスマホで読み取れる図を表示","ホーム画面のアプリで、上の時計の部分がすけて見えないように"]},
@@ -638,10 +639,13 @@ function cleanMine(arr){
 }
 let mine=cleanMine(store.get("ssg_list",[]));
 mine.forEach(m=>{if(m.w==="month")m.w="later"});
-const AGES_OK=["20","30","40","50","60"];
+// 年代は3つ：20〜30代／40〜50代／60代〜（前の10年ごとの選択は近いほうに寄せる）
+const AGES_OK=["20","40","60"];
+const AGE_SPAN={"20":[20,30],"40":[40,50],"60":[60]};
+const normAge=a=>({"10":"20","20":"20","30":"20","40":"40","50":"40","60":"60"})[a]||"20";
 const newPerson=()=>({gender:"any",age:"20",zodiac:"",persona:[]});
 let state=store.get("ssg_q2",null)||{people:"1",persons:[newPerson(),newPerson()],persona:[]};
-state.persons.forEach(p=>{if(!AGES_OK.includes(p.age))p.age="20";if(!Array.isArray(p.persona))p.persona=Array.isArray(state.persona)?[...state.persona]:[]});
+state.persons.forEach(p=>{p.age=normAge(p.age);if(!Array.isArray(p.persona))p.persona=Array.isArray(state.persona)?[...state.persona]:[]});
 const saveQ=()=>store.set("ssg_q2",state);
 const PERSONA_OPTS=Object.entries(PERSONA);
 if(!Array.isArray(state.focus))state.focus=[];
@@ -680,7 +684,7 @@ document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
 });
 
 // ===== 質問チップ =====
-const AGES=[["20","20代"],["30","30代"],["40","40代"],["50","50代"],["60","60代〜"]];
+const AGES=[["20","20〜30代"],["40","40〜50代"],["60","60代〜"]];
 const GENDERS=[["f","女性"],["m","男性"],["any","問わない"]];
 const chipRow=(k,opts,cur)=>`<div class="chips" data-k="${k}">${opts.map(o=>`<button class="chip ${cur===o[0]?"on":""}" data-v="${o[0]}">${o[1]}</button>`).join("")}</div>`;
 function renderPersons(){
@@ -740,7 +744,7 @@ function recommend(){
       why.push({c:"z",t:ppl===1?ELEMENT[els[0]].name+"の星座と相性◎":zm.length===2?"ふたりの星座と相性◎":`${zm[0]+1}人目の星座と相性◎`});
     }
     // 年代（誰かに合えばOK）
-    if(ps.some(p=>it.a.includes(+p.age)))s+=1;else s-=1;
+    if(ps.some(p=>(AGE_SPAN[p.age]||[]).some(d=>it.a.includes(d))))s+=1;else s-=1;
     // 性別
     if(it.g){
       const match=genders.map((g,i)=>g===it.g?i:-1).filter(i=>i>=0);
@@ -1280,7 +1284,7 @@ function applyData(dt){
   dt=dt&&typeof dt==="object"?dt:{};
   mine=cleanMine(dt.list);save();
   const q=dt.query;
-  const pick=p=>({gender:["f","m","any"].includes(p&&p.gender)?p.gender:"any",age:AGES_OK.includes(p&&p.age)?p.age:"20",
+  const pick=p=>({gender:["f","m","any"].includes(p&&p.gender)?p.gender:"any",age:normAge(p&&p.age),
     zodiac:ZODIAC.some(z=>z[0]===(p&&p.zodiac))?p.zodiac:"",persona:Array.isArray(p&&p.persona)?p.persona.filter(x=>PERSONA[x]):[]});
   const ok=q&&typeof q==="object"&&Array.isArray(q.persons);
   state={people:ok&&q.people==="2"?"2":"1",persons:[pick(ok&&q.persons[0]),pick(ok&&q.persons[1])],
