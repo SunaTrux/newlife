@@ -5,10 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; font-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'none'">
 <title>新生活おすすめグッズ</title>
+<meta name="description" content="性別・年代・性格・星座から新生活のおすすめグッズを選んで、本当にあって良かったものをマイリストに集め、友だちと送り合えるアプリ。">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="新生活おすすめグッズ">
+<meta property="og:title" content="新生活おすすめグッズ">
+<meta property="og:description" content="本当にあって良かったものをマイリストに集めて、友だちと送り合おう。ホーム画面に追加するとアプリのように使えます。">
+<meta property="og:url" content="https://sunatrux.github.io/newlife/">
+<meta property="og:image" content="https://sunatrux.github.io/newlife/icons/og.jpg?v=1">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="新生活グッズ">
 <meta name="theme-color" content="#fbf7f0">
 <meta name="color-scheme" content="light dark">
@@ -26,6 +37,8 @@ document.documentElement.setAttribute("data-theme",d?"dark":"light")})();
   --r:14px;
 }
 *,*::before,*::after{box-sizing:border-box}
+/* ホーム画面のアプリで、時計などが出る上の部分も背景色で埋める（すけて見えないように） */
+.status-fill{position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top);background:var(--bg);z-index:60;pointer-events:none}
 /* アプリ定型04：右端が切れない・ノッチやホームバーに隠れない */
 body{overflow-x:hidden;overflow-wrap:anywhere;padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
 
@@ -106,7 +119,8 @@ textarea{min-height:140px;font-family:ui-monospace,Menlo,monospace;font-size:16p
 .ver button{border:none;background:none;color:var(--sub);font:inherit;font-size:12px;text-decoration:underline;text-underline-offset:3px}
 .modal{display:none;position:fixed;inset:0;background:rgba(58,51,48,.45);z-index:30;align-items:flex-end;justify-content:center}
 .modal.on{display:flex}
-#verModal{z-index:40}   /* 設定の上から更新履歴を開いても前に出す */
+#verModal{z-index:40}
+#packModal{z-index:45}   /* 設定の上から更新履歴を開いても前に出す */
 @media (min-width:760px){.modal{align-items:center;padding:24px}.modal .sheet{border-radius:18px;max-height:88vh}}
 .modal .sheet{background:var(--bg);width:100%;max-width:640px;max-height:80vh;overflow:auto;border-radius:18px 18px 0 0;padding:18px calc(16px + env(safe-area-inset-right)) calc(24px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left))}
 .hv{margin-bottom:14px}.hv b{font-size:14px}.hv small{color:var(--sub);margin-left:6px}
@@ -246,6 +260,7 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
 </style>
 </head>
 <body>
+<div class="status-fill" aria-hidden="true"></div>
 <div id="saveWarn"></div>
 <div id="newverBar"></div>
 <div id="installBar"></div>
@@ -340,12 +355,14 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
     <div style="height:8px"></div>
     <textarea id="exp" readonly></textarea>
     <p class="hint" style="margin:6px 0 0">👀 この内容が、そのまま相手に見えます。メモに人に見せたくないことが書いてあれば、送る前に確かめてね。</p>
-    <div class="row"><button class="btn" id="sendBtn">友だちに送る</button><button class="btn sub" id="copyBtn">コピーする</button></div>
-    <p class="hint">LINE やメールで送ってね。リンクを付けると、受け取った友だちもアプリを開いてそのまま取り込めます。</p>
+    <button class="btn" id="linkBtn">🔗 リンクで送る</button>
+    <p class="hint" style="margin:6px 0 0">相手がリンクを押すだけで、このアプリが開いてマイリストに追加できます。</p>
+    <div class="row"><button class="btn sub" id="sendBtn">テキストで送る</button><button class="btn sub" id="copyBtn">コピーする</button></div>
+    <p class="hint">テキストは、相手に「共有」→「取り込む」へ貼り付けてもらう形です。</p>
   </div>
   <div class="card">
     <h2>📥 友だちのリストを取り込む</h2>
-    <textarea id="imp" placeholder="友だちから届いたテキストを貼り付け"></textarea>
+    <textarea id="imp" placeholder="友だちから届いたテキストやリンクを、メッセージごと貼り付け"></textarea>
     <button class="btn" id="impBtn">取り込む</button>
     <p class="hint">書き方の例（手書きでもOK）<br>
       <code># わたしの新生活リスト</code><br>
@@ -359,6 +376,11 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
 
 </main>
 <footer class="ver"><button id="verBtn"></button></footer>
+<div class="modal" id="packModal" role="dialog" aria-modal="true"><div class="sheet">
+  <h2>📥 友だちのリストが届きました</h2>
+  <div id="packBody"></div>
+  <div class="row"><button class="btn sub" id="packNo">やめる</button><button class="btn" id="packOk">取り込む</button></div>
+</div></div>
 <div class="modal" id="verModal"><div class="sheet">
   <h2>更新履歴</h2><div id="hist"></div>
   <button class="btn sub" id="verClose">閉じる</button>
@@ -380,6 +402,7 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
     <textarea id="recText" rows="8" aria-label="送る文章" style="font-family:inherit;margin-top:8px"></textarea>
     <div class="row"><button class="btn" id="recSend">友達に送る</button><button class="btn sub" id="recCopy">文章をコピー</button></div>
     <button class="btn sub sm" id="recReset" style="display:none">最初の文章に戻す</button>
+    <div class="pc-only" style="margin-top:10px"><div style="display:flex;gap:12px;align-items:center"><div class="po-code" id="recCode" style="flex:none;width:96px"></div><p class="hint" style="margin:0">そばにいる友達には、これをスマホのカメラで読み取ってもらうと、すぐに開けます。</p></div></div>
   </div>
   <div class="card pc-only">
     <div class="lbl">📱 スマホで開く</div>
@@ -444,11 +467,12 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 <script>
 // ===== バージョン =====
 const SHARE_URL="https://sunatrux.github.io/newlife/";
-const APP_VERSION = '1.32.3';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
+const APP_VERSION = '1.33.0';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
 const APP_RELEASE_DATE = '2026-11-06';
 const VERSION=APP_VERSION;
 const CHANGELOG_URL="https://github.com/sunatrux/newlife/blob/main/CHANGELOG.md";
 const HISTORY=[
+ {v:"1.33.0",d:"2026-11-06",c:["共有に「🔗 リンクで送る」を追加。受け取った人はリンクを押すだけで、確認のあとマイリストに追加できます","LINEなどで送ったとき、アプリ名と絵の付いたカードが出るように","設定の「友達に勧める」に、パソコンのときはスマホで読み取れる図を表示","ホーム画面のアプリで、上の時計の部分がすけて見えないように"]},
  {v:"1.32.3",d:"2026-11-06",c:["iPhoneで、検索欄の🔍に文字カーソルが重なる・入力欄を押すと画面が拡大される問題を修正"]},
  {v:"1.32.2",d:"2026-11-06",c:["共有タブのヒント文を変更"]},
  {v:"1.32.1",d:"2026-11-06",c:["細かい表示の調整"]},
@@ -927,6 +951,66 @@ optsEl.addEventListener("click",e=>{const c=e.target.closest(".chip");if(!c)retu
   else{expOpt[k]=!expOpt[k];store.set("ssg_expopts",expOpt)}
   syncOpts();renderExport()});
 syncOpts();
+// ===== リンクで送る（アプリ定型18。中身はURLの # の後ろに入れるので、サーバーには送られない） =====
+const b64u={
+  enc:bytes=>{let s="";for(let i=0;i<bytes.length;i+=0x8000)s+=String.fromCharCode.apply(null,bytes.subarray(i,i+0x8000));return btoa(s).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")},
+  dec:t=>{const s=atob(t.replace(/-/g,"+").replace(/_/g,"/"));const u=new Uint8Array(s.length);for(let i=0;i<s.length;i++)u[i]=s.charCodeAt(i);return u}
+};
+async function zip(bytes,mode){
+  const cs=mode==="c"?new CompressionStream("deflate-raw"):new DecompressionStream("deflate-raw");
+  return new Uint8Array(await new Response(new Blob([bytes]).stream().pipeThrough(cs)).arrayBuffer());
+}
+function exportList(){   // 今の「送るもの」「時期」の選び方で並べたアイテム
+  return mine.filter(m=>(expMode==="all"||(expMode==="good"&&m.good)||(expMode==="bad"&&m.bad))&&(!expWhen||m.w===expWhen));
+}
+async function makePackLink(){
+  const list=exportList();if(!list.length)return null;
+  const pk={v:1,f:str(myName.value.trim(),LIM.from),i:list.map(m=>[m.name,expOpt.memo?m.memo:"",(m.good?1:0)|(m.bad?2:0),m.w==="now"?1:m.w==="later"?2:0,expOpt.ep&&m.bad?(m.ep||""):""])};
+  const raw=new TextEncoder().encode(JSON.stringify(pk));
+  let code;
+  try{code="z"+b64u.enc(await zip(raw,"c"))}catch(e){code="j"+b64u.enc(raw)}
+  return {url:SHARE_URL+"#pack="+code,count:list.length};
+}
+document.getElementById("linkBtn").onclick=async()=>{
+  const r=await makePackLink();
+  if(!r){toast("送るアイテムがありません（送るもの・時期の選び方を確かめてね）");return}
+  if(r.url.length>8000){toast("アイテムが多くてリンクが長すぎます。「テキストで送る」を使ってね");return}
+  const nm=myName.value.trim();
+  const text=`${nm?nm+"の":""}新生活グッズのリスト（${r.count}件）です。リンクを開くと、新生活おすすめグッズのマイリストに追加できます。\n${r.url}\n\n※ホーム画面のアプリで使っている人は、このメッセージ全体をコピーして、アプリの「共有」→「取り込む」に貼り付けてください。`;
+  sendText(text,"新生活グッズのリスト",null);
+};
+// 受け取った側：リンクを開いたとき・貼り付けたとき
+async function openPack(code){
+  let pk=null;
+  try{
+    if(code.length>12000)throw 0;
+    let bytes=b64u.dec(code.slice(1));
+    if(code[0]==="z")bytes=await zip(bytes,"d");else if(code[0]!=="j")throw 0;
+    if(bytes.length>200000)throw 0;
+    pk=JSON.parse(new TextDecoder().decode(bytes));
+  }catch(e){toast("リンクの中身を読めませんでした。送ってくれた人に「テキストで送る」で送り直してもらってね");return false}
+  if(!pk||typeof pk!=="object"||pk.v!==1||!Array.isArray(pk.i)){toast("このアプリのリストではないようです");return false}
+  // 決まった形の値だけを取り出す（アプリ定型10）
+  const items=pk.i.slice(0,LIM.items).filter(Array.isArray).map(a=>({name:str(a[0],LIM.name).trim(),memo:str(a[1],LIM.memo),good:(+a[2]&1)===1,bad:(+a[2]&2)===2,w:+a[3]===1?"now":+a[3]===2?"later":"",ep:str(a[4],LIM.memo)})).filter(it=>it.name);
+  if(!items.length){toast("リストにアイテムが入っていませんでした");return false}
+  if(mine.length+items.length>LIM.items){toast(`マイリストは${LIM.items}件までです`);return false}
+  const from=str(pk.f,LIM.from).trim();
+  const g=items.filter(i=>i.good).length,bd=items.filter(i=>i.bad).length,dup=items.filter(i=>mine.some(m=>m.name===i.name)).length;
+  document.getElementById("packBody").innerHTML=`<p class="hint" style="margin-top:0">${from?esc(from)+"さんの":"友だちの"}リストを、あなたのマイリストに追加します。今のマイリストは消えません。</p>
+    <div class="card" style="margin:8px 0"><b>${items.length}件</b>（⭐️ 良かった ${g}・❌ 失敗 ${bd}）${dup?`<br><span class="hint">うち${dup}件はもうマイリストにあるので、メモだけ追記します</span>`:""}
+    <ul style="margin:8px 0 0;padding-left:20px;font-size:13px;line-height:1.7;max-height:30vh;overflow:auto">${items.map(i=>`<li>${i.good?"⭐️ ":i.bad?"❌ ":""}${esc(i.name)}</li>`).join("")}</ul></div>`;
+  const pm=document.getElementById("packModal");pm.classList.add("on");
+  return new Promise(res=>{
+    document.getElementById("packOk").onclick=()=>{pm.classList.remove("on");mergeItems(items,from);goTab("list");res(true)};
+    document.getElementById("packNo").onclick=()=>{pm.classList.remove("on");res(false)};
+  });
+}
+function checkPackHash(){
+  const m=/^#pack=([A-Za-z0-9_\-]+)$/.exec(location.hash||"");if(!m)return;
+  try{history.replaceState(null,"",location.pathname+location.search)}catch(e){}   // 何度も取り込まないようにアドレスから消す
+  openPack(m[1]);
+}
+window.addEventListener("hashchange",checkPackHash);
 const itemUrl=name=>{const it=ITEMS.find(x=>x.n===name);return it&&it.l?it.l.u:""};
 async function copyText(text,okMsg,ta){
   try{await navigator.clipboard.writeText(text);toast(okMsg);return true}
@@ -967,10 +1051,16 @@ function parseMd(text){
 document.getElementById("impBtn").onclick=()=>{
   const ta=document.getElementById("imp");
   if(ta.value.length>LIM.text){toast("長すぎて取り込めません（10万文字まで）");return}
+  const pm=/#pack=([A-Za-z0-9_\-]+)/.exec(ta.value);
+  if(pm){openPack(pm[1]).then(ok=>{if(ok)ta.value=""});return}
   const r=parseMd(ta.value),from=str(r.from,LIM.from);
   if(!r.items.length){toast("アイテムが見つかりませんでした");return}
   if(mine.length+r.items.length>LIM.items){toast(`マイリストは${LIM.items}件までです`);return}
-  const items=r.items.map(it=>({...it,name:str(it.name,LIM.name),memo:str(it.memo,LIM.memo),ep:str(it.ep,LIM.memo)}));
+  mergeItems(r.items,from);ta.value="";
+};
+// 友だちのアイテムをマイリストに足す（今のデータは消さない）
+function mergeItems(raw,from){
+  const items=raw.map(it=>({...it,name:str(it.name,LIM.name),memo:str(it.memo,LIM.memo),ep:str(it.ep,LIM.memo)})).filter(it=>it.name);
   saveUndo("取り込み前に戻す");
   let add=0;
   items.forEach(it=>{
@@ -978,9 +1068,9 @@ document.getElementById("impBtn").onclick=()=>{
     if(ex){ if(it.memo&&!ex.memo.includes(it.memo))ex.memo+=(ex.memo?"\n":"")+(from?from+"：":"")+it.memo; }
     else{mine.push({id:uid(),name:it.name,memo:(it.memo+(it.ep?(it.memo?"\n":"")+"失敗："+it.ep:"")),good:false,fgood:it.good,fbad:it.bad,w:it.w||(ITEMS.find(x=>x.n===it.name)||{}).w||"",from:from||"友だち"});add++}
   });
-  save();updateBadge();ta.value="";
+  save();updateBadge();renderMine();
   toast(`${add}件追加しました${items.length-add?`（${items.length-add}件は既存にメモを追記）`:""}`);
-};
+}
 
 updateBadge();
 document.getElementById("verBtn").textContent=`v${VERSION}・更新履歴`;
@@ -991,7 +1081,7 @@ document.getElementById("verClose").onclick=()=>vm.classList.remove("on");
 vm.onclick=e=>{if(e.target===vm)vm.classList.remove("on")};
 document.addEventListener("keydown",e=>{   // Escで小窓を閉じる（上に重なっているものから）
   if(e.key!=="Escape")return;
-  const m=["verModal","setModal"].map(id=>document.getElementById(id)).find(x=>x.classList.contains("on"));   // 前に出ている順
+  const m=["packModal","verModal","setModal"].map(id=>document.getElementById(id)).find(x=>x.classList.contains("on"));   // 前に出ている順
   if(m){m.classList.remove("on");if(m.id==="setModal")document.documentElement.style.overflow=""}
 });
 
@@ -1142,6 +1232,7 @@ function renderNotice(){
 }
 renderNotice();
 renderInstall();
+checkPackHash();
 
 // ===== スマホで開く（アプリ定型12：PCで見たときだけ、アプリのURLを2次元コードで表示） =====
 function qrSvg(text){
@@ -1156,6 +1247,7 @@ function qrSvg(text){
   const url=SHARE_URL;   // 入れるのはアプリのURLだけ（データは入れない）
   const svg=qrSvg(url);if(!svg)return;
   document.getElementById("setCode").innerHTML=svg;
+  document.getElementById("recCode").innerHTML=svg;
   const po=document.getElementById("phoneOpen");
   document.getElementById("poCode").innerHTML=svg;
   const KEY="ssg_phoneopen_hide";
