@@ -115,8 +115,6 @@ textarea{min-height:140px;font-family:ui-monospace,Menlo,monospace;font-size:16p
 .from{font-size:11px;color:var(--sky);margin-left:2px}
 .cnt{font-size:12px;color:var(--sub);margin:0 0 8px}
 .empty{text-align:center;color:var(--sub);font-size:13px;padding:24px 8px;line-height:1.8}
-.ver{text-align:center;padding:0 0 28px;margin-top:-56px}
-.ver button{border:none;background:none;color:var(--sub);font:inherit;font-size:12px;text-decoration:underline;text-underline-offset:3px}
 .modal{display:none;position:fixed;inset:0;background:rgba(58,51,48,.45);z-index:30;align-items:flex-end;justify-content:center}
 .modal.on{display:flex}
 #verModal{z-index:40}
@@ -375,7 +373,6 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
 </section>
 
 </main>
-<footer class="ver"><button id="verBtn"></button></footer>
 <div class="modal" id="packModal" role="dialog" aria-modal="true"><div class="sheet">
   <h2>📥 友だちのリストが届きました</h2>
   <div id="packBody"></div>
@@ -437,6 +434,7 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
     <div class="lbl">アプリの更新</div>
     <p class="hint" style="margin-top:0">ホーム画面のアプリは、閉じても裏で止まっているだけで、自動では新しくなりません。開いたときに最新版を確認しますが、すぐ知りたいときはここで確認できます。</p>
     <div id="updBox"></div>
+    <button class="btn sub sm" id="histBtn">📝 更新履歴を見る</button>
   </div>
   <div class="card">
     <div class="lbl">作者へお手紙を送る💌</div>
@@ -445,7 +443,7 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
     <p class="hint" style="font-size:11px">名前やマイリストの中身は送られません。アプリのバージョンと端末の種類だけ、一緒に届きます（<span id="fbInfo"></span>）。</p>
   </div>
   <p class="hint" style="text-align:center;margin:4px 0 14px">入力したデータはこの端末の中だけに保存され、サーバーには送られません。</p>
-  <div class="app-version">バージョン <span id="setVer"></span><br><button class="linkbtn" id="histBtn">更新履歴</button></div>
+  <div class="app-version">バージョン <span id="setVer"></span></div>
   <button class="btn sub" id="setClose">閉じる</button>
   </div>
 </div></div>
@@ -467,11 +465,12 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 <script>
 // ===== バージョン =====
 const SHARE_URL="https://sunatrux.github.io/newlife/";
-const APP_VERSION = '1.34.0';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
+const APP_VERSION = '1.34.1';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
 const APP_RELEASE_DATE = '2026-11-07';
 const VERSION=APP_VERSION;
 const CHANGELOG_URL="https://github.com/sunatrux/newlife/blob/main/CHANGELOG.md";
 const HISTORY=[
+ {v:"1.34.1",d:"2026-11-07",c:["更新履歴は、設定の「アプリの更新」から見るように（画面下のリンクはなくしました）"]},
  {v:"1.34.0",d:"2026-11-07",c:["年代を「20〜30代／40〜50代／60代〜」の3つに"]},
  {v:"1.33.2",d:"2026-11-07",c:["設定の「作者へお手紙を送る💌」の見出しとボタンの文字を変更"]},
  {v:"1.33.1",d:"2026-11-06",c:["遮光・防音カーテンのアイコンを、カーテンらしい絵に変更"]},
@@ -1080,10 +1079,8 @@ function mergeItems(raw,from){
 }
 
 updateBadge();
-document.getElementById("verBtn").textContent=`v${VERSION}・更新履歴`;
 document.getElementById("hist").innerHTML=HISTORY.map(h=>`<div class="hv"><b>v${h.v}</b><small>${h.d}</small><ul>${h.c.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`).join("");
 const vm=document.getElementById("verModal");
-document.getElementById("verBtn").onclick=()=>vm.classList.add("on");
 document.getElementById("verClose").onclick=()=>vm.classList.remove("on");
 vm.onclick=e=>{if(e.target===vm)vm.classList.remove("on")};
 document.addEventListener("keydown",e=>{   // Escで小窓を閉じる（上に重なっているものから）
