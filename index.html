@@ -439,9 +439,9 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
     <div id="updBox"></div>
   </div>
   <div class="card">
-    <div class="lbl">💌 作者へのおたより</div>
+    <div class="lbl">作者へお手紙を送る💌</div>
     <p class="hint" style="margin-top:0">「これ買ってよかった！」「このアプリで新生活が楽しくなった」など、おたよりや応援メッセージを気軽にどうぞ。届いたおたよりは、作者のいちばんの励みになります。</p>
-    <a class="btn" id="fbLink" href="https://tally.so/r/9qL0A4" target="_blank" rel="noopener noreferrer" style="text-align:center;text-decoration:none">✉️ おたより・応援メッセージを送る</a>
+    <a class="btn" id="fbLink" href="https://tally.so/r/9qL0A4" target="_blank" rel="noopener noreferrer" style="text-align:center;text-decoration:none">感想、応援、FB</a>
     <p class="hint" style="font-size:11px">名前やマイリストの中身は送られません。アプリのバージョンと端末の種類だけ、一緒に届きます（<span id="fbInfo"></span>）。</p>
   </div>
   <p class="hint" style="text-align:center;margin:4px 0 14px">入力したデータはこの端末の中だけに保存され、サーバーには送られません。</p>
@@ -467,11 +467,12 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 <script>
 // ===== バージョン =====
 const SHARE_URL="https://sunatrux.github.io/newlife/";
-const APP_VERSION = '1.33.1';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
-const APP_RELEASE_DATE = '2026-11-06';
+const APP_VERSION = '1.33.2';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
+const APP_RELEASE_DATE = '2026-11-07';
 const VERSION=APP_VERSION;
 const CHANGELOG_URL="https://github.com/sunatrux/newlife/blob/main/CHANGELOG.md";
 const HISTORY=[
+ {v:"1.33.2",d:"2026-11-07",c:["設定の「作者へお手紙を送る💌」の見出しとボタンの文字を変更"]},
  {v:"1.33.1",d:"2026-11-06",c:["遮光・防音カーテンのアイコンを、カーテンらしい絵に変更"]},
  {v:"1.33.0",d:"2026-11-06",c:["共有に「🔗 リンクで送る」を追加。受け取った人はリンクを押すだけで、確認のあとマイリストに追加できます","LINEなどで送ったとき、アプリ名と絵の付いたカードが出るように","設定の「友達に勧める」に、パソコンのときはスマホで読み取れる図を表示","ホーム画面のアプリで、上の時計の部分がすけて見えないように"]},
  {v:"1.32.3",d:"2026-11-06",c:["iPhoneで、検索欄の🔍に文字カーソルが重なる・入力欄を押すと画面が拡大される問題を修正"]},
