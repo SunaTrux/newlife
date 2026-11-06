@@ -288,9 +288,6 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
       <button class="chip" data-v="1">ひとり暮らし</button><button class="chip" data-v="2">ふたり暮らし</button>
     </div>
     <div id="persons"></div>
-    <div class="lbl">重視すること（任意）</div>
-    <div class="chips" id="focusChips"><button class="chip" data-v="eco">♻️ エコ</button><button class="chip" data-v="cheap">💴 安価</button></div>
-    <div class="chips" id="powerChips" style="margin-top:6px"><button class="chip" data-v="on">🔌 家電</button><button class="chip" data-v="off">🍃 電気なし</button></div>
     <button class="btn" id="go">おすすめを見る</button>
   </div>
   <div id="result"></div>
@@ -465,11 +462,12 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 <script>
 // ===== バージョン =====
 const SHARE_URL="https://sunatrux.github.io/newlife/";
-const APP_VERSION = '1.34.1';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
+const APP_VERSION = '1.35.0';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
 const APP_RELEASE_DATE = '2026-11-07';
 const VERSION=APP_VERSION;
 const CHANGELOG_URL="https://github.com/sunatrux/newlife/blob/main/CHANGELOG.md";
 const HISTORY=[
+ {v:"1.35.0",d:"2026-11-07",c:["おすすめの「重視すること」をなくして、条件をシンプルに（エコ・安価・家電・電気なしの絞り込みは一覧でできます）"]},
  {v:"1.34.1",d:"2026-11-07",c:["更新履歴は、設定の「アプリの更新」から見るように（画面下のリンクはなくしました）"]},
  {v:"1.34.0",d:"2026-11-07",c:["年代を「20〜30代／40〜50代／60代〜」の3つに"]},
  {v:"1.33.2",d:"2026-11-07",c:["設定の「作者へお手紙を送る💌」の見出しとボタンの文字を変更"]},
@@ -708,18 +706,8 @@ document.getElementById("persons").addEventListener("click",e=>{
   saveQ();renderPersons();
 });
 renderPersons();
-const focusEl=document.getElementById("focusChips");
-const syncFocus=()=>focusEl.querySelectorAll(".chip").forEach(c=>c.classList.toggle("on",state.focus.includes(c.dataset.v)));
-focusEl.addEventListener("click",e=>{const c=e.target.closest(".chip");if(!c)return;const v=c.dataset.v;
-  state.focus=state.focus.includes(v)?state.focus.filter(x=>x!==v):[...state.focus,v];saveQ();syncFocus()});
-syncFocus();
-// 家電／電気なし（どちらか一方だけ。もう一度押すと解除）
-if(typeof state.power!=="string")state.power="";
-const powerEl=document.getElementById("powerChips");
-const syncPower=()=>powerEl.querySelectorAll(".chip").forEach(c=>c.classList.toggle("on",state.power===c.dataset.v));
-powerEl.addEventListener("click",e=>{const c=e.target.closest(".chip");if(!c)return;state.power=state.power===c.dataset.v?"":c.dataset.v;saveQ();syncPower()});
-syncPower();
-const powerOk=it=>!state.power||(state.power==="on"?!!it.el:!it.el);
+// 「重視すること」はなくした（エコ・安価・家電・電気なしの絞り込みは一覧で）
+state.focus=[];state.power="";
 
 // ===== おすすめ計算 =====
 const zOf=id=>ZODIAC.find(x=>x[0]===id);
@@ -727,7 +715,7 @@ function recommend(){
   const ppl=+state.people, ps=state.persons.slice(0,ppl);
   const els=ps.map(p=>zOf(p.zodiac)).map(z=>z?z[2]:null);
   const genders=ps.map(p=>p.gender);
-  return ITEMS.filter(it=>!it.ret&&it.p.includes(ppl)&&powerOk(it)).map(it=>{
+  return ITEMS.filter(it=>!it.ret&&it.p.includes(ppl)).map(it=>{
     let s=1; const why=[];
     // 性格（人ごと）
     it.t.forEach(t=>{
@@ -751,7 +739,7 @@ function recommend(){
       else if(genders.every(g=>g==="any"))s-=1.5;
       else s-=3;
     }
-    (it.c||[]).forEach(c=>{if(state.focus.includes(c))s+=3;why.push({c:"k",t:CATS[c]})});
+    (it.c||[]).forEach(c=>why.push({c:"k",t:CATS[c]}));
     if(ppl===2&&it.p.length===1){s+=1.5;why.push({c:"p",t:"ふたり暮らし向け"})}
     if(ppl===1&&it.p.length===1){s+=1;why.push({c:"p",t:"ひとり暮らし向け"})}
     return {...it,s,why};
@@ -1293,7 +1281,7 @@ function applyData(dt){
   const eo=dt.expOpt&&typeof dt.expOpt==="object"?dt.expOpt:{};expOpt.memo=eo.memo!==false;expOpt.ep=eo.ep!==false;store.set("ssg_expopts",expOpt);
   expWhen=dt.expWhen==="now"||dt.expWhen==="later"?dt.expWhen:"";store.set("ssg_expwhen",expWhen);
   if(["auto","light","dark"].includes(dt.theme))setTheme(dt.theme);
-  updateBadge();renderPersons();syncFocus();syncPower();syncOpts();syncWhen();renderMine();renderExport();
+  updateBadge();renderPersons();syncOpts();syncWhen();renderMine();renderExport();
 }
 // 直前の操作を戻す（復元・取り込み・初期化の前の状態を、直前1回分だけ保存）
 const UNDO_KEY="ssg_undo";
