@@ -4,14 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; font-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'none'">
-<title>新生活おすすめグッズ</title>
+<title>新生活グッズリスト</title>
 <meta name="description" content="性別・年代・性格・星座から新生活のおすすめグッズを選んで、本当にあって良かったものをマイリストに集め、友だちと送り合えるアプリ。">
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="新生活おすすめグッズ">
-<meta property="og:title" content="新生活おすすめグッズ">
+<meta property="og:site_name" content="新生活グッズリスト">
+<meta property="og:title" content="新生活グッズリスト">
 <meta property="og:description" content="本当にあって良かったものをマイリストに集めて、友だちと送り合おう。ホーム画面に追加するとアプリのように使えます。">
 <meta property="og:url" content="https://sunatrux.github.io/newlife/">
-<meta property="og:image" content="https://sunatrux.github.io/newlife/icons/og.jpg?v=1">
+<meta property="og:image" content="https://sunatrux.github.io/newlife/icons/og.jpg?v=2">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
@@ -264,7 +264,7 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
 <div id="installBar"></div>
 <header>
   <div class="ttl">
-    <h1>🌱 新生活<span>おすすめ</span>グッズ</h1>
+    <h1>🌱 新生活<span>グッズ</span>リスト</h1>
     <button class="gear" id="gearBtn" aria-label="設定"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
   </div>
   <p>本当にあって良かったものだけを集めよう</p>
@@ -462,11 +462,12 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 <script>
 // ===== バージョン =====
 const SHARE_URL="https://sunatrux.github.io/newlife/";
-const APP_VERSION = '1.35.0';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
+const APP_VERSION = '1.36.0';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
 const APP_RELEASE_DATE = '2026-11-07';
 const VERSION=APP_VERSION;
 const CHANGELOG_URL="https://github.com/sunatrux/newlife/blob/main/CHANGELOG.md";
 const HISTORY=[
+ {v:"1.36.0",d:"2026-11-07",c:["アプリの名前を「新生活グッズリスト」に変更"]},
  {v:"1.35.0",d:"2026-11-07",c:["おすすめの「重視すること」をなくして、条件をシンプルに（エコ・安価・家電・電気なしの絞り込みは一覧でできます）"]},
  {v:"1.34.1",d:"2026-11-07",c:["更新履歴は、設定の「アプリの更新」から見るように（画面下のリンクはなくしました）"]},
  {v:"1.34.0",d:"2026-11-07",c:["年代を「20〜30代／40〜50代／60代〜」の3つに"]},
@@ -923,7 +924,7 @@ function renderExport(){
     const groups=[["now",WHEN.now],["later",WHEN.later],["","🗂 時期未定"]];
     md+=groups.map(([k,title])=>{const g=list.filter(m=>(m.w||"")===k);return g.length?`## ${title}\n${g.map(m=>line(m,false)).join("\n")}`:""}).filter(Boolean).join("\n\n");
   }
-  if(withLink.checked)md+=`\n\n新生活おすすめグッズで作ったリストです。アプリを開いて「共有」→「取り込む」に貼り付けると、マイリストに追加できます。\n${SHARE_URL}`;
+  if(withLink.checked)md+=`\n\n新生活グッズリストのアプリで作ったリストです。アプリを開いて「共有」→「取り込む」に貼り付けると、マイリストに追加できます。\n${SHARE_URL}`;
   document.getElementById("exp").value=md+"\n";
 }
 // 付けるもの：時期・メモ・失敗談・商品URL・このアプリのリンク（チップで切り替え。最初はすべてオン）
@@ -970,7 +971,7 @@ document.getElementById("linkBtn").onclick=async()=>{
   if(!r){toast("送るアイテムがありません（送るもの・時期の選び方を確かめてね）");return}
   if(r.url.length>8000){toast("アイテムが多くてリンクが長すぎます。「テキストで送る」を使ってね");return}
   const nm=myName.value.trim();
-  const text=`${nm?nm+"の":""}新生活グッズのリスト（${r.count}件）です。リンクを開くと、新生活おすすめグッズのマイリストに追加できます。\n${r.url}\n\n※ホーム画面のアプリで使っている人は、このメッセージ全体をコピーして、アプリの「共有」→「取り込む」に貼り付けてください。`;
+  const text=`${nm?nm+"の":""}新生活グッズのリスト（${r.count}件）です。リンクを開くと、新生活グッズリストのマイリストに追加できます。\n${r.url}\n\n※ホーム画面のアプリで使っている人は、このメッセージ全体をコピーして、アプリの「共有」→「取り込む」に貼り付けてください。`;
   sendText(text,"新生活グッズのリスト",null);
 };
 // 受け取った側：リンクを開いたとき・貼り付けたとき
@@ -1095,7 +1096,7 @@ if(themeMq){try{themeMq.addEventListener("change",applyTheme)}catch(e){try{theme
 applyTheme();
 // ===== 作者に感想を送る（アプリ定型09。共通のTallyフォームで、?app= でアプリが選ばれる） =====
 const FEEDBACK_URL="https://tally.so/r/9qL0A4";
-const FEEDBACK_APP_NAME="新生活おすすめグッズ";
+const FEEDBACK_APP_NAME="新生活グッズリスト";
 function feedbackDeviceInfo(){
   const ua=navigator.userAgent||"";let m,dev,os="";
   if(/iPhone/.test(ua))dev="iPhone";
@@ -1132,12 +1133,12 @@ document.getElementById("histBtn").onclick=()=>vm.classList.add("on");
 // ===== 友達に勧める（文章は送る前に書きかえOK。書きかえた文章は開いている間だけ覚えておく） =====
 const recText=document.getElementById("recText"),recReset=document.getElementById("recReset");
 let recDraft=null;
-const defaultRecText=()=>"新生活おすすめグッズ\n"+
+const defaultRecText=()=>"新生活グッズリスト\n"+
   "性別・年代・性格・星座から、新生活にぴったりのグッズを選んでくれるアプリです。ふたり暮らしなら1人目・2人目それぞれで選べます。使ってみて本当にあって良かったもの・失敗だったものをマイリストに残して、友だちと送り合えます。ホーム画面に追加すると、アプリのように使えます。入力したデータはこの端末の中だけに保存され、サーバーには送られません。\n"+SHARE_URL;
 const recNow=()=>recDraft===null?defaultRecText():recDraft;
 function renderRec(){recText.value=recNow();recReset.style.display=recDraft!==null&&recDraft!==defaultRecText()?"inline-block":"none"}
 recText.oninput=()=>{recDraft=recText.value;recReset.style.display=recDraft!==defaultRecText()?"inline-block":"none"};
-document.getElementById("recSend").onclick=()=>sendText(recNow(),"新生活おすすめグッズ",recText);
+document.getElementById("recSend").onclick=()=>sendText(recNow(),"新生活グッズリスト",recText);
 document.getElementById("recCopy").onclick=()=>copyText(recNow(),"文章をコピーしました。",recText);
 recReset.onclick=()=>{recDraft=null;renderRec()};
 renderRec();
