@@ -98,6 +98,8 @@ input[type=text],input[type=search],textarea{-webkit-appearance:none;appearance:
 textarea{min-height:140px;font-family:ui-monospace,Menlo,monospace;font-size:16px;line-height:1.6}
 .row{display:flex;gap:8px}.row>*{flex:1}
 .mine .top{display:flex;align-items:center;gap:8px}
+.mine .mic{font-size:22px;line-height:1;width:28px;text-align:center;flex:none}
+.mine .mic svg{display:block;width:26px;height:26px;margin:0 auto}
 .mine .nm{flex:1;font-weight:700;font-size:15px;word-break:break-all}
 /* ⭐️と❌はどちらか一方（もう一度押すと外れる） */
 .rate{display:inline-flex;margin-top:8px;border:1.5px solid var(--line);border-radius:999px;overflow:hidden;background:var(--card)}
@@ -462,11 +464,12 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 <script>
 // ===== バージョン =====
 const SHARE_URL="https://sunatrux.github.io/newlife/";
-const APP_VERSION = '1.36.0';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
-const APP_RELEASE_DATE = '2026-11-07';
+const APP_VERSION = '1.36.1';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
+const APP_RELEASE_DATE = '2026-11-08';
 const VERSION=APP_VERSION;
 const CHANGELOG_URL="https://github.com/sunatrux/newlife/blob/main/CHANGELOG.md";
 const HISTORY=[
+ {v:"1.36.1",d:"2026-11-08",c:["マイリストにもアイテムのアイコンを表示"]},
  {v:"1.36.0",d:"2026-11-07",c:["アプリの名前を「新生活グッズリスト」に変更"]},
  {v:"1.35.0",d:"2026-11-07",c:["おすすめの「重視すること」をなくして、条件をシンプルに（エコ・安価・家電・電気なしの絞り込みは一覧でできます）"]},
  {v:"1.34.1",d:"2026-11-07",c:["更新履歴は、設定の「アプリの更新」から見るように（画面下のリンクはなくしました）"]},
@@ -853,6 +856,8 @@ document.getElementById("filter").addEventListener("click",e=>{
   const c=e.target.closest(".chip");if(!c)return;filter=c.dataset.f;
   document.querySelectorAll("#filter .chip").forEach(x=>x.classList.toggle("on",x===c));renderMine();
 });
+// マイリストのアイコン：おすすめにあるアイテムはその絵、自分や友だちが足したものは ✏️
+const mineIcon=n=>{const it=ITEMS.find(x=>x.n===n);return it?icon(it.i):"✏️"};
 function renderMine(){
   const list=mine.filter(m=>filter==="all"||(filter==="good"&&m.good)||(filter==="bad"&&(m.bad||m.fbad))||(filter==="friend"&&m.from)||(filter==="now"&&m.w==="now"));
   const goods=mine.filter(m=>m.good).length,bads=mine.filter(m=>m.bad).length;
@@ -867,6 +872,7 @@ function renderMine(){
   if(!list.length){el.innerHTML=`<div class="empty">${mine.length?"この条件のアイテムはありません":"まだアイテムがありません。<br>おすすめから追加するか、上で自分で追加してね。<br>使ってみて良かったら「⭐️ あって良かった」、イマイチなら「❌ 失敗だった」を選ぼう。"}</div>`;return}
   el.innerHTML=list.map(m=>`<div class="card mine" data-id="${m.id}">
     <div class="top">
+    <div class="mic">${mineIcon(m.name)}</div>
     <div class="nm">${esc(m.name)}${m.from?`<span class="from">from ${esc(m.from)}${m.fgood?" ★":""}${m.fbad?" 失敗":""}</span>`:""}</div>
     <button class="del" aria-label="削除">✕</button></div>
     <div class="rate" role="radiogroup" aria-label="使ってみてどうだった？"><button class="star ${m.good?"on":""}" role="radio" aria-checked="${!!m.good}">⭐️ あって良かった</button><button class="bad ${m.bad?"on":""}" role="radio" aria-checked="${!!m.bad}">❌ 失敗だった</button></div>
