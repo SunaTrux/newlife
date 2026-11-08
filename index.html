@@ -397,7 +397,7 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
     <div class="lbl">表示</div>
     <div class="chips" id="themeChips"><button class="chip" data-t="light">☀️ ライト</button><button class="chip" data-t="dark">🌙 ダーク</button><button class="chip" data-t="auto">自動（端末に合わせる）</button></div>
   </div>
-  <div class="card">
+  <div class="card" id="installCard">
     <div class="lbl">ホーム画面に追加（おすすめ）</div>
     <div id="installSet"></div>
   </div>
@@ -473,11 +473,12 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 <script>
 // ===== バージョン =====
 const SHARE_URL="https://sunatrux.github.io/newlife/";
-const APP_VERSION = '1.36.3';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
+const APP_VERSION = '1.36.4';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
 const APP_RELEASE_DATE = '2026-11-08';
 const VERSION=APP_VERSION;
 const CHANGELOG_URL="https://github.com/sunatrux/newlife/blob/main/CHANGELOG.md";
 const HISTORY=[
+ {v:"1.36.4",d:"2026-11-08",c:["パソコンで開いたときは「ホーム画面に追加」の案内を出さないように（スマホ向けのアプリのため。パソコンでは「スマホで開く」を案内）"]},
  {v:"1.36.3",d:"2026-11-08",c:["ブラウザで更新履歴の ✕ が見切れる問題を修正","更新履歴は20件ずつ表示し、「もっと見る」で続きを表示"]},
  {v:"1.36.2",d:"2026-11-08",c:["更新履歴の画面の上にも ✕（閉じる）ボタンを追加"]},
  {v:"1.36.1",d:"2026-11-08",c:["マイリストにもアイテムのアイコンを表示"]},
@@ -1195,7 +1196,7 @@ function installPlatform(){
 function installBarVisible(){
   if(!(IS_HOSTED||INSTALL_TEST)||isStandalone())return false;
   try{if(window.top!==window.self)return false}catch(e){return false}
-  if(installPlatform()==="pc"&&!deferredInstall)return false;   // PCは、ブラウザがインストールに対応しているときだけ
+  if(installPlatform()==="pc")return false;   // スマホ向けのアプリなので、PCではインストールを案内しない（代わりに「スマホで開く」）
   if(LAUNCHES<2&&!INSTALL_TEST)return false;   // 初回は出さない
   if(document.querySelector("#updNotice .update-notice"))return false;   // アップデートのお知らせと同時に出さない
   const t=+store.get(INSTALL_DISMISS_KEY,0)||0;
@@ -1228,6 +1229,8 @@ function renderInstall(){
   else bar.innerHTML="";
   // 設定
   const set=document.getElementById("installSet");
+  // PCでは設定の「ホーム画面に追加」欄ごと出さない（ホーム画面のアプリで開いているときは除く）
+  document.getElementById("installCard").hidden=installPlatform()==="pc"&&!isStandalone()&&!INSTALL_TEST;
   if(isStandalone())set.innerHTML=`<p class="ok-msg">✓ ホーム画面のアプリで開いています</p>`;
   else set.innerHTML=`<p class="hint" style="margin-top:0">ホーム画面に追加すると、アプリのように全画面で開けて、ネットが弱い場所でも開けます。お店でマイリストを見ながら買い物するときに便利です。</p><button class="btn" data-install="set" style="margin-top:8px">ホーム画面に追加</button>${installGuide==="set"?installGuideHtml():""}`;
 }
