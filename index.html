@@ -121,7 +121,7 @@ textarea{min-height:140px;font-family:ui-monospace,Menlo,monospace;font-size:16p
 .modal.on{display:flex}
 #verModal{z-index:40}
 #packModal{z-index:45}   /* 設定の上から更新履歴を開いても前に出す */
-@media (min-width:760px){.modal{align-items:center;padding:24px}.modal .sheet{border-radius:18px;max-height:88vh}}
+@media (min-width:760px){.modal{align-items:center;padding:24px}.modal .sheet{border-radius:18px;max-height:88vh}.modal .sheet.sheet-col{max-height:88vh;max-height:88dvh}}
 .modal .sheet{background:var(--bg);width:100%;max-width:640px;max-height:80vh;overflow:auto;border-radius:18px 18px 0 0;padding:18px calc(16px + env(safe-area-inset-right)) calc(24px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left))}
 .hv{margin-bottom:14px}.hv b{font-size:14px}.hv small{color:var(--sub);margin-left:6px}
 .hv ul{margin:4px 0 0;padding-left:20px;font-size:13px;line-height:1.7}
@@ -213,6 +213,7 @@ html[data-theme=dark] input::placeholder,html[data-theme=dark] textarea::placeho
   header h1{font-size:18px}
   .totop{padding:7px 12px;font-size:12px}
   .modal .sheet{max-height:92vh}
+  .modal .sheet.sheet-col{max-height:92vh;max-height:92dvh}
 }
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));width:max-content;max-width:calc(100% - 24px);transform:translateX(-50%) translateY(20px);opacity:0;background:#3a3330;color:#fff;padding:10px 16px;border-radius:999px;font-size:13px;transition:.25s;pointer-events:none;z-index:20;display:flex;align-items:center;gap:10px;white-space:normal}
 .toast .ta{flex:none;border:none;background:#fff;color:var(--ink);border-radius:999px;padding:5px 12px;font:inherit;font-size:12.5px;font-weight:700}
@@ -255,9 +256,13 @@ html[data-theme=dark] .save-warn{background:#3a2a20;border-color:#8a5a3a;color:#
 .full-x{flex:none;width:40px;height:40px;border:none;border-radius:50%;background:var(--soft);color:var(--ink);font:inherit;font-size:18px;font-weight:700;line-height:1}
 .full-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:14px max(12px,calc((100% - 640px) / 2 + 12px),env(safe-area-inset-right)) calc(28px + env(safe-area-inset-bottom)) max(12px,calc((100% - 640px) / 2 + 12px),env(safe-area-inset-left))}
 @media (min-width:760px){.modal.full{padding:0}.modal.full .sheet{border-radius:0;max-height:none}}
-/* 更新履歴などのシート：上の見出しと✕はスクロールしても残る */
-.sheet-head{position:sticky;top:-18px;z-index:1;display:flex;align-items:center;gap:10px;margin:-18px -4px 8px;padding:12px 4px 10px;background:var(--bg);border-bottom:1px solid var(--line)}
+/* 更新履歴などのシート：上の見出しと✕は動かず、中身だけスクロール。
+   高さは dvh（ブラウザのバーを除いた高さ）で決めて、✕がバーの下に隠れないようにする */
+.modal .sheet.sheet-col{display:flex;flex-direction:column;overflow:hidden;padding-top:0;padding-bottom:0;max-height:80vh;max-height:80dvh}
+.sheet-head{flex:none;display:flex;align-items:center;gap:10px;padding:12px 0 10px;border-bottom:1px solid var(--line)}
 .sheet-head h2{flex:1;margin:0}
+.sheet-body{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:12px 0 calc(24px + env(safe-area-inset-bottom))}
+#histMore{width:100%;margin-bottom:10px}
 .hint{font-size:12px;color:var(--sub);line-height:1.7;margin:6px 0 0}
 code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
 </style>
@@ -380,9 +385,10 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
   <div id="packBody"></div>
   <div class="row"><button class="btn sub" id="packNo">やめる</button><button class="btn" id="packOk">取り込む</button></div>
 </div></div>
-<div class="modal" id="verModal" role="dialog" aria-modal="true" aria-labelledby="verTitle"><div class="sheet">
-  <div class="sheet-head"><h2 id="verTitle">更新履歴</h2><button class="full-x" id="verX" aria-label="更新履歴を閉じる">✕</button></div><div id="hist"></div>
-  <button class="btn sub" id="verClose">閉じる</button>
+<div class="modal" id="verModal" role="dialog" aria-modal="true" aria-labelledby="verTitle"><div class="sheet sheet-col">
+  <div class="sheet-head"><h2 id="verTitle">更新履歴</h2><button class="full-x" id="verX" aria-label="更新履歴を閉じる">✕</button></div>
+  <div class="sheet-body"><div id="hist"></div><button class="btn sub" id="histMore" hidden></button>
+  <button class="btn sub" id="verClose">閉じる</button></div>
 </div></div>
 <div class="modal full" id="setModal" role="dialog" aria-modal="true" aria-labelledby="setTitle"><div class="sheet">
   <div class="full-head"><h2 id="setTitle">設定</h2><button class="full-x" id="setX" aria-label="設定を閉じる">✕</button></div>
@@ -467,11 +473,12 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 <script>
 // ===== バージョン =====
 const SHARE_URL="https://sunatrux.github.io/newlife/";
-const APP_VERSION = '1.36.2';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
+const APP_VERSION = '1.36.3';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
 const APP_RELEASE_DATE = '2026-11-08';
 const VERSION=APP_VERSION;
 const CHANGELOG_URL="https://github.com/sunatrux/newlife/blob/main/CHANGELOG.md";
 const HISTORY=[
+ {v:"1.36.3",d:"2026-11-08",c:["ブラウザで更新履歴の ✕ が見切れる問題を修正","更新履歴は20件ずつ表示し、「もっと見る」で続きを表示"]},
  {v:"1.36.2",d:"2026-11-08",c:["更新履歴の画面の上にも ✕（閉じる）ボタンを追加"]},
  {v:"1.36.1",d:"2026-11-08",c:["マイリストにもアイテムのアイコンを表示"]},
  {v:"1.36.0",d:"2026-11-07",c:["アプリの名前を「新生活グッズリスト」に変更"]},
@@ -1078,7 +1085,17 @@ function mergeItems(raw,from){
 }
 
 updateBadge();
-document.getElementById("hist").innerHTML=HISTORY.map(h=>`<div class="hv"><b>v${h.v}</b><small>${h.d}</small><ul>${h.c.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`).join("");
+// アプリ定型：更新履歴は長くなるので20件ずつ。「もっと見る」で続きを足す
+const HIST_STEP=20;let histShown=0;
+const histEl=document.getElementById("hist"),histMore=document.getElementById("histMore");
+function renderHist(reset){
+  if(reset){histShown=0;histEl.innerHTML=""}
+  const next=HISTORY.slice(histShown,histShown+HIST_STEP);histShown+=next.length;
+  histEl.insertAdjacentHTML("beforeend",next.map(h=>`<div class="hv"><b>v${h.v}</b><small>${h.d}</small><ul>${h.c.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`).join(""));
+  const rest=HISTORY.length-histShown;histMore.hidden=rest<=0;histMore.textContent=`もっと見る（あと${rest}件）`;
+}
+histMore.onclick=()=>renderHist(false);
+renderHist(true);
 const vm=document.getElementById("verModal");
 document.getElementById("verClose").onclick=document.getElementById("verX").onclick=()=>vm.classList.remove("on");
 vm.onclick=e=>{if(e.target===vm)vm.classList.remove("on")};
@@ -1138,7 +1155,7 @@ const closeSet=()=>{sm.classList.remove("on");document.documentElement.style.ove
 document.getElementById("setClose").onclick=closeSet;
 document.getElementById("setX").onclick=closeSet;
 
-document.getElementById("histBtn").onclick=()=>vm.classList.add("on");
+document.getElementById("histBtn").onclick=()=>{renderHist(true);vm.querySelector(".sheet-body").scrollTop=0;vm.classList.add("on")};
 
 // ===== 友達に勧める（文章は送る前に書きかえOK。書きかえた文章は開いている間だけ覚えておく） =====
 const recText=document.getElementById("recText"),recReset=document.getElementById("recReset");
@@ -1231,7 +1248,7 @@ function renderNotice(){
   if(seenVersion===APP_VERSION||!h){el.innerHTML="";return}
   el.innerHTML=`<div class="update-notice"><button class="x" id="noticeClose" aria-label="閉じる">×</button><div class="t">v${APP_VERSION} にアップデートしました</div><ul>${h.c.map(n=>`<li>${esc(n)}</li>`).join("")}</ul><button class="linkbtn" id="noticeHist" style="padding:0">すべての更新履歴を見る</button></div>`;
   document.getElementById("noticeClose").onclick=()=>{seenVersion=APP_VERSION;store.set(SEEN_VERSION_KEY,APP_VERSION);renderNotice();renderInstall()};
-  document.getElementById("noticeHist").onclick=()=>vm.classList.add("on");
+  document.getElementById("noticeHist").onclick=()=>{renderHist(true);vm.querySelector(".sheet-body").scrollTop=0;vm.classList.add("on")};
 }
 renderNotice();
 renderInstall();
