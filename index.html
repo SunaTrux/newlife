@@ -255,6 +255,9 @@ html[data-theme=dark] .save-warn{background:#3a2a20;border-color:#8a5a3a;color:#
 .full-x{flex:none;width:40px;height:40px;border:none;border-radius:50%;background:var(--soft);color:var(--ink);font:inherit;font-size:18px;font-weight:700;line-height:1}
 .full-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:14px max(12px,calc((100% - 640px) / 2 + 12px),env(safe-area-inset-right)) calc(28px + env(safe-area-inset-bottom)) max(12px,calc((100% - 640px) / 2 + 12px),env(safe-area-inset-left))}
 @media (min-width:760px){.modal.full{padding:0}.modal.full .sheet{border-radius:0;max-height:none}}
+/* 更新履歴などのシート：上の見出しと✕はスクロールしても残る */
+.sheet-head{position:sticky;top:-18px;z-index:1;display:flex;align-items:center;gap:10px;margin:-18px -4px 8px;padding:12px 4px 10px;background:var(--bg);border-bottom:1px solid var(--line)}
+.sheet-head h2{flex:1;margin:0}
 .hint{font-size:12px;color:var(--sub);line-height:1.7;margin:6px 0 0}
 code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
 </style>
@@ -377,8 +380,8 @@ code{background:#f4efe7;padding:1px 5px;border-radius:5px;font-size:12px}
   <div id="packBody"></div>
   <div class="row"><button class="btn sub" id="packNo">やめる</button><button class="btn" id="packOk">取り込む</button></div>
 </div></div>
-<div class="modal" id="verModal"><div class="sheet">
-  <h2>更新履歴</h2><div id="hist"></div>
+<div class="modal" id="verModal" role="dialog" aria-modal="true" aria-labelledby="verTitle"><div class="sheet">
+  <div class="sheet-head"><h2 id="verTitle">更新履歴</h2><button class="full-x" id="verX" aria-label="更新履歴を閉じる">✕</button></div><div id="hist"></div>
   <button class="btn sub" id="verClose">閉じる</button>
 </div></div>
 <div class="modal full" id="setModal" role="dialog" aria-modal="true" aria-labelledby="setTitle"><div class="sheet">
@@ -464,11 +467,12 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 <script>
 // ===== バージョン =====
 const SHARE_URL="https://sunatrux.github.io/newlife/";
-const APP_VERSION = '1.36.1';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
+const APP_VERSION = '1.36.2';        // メジャー.マイナー.パッチ。更新のたびに上げる。CHANGELOG.md と合わせる
 const APP_RELEASE_DATE = '2026-11-08';
 const VERSION=APP_VERSION;
 const CHANGELOG_URL="https://github.com/sunatrux/newlife/blob/main/CHANGELOG.md";
 const HISTORY=[
+ {v:"1.36.2",d:"2026-11-08",c:["更新履歴の画面の上にも ✕（閉じる）ボタンを追加"]},
  {v:"1.36.1",d:"2026-11-08",c:["マイリストにもアイテムのアイコンを表示"]},
  {v:"1.36.0",d:"2026-11-07",c:["アプリの名前を「新生活グッズリスト」に変更"]},
  {v:"1.35.0",d:"2026-11-07",c:["おすすめの「重視すること」をなくして、条件をシンプルに（エコ・安価・家電・電気なしの絞り込みは一覧でできます）"]},
@@ -1076,7 +1080,7 @@ function mergeItems(raw,from){
 updateBadge();
 document.getElementById("hist").innerHTML=HISTORY.map(h=>`<div class="hv"><b>v${h.v}</b><small>${h.d}</small><ul>${h.c.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`).join("");
 const vm=document.getElementById("verModal");
-document.getElementById("verClose").onclick=()=>vm.classList.remove("on");
+document.getElementById("verClose").onclick=document.getElementById("verX").onclick=()=>vm.classList.remove("on");
 vm.onclick=e=>{if(e.target===vm)vm.classList.remove("on")};
 document.addEventListener("keydown",e=>{   // Escで小窓を閉じる（上に重なっているものから）
   if(e.key!=="Escape")return;
